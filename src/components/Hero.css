@@ -1,0 +1,114 @@
+.hero-section {
+    padding-top: calc(var(--header-height) + 4rem);
+    padding-bottom: 8rem;
+    min-height: 90vh;
+    /* Takes up most of the screen */
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-bg-glow {
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 50vw;
+    height: 50vw;
+    max-width: 800px;
+    max-height: 800px;
+    background: radial-gradient(circle, rgba(109, 40, 217, 0.15) 0%, transparent 70%);
+    filter: blur(100px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-bg-glow-2 {
+    position: absolute;
+    bottom: 0%;
+    left: -10%;
+    width: 40vw;
+    height: 40vw;
+    background: radial-gradient(circle, rgba(219, 39, 119, 0.1) 0%, transparent 70%);
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+}
+
+.hero-label {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-secondary);
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(219, 39, 119, 0.1);
+    border-radius: 100px;
+    border: 1px solid rgba(219, 39, 119, 0.2);
+}
+
+.hero-title {
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-hero-primary {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    padding: 1rem 2rem;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+}
+
+.btn-hero-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    padding: 1rem 2rem;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid var(--border-subtle);
+    transition: all 0.3s ease;
+}
+
+.btn-hero-secondary:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+}
