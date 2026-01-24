@@ -1,6 +1,6 @@
 .hero-section {
     padding-top: var(--header-height);
-    min-height: calc(100vh - 40px);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
