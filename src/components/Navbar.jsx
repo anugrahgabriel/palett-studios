@@ -1,11 +1,12 @@
-import React from 'react';
-import './Navbar.css';
+import logo from '../assets/logo.svg';
 
 const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="container navbar-content">
-        <div className="logo">Palett Studios</div>
+        <a href="/" className="logo-container">
+          <img src={logo} alt="Palett Studios" className="logo" />
+        </a>
         <div className="nav-links">
           <a href="#work" className="nav-item">Work</a>
           <a href="#services" className="nav-item">Services</a>

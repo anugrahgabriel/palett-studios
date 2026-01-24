@@ -7,10 +7,13 @@
     z-index: 1000;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    background: rgba(10, 10, 10, 0.7);
+    border-bottom: none;
+    /* handled by background property block if needed, but lets just use border-subtle */
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(17, 17, 17, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .navbar-content {
@@ -20,12 +23,17 @@
     width: 100%;
 }
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
 .logo {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
+    height: 32px;
+    /* Adjust based on preference, standard header icon size */
+    width: auto;
+    object-fit: contain;
     cursor: pointer;
 }
 

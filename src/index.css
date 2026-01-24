@@ -1,25 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&family=Jersey+25&display=swap');
 
 :root {
-  /* Colors - Premium Dark Palette */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1f1f1f;
-  
+  /* Colors - Minimal Dark Palette */
+  --bg-primary: #111111;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #27272a;
+
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #52525b;
-  
-  --accent-primary: #6d28d9; /* Deep Purple */
-  --accent-secondary: #db2777; /* Pink */
-  --accent-glow: rgba(109, 40, 217, 0.5);
-  
+
+  --accent-primary: #ffffff;
+  --accent-secondary: #e4e4e7;
+
   --border-subtle: #27272a;
-  
+
   /* Spacing & Layout */
   --max-width: 1400px;
   --header-height: 80px;
-  
+
   /* Animations */
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -30,17 +29,38 @@
   padding: 0;
 }
 
+html {
+  background-color: var(--bg-primary);
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
+  /* Slightly different to distinguish frame? Or same? Let's use image. */
+  background-image: url('./assets/bg2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+
+  /* Frame Effect */
+  margin: 20px;
+  min-height: calc(100vh - 40px);
+  border-radius: 20px;
+  /* Optional: adds to the 'fitted' look */
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Outfit', sans-serif;
   color: var(--text-primary);
   line-height: 1.2;
@@ -68,9 +88,8 @@ button {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
+  /* Removed complex gradient for minimal look */
 }
 
 .glass-panel {
