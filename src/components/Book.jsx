@@ -1,6 +1,7 @@
 import React from 'react';
 import './Book.css';
 import leftPageImg from '../assets/page_left.jpg';
+import rightPageImg from '../assets/page_right.jpg';
 
 const Book = () => {
     return (
@@ -12,10 +13,8 @@ const Book = () => {
                     <img src={leftPageImg} alt="Left Page" className="page-image" />
                 </div>
 
-                <div className="page right">
-                    <div className="page-content">
-                        {/* Content for right page */}
-                    </div>
+                <div className="page right no-padding">
+                    <img src={rightPageImg} alt="Right Page" className="page-image" />
                 </div>
             </div>
         </div>
