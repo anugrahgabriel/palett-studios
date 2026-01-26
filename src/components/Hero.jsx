@@ -1,7 +1,9 @@
+import Book from './Book';
+
 const Hero = () => {
     return (
         <section className="hero-section">
-            {/* Empty as requested */}
+            <Book />
         </section>
     );
 };

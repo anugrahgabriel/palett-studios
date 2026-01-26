@@ -2,7 +2,7 @@
 
 :root {
   /* Colors - Minimal Dark Palette */
-  --bg-primary: #111111;
+  --bg-primary: #000000;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #27272a;
 
@@ -23,14 +23,21 @@
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+#root {
+  min-height: 100%;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html {
-  background-color: var(--bg-primary);
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {

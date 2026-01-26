@@ -1,147 +1,21 @@
 .hero-section {
-    padding-top: var(--header-height);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Removed flex centering since we are using absolute positioning on the child now */
     overflow: hidden;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
 }
 
-/* Centered Content Container */
-.hero-content-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Center horizontally */
-    justify-content: center;
-    padding: 0px;
-    gap: 48px;
-    width: auto;
-    flex: none;
-}
-
+/* Ensure the book aligns perfectly in the middle */
 .hero-container {
     display: flex;
     justify-content: center;
-    /* Center the main container content */
     align-items: center;
     width: 100%;
     height: 100%;
-}
-
-/* Frame 70 - Title Container */
-.title-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Centered alignment */
-    padding: 0px;
-    gap: 4px;
-    width: 300px;
-    /* Increased to fit wider centered text if needed, or keep 180px */
-    height: auto;
-}
-
-.text-palett {
-    width: 180px;
-    height: 38px;
-    font-family: 'Jersey 25', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 28px;
-    line-height: 28px;
-    display: flex;
-    align-items: center;
-    letter-spacing: -0.01em;
-    color: #FFFFFF;
-}
-
-/* Frame 71 - Subtitle Row */
-.subtitle-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0px 0px 0px 1px;
-    gap: 10px;
-    width: 180px;
-    height: 28px;
-}
-
-.text-subtitle {
-    width: 154px;
-    height: 28px;
-    font-family: 'Inter', sans-serif;
-    /* SF Pro Rounded override to Inter for web safety */
-    font-style: normal;
-    font-weight: 300;
-    font-size: 13px;
-    line-height: 14px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.02em;
-    color: #E5E0E0;
-}
-
-/* Frame 66 - Button */
-.btn-contact-small {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0px;
-    gap: 3px;
-    width: 68px;
-    height: 24px;
-    background: #BBA2FF;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-}
-
-.btn-contact-small:hover {
-    transform: translateY(-1px);
-    background: #a88aff;
-    /* Slightly darker on hover */
-}
-
-.btn-text {
-    width: 79px;
-    /* slightly wider to fit content if scaling issues */
-    height: 14px;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #050F5A;
-    text-shadow: 0px 1px 6px rgba(255, 255, 255, 0.4);
-}
-
-@media (max-width: 1024px) {
-    .hero-container {
-        flex-direction: column-reverse;
-        gap: 2rem;
-        text-align: center;
-    }
-
-    .hero-content-left {
-        align-items: center;
-    }
-
-    .text-line-1,
-    .text-line-2 {
-        font-size: 2.5rem;
-    }
-
-    .hero-content-right {
-        min-width: unset;
-        width: 100%;
-        transform: scale(0.8);
-    }
 }
