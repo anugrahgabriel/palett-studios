@@ -197,7 +197,7 @@ const Book = () => {
                     <div className="controls-header" style={{ transform: 'translateY(-8px)', marginLeft: '-2px' }}>
                         <span className="text-header" style={{ fontSize: '18px', opacity: 0.74, fontFamily: "'SF Pro Rounded', sans-serif" }}>Your Canvas, Our Palett</span>
                     </div>
-                    <div className="controls-list" style={{ gap: '4px' }}>
+                    <div className="controls-list" style={{ gap: '5px' }}>
                         <div className="text-list-item" style={{ lineHeight: '8px', display: 'flex', alignItems: 'center', fontSize: '14px', marginBottom: '2px', fontFamily: "'SF Pro Rounded', sans-serif" }}>
                             My name is
                             <input
