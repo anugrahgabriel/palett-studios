@@ -175,16 +175,19 @@
 .text-list-item input::placeholder {
     color: #D2D2D2;
     opacity: 0.32;
+    font-size: 12px;
 }
 
 .text-list-item input::-webkit-input-placeholder {
     color: #D2D2D2;
     opacity: 0.32;
+    font-size: 12px;
 }
 
 .text-list-item input::-moz-placeholder {
     color: #D2D2D2;
     opacity: 0.32;
+    font-size: 12px;
 }
 
 @keyframes textBounce {
