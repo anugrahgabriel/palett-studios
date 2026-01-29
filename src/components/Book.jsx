@@ -248,7 +248,7 @@ const Book = () => {
                         </div>
                         <div className="text-list-item" style={{ lineHeight: '8px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: "'SF Pro Rounded', sans-serif" }}>
                             I want to chat about designs for my
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '2px' }}>
                                 {['Web app', 'Mobile app', 'Website'].map((type) => (
                                     <button
                                         key={type}
