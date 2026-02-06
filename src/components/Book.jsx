@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './Book.css';
@@ -10,6 +10,271 @@ const ArrowIcon = () => (
         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="#D2D2D2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
+
+// Thread Grid Component with Physics
+const ThreadGrid = () => {
+    const containerRef = useRef(null);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [dots, setDots] = useState([]);
+    const [connections, setConnections] = useState([]);
+    const threadRefs = useRef([]);
+
+    useEffect(() => {
+        // Generate dots
+        const generatedDots = [];
+        const circleSize = 4;
+        const minGap = 44;
+        const maxGap = 52;
+        const colors = ['#D9D9D9', '#9B9494'];
+        const padding = 20;
+        const viewportWidth = 1920;
+        const viewportHeight = 1080;
+        const avgGap = (minGap + maxGap) / 2;
+        const cols = Math.floor((viewportWidth - 2 * padding) / (circleSize + avgGap));
+        const rows = Math.floor((viewportHeight - 2 * padding) / (circleSize + avgGap));
+
+        let currentY = padding;
+        let dotIndex = 0;
+
+        for (let row = 0; row < rows; row++) {
+            let currentX = padding;
+            for (let col = 0; col < cols; col++) {
+                const color = colors[Math.floor(Math.random() * 2)];
+                const gapX = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
+                const gapY = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
+
+                generatedDots.push({
+                    id: dotIndex++,
+                    x: currentX + circleSize / 2,
+                    y: currentY + circleSize / 2,
+                    color,
+                    size: circleSize
+                });
+
+                currentX += circleSize + gapX;
+            }
+            const gapY = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
+            currentY += circleSize + gapY;
+        }
+
+        setDots(generatedDots);
+
+        // Create random connections (15-25 threads) with 4-8 dot distance
+        const numConnections = Math.floor(Math.random() * 11) + 15;
+        const generatedConnections = [];
+
+        // Thread color palette
+        const threadColors = ['#E2C6AB', '#274DF5', '#802F64', '#802F64', '#555789'];
+
+        for (let i = 0; i < numConnections; i++) {
+            const dot1 = generatedDots[Math.floor(Math.random() * generatedDots.length)];
+
+            // Find dots that are 4-8 dots away
+            const minDistance = 4;
+            const maxDistance = 8;
+            const nearbyDots = generatedDots.filter(d => {
+                if (d.id === dot1.id) return false;
+                const dx = d.x - dot1.x;
+                const dy = d.y - dot1.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const avgGap = 48; // Average gap between dots
+                const dotDistance = distance / avgGap;
+                return dotDistance >= minDistance && dotDistance <= maxDistance;
+            });
+
+            if (nearbyDots.length > 0) {
+                const dot2 = nearbyDots[Math.floor(Math.random() * nearbyDots.length)];
+                const threadColor = threadColors[Math.floor(Math.random() * threadColors.length)];
+                generatedConnections.push({
+                    id: i,
+                    start: dot1,
+                    end: dot2,
+                    controlOffset: { x: 0, y: 0 },
+                    isHovered: false,
+                    color: threadColor
+                });
+            }
+        }
+
+        setConnections(generatedConnections);
+    }, []);
+
+    // Mouse tracking
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setMousePos({
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                });
+            }
+        };
+
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener('mousemove', handleMouseMove);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener('mousemove', handleMouseMove);
+            }
+        };
+    }, []);
+
+    // Physics animation for threads with momentum
+    const velocitiesRef = useRef([]);
+
+    useEffect(() => {
+        if (connections.length === 0) return;
+
+        // Initialize velocities if needed
+        if (velocitiesRef.current.length !== connections.length) {
+            velocitiesRef.current = connections.map(() => ({ x: 0, y: 0 }));
+        }
+
+        let animationFrameId;
+
+        const animate = () => {
+            setConnections(prevConnections => {
+                return prevConnections.map((conn, index) => {
+                    let targetOffsetX = 0;
+                    let targetOffsetY = 180; // Gravity sag (always applied)
+
+                    // Only apply repulsion if this thread is hovered
+                    if (conn.isHovered) {
+                        const midX = (conn.start.x + conn.end.x) / 2;
+                        const midY = (conn.start.y + conn.end.y) / 2;
+                        const dx = mousePos.x - midX;
+                        const dy = mousePos.y - midY;
+
+                        // Apply smooth, floaty repulsion that adds to the sag
+                        // Instead of replacing, we add the repulsion to maintain the curve
+                        targetOffsetX = -dx * 0.9; // Increased repulsion power
+                        targetOffsetY = 180 + (-dy * 0.9); // Maintain sag + add vertical repulsion
+                    }
+
+                    // Current position
+                    const currentOffsetX = conn.controlOffset?.x || 0;
+                    const currentOffsetY = conn.controlOffset?.y || 0;
+
+                    // Calculate spring force (like a rubber band)
+                    // Softer spring for more floaty feel
+                    const springStrength = 0.08; // Reduced for smoother movement
+                    const damping = 0.85; // Lower damping = more float and oscillation
+
+                    const forceX = (targetOffsetX - currentOffsetX) * springStrength;
+                    const forceY = (targetOffsetY - currentOffsetY) * springStrength;
+
+                    // Update velocity with force
+                    velocitiesRef.current[index].x += forceX;
+                    velocitiesRef.current[index].y += forceY;
+
+                    // Apply damping (slow down over time)
+                    velocitiesRef.current[index].x *= damping;
+                    velocitiesRef.current[index].y *= damping;
+
+                    // Update position with velocity
+                    const newOffsetX = currentOffsetX + velocitiesRef.current[index].x;
+                    const newOffsetY = currentOffsetY + velocitiesRef.current[index].y;
+
+                    return {
+                        ...conn,
+                        controlOffset: {
+                            x: newOffsetX,
+                            y: newOffsetY
+                        }
+                    };
+                });
+            });
+
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+        return () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        };
+    }, [mousePos]);
+
+    return (
+        <div
+            ref={containerRef}
+            style={{
+                width: '100%',
+                height: '100vh',
+                background: '#F3E9E9',
+                position: 'relative',
+                overflow: 'hidden'
+            }}
+        >
+            {/* SVG for threads */}
+            <svg
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'auto',
+                    zIndex: 1
+                }}
+            >
+                {connections.map((conn, index) => {
+                    const midX = (conn.start.x + conn.end.x) / 2 + (conn.controlOffset?.x || 0);
+                    const midY = (conn.start.y + conn.end.y) / 2 + (conn.controlOffset?.y || 0);
+
+                    return (
+                        <path
+                            key={conn.id}
+                            ref={el => threadRefs.current[index] = el}
+                            d={`M ${conn.start.x} ${conn.start.y} Q ${midX} ${midY} ${conn.end.x} ${conn.end.y}`}
+                            stroke={conn.color || 'rgba(155, 148, 148, 0.3)'}
+                            strokeWidth="8"
+                            fill="none"
+                            strokeLinecap="round"
+                            style={{
+                                cursor: 'default',
+                                pointerEvents: 'stroke',
+                                opacity: 1.0
+                            }}
+                            onMouseEnter={() => {
+                                setConnections(prev => prev.map(c =>
+                                    c.id === conn.id ? { ...c, isHovered: true } : c
+                                ));
+                            }}
+                            onMouseLeave={() => {
+                                setConnections(prev => prev.map(c =>
+                                    c.id === conn.id ? { ...c, isHovered: false } : c
+                                ));
+                            }}
+                        />
+                    );
+                })}
+            </svg>
+
+            {/* Dots */}
+            {dots.map(dot => (
+                <div
+                    key={dot.id}
+                    style={{
+                        position: 'absolute',
+                        left: `${dot.x - dot.size / 2}px`,
+                        top: `${dot.y - dot.size / 2}px`,
+                        width: `${dot.size}px`,
+                        height: `${dot.size}px`,
+                        borderRadius: '50%',
+                        backgroundColor: dot.color,
+                        zIndex: 2
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
 
 const Book = () => {
     const containerRef = useRef(null);
@@ -123,207 +388,10 @@ const Book = () => {
     };
 
     return (
-        <div className="main-stage" ref={containerRef} style={{ width: '100%', height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="book-wrapper" style={{ width: '100%' }}>
+            {/* Thread Grid with Physics */}
+            <ThreadGrid />
 
-            {/* Cards Canvas */}
-            <div className="cards-canvas" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10 }}>
-                <div className="cards-group" style={{ position: 'relative', width: '419px', height: '559px' }}>
-
-                    {/* Left Card Wrapper (Position/Float) */}
-                    <div
-                        ref={leftWrapperRef}
-                        className="card-wrapper"
-                        style={{
-                            position: 'absolute',
-                            top: 0, left: 0,
-                            width: '419px', height: '559px', // Match card size
-                            zIndex: 10
-                        }}
-                    >
-                        {/* Interactive Inner Card */}
-                        <div
-                            className="card"
-                            ref={leftCardRef}
-                            onMouseMove={(e) => handleHover(e, leftCardRef)}
-                            onMouseLeave={() => handleLeave(leftCardRef)}
-                            style={{ cursor: 'default', width: '100%', height: '100%' }}
-                        >
-                            <img src={leftPageImg} alt="Left Card" className="card-image" />
-                        </div>
-                    </div>
-
-                    {/* Right Card Wrapper */}
-                    <div
-                        ref={rightWrapperRef}
-                        className="card-wrapper"
-                        style={{
-                            position: 'absolute',
-                            top: 0, left: 0,
-                            width: '419px', height: '559px',
-                            zIndex: 20
-                        }}
-                    >
-                        <div
-                            className="card"  // Removed card-right-inner to be consistent
-                            ref={rightCardRef}
-                            onMouseMove={(e) => handleHover(e, rightCardRef)}
-                            onMouseLeave={() => handleLeave(rightCardRef)}
-                            style={{ cursor: 'default', width: '100%', height: '100%' }}
-                        >
-                            <img src={rightPageImg} alt="Right Card" className="card-image" />
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Text Panel Container - Flex Column for multiple blocks */}
-            <div
-                className="text-panel-wrapper"
-                ref={textRef}
-                style={{
-                    position: 'absolute',
-                    left: '50%',
-                    marginLeft: '190px',
-                    marginTop: '-48px',
-                    zIndex: 5,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '80px'
-                }}
-            >
-                {/* Block 1 */}
-                <div className="book-controls" style={{ width: '300px', position: 'relative', height: 'auto' }}>
-                    <div className="controls-header" style={{ transform: 'translateY(-8px)', marginLeft: '-2px' }}>
-                        <span className="text-header" style={{ fontSize: '18px', opacity: 0.74, fontFamily: "'SF Pro Rounded', sans-serif" }}>Your Canvas, Our Palett</span>
-                    </div>
-                    <div className="controls-list" style={{ gap: '5px' }}>
-                        <div className="text-list-item" style={{ lineHeight: '8px', display: 'flex', alignItems: 'center', fontSize: '14px', marginBottom: '2px', fontFamily: "'SF Pro Rounded', sans-serif" }}>
-                            My name is
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="your name"
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    borderBottom: '1px solid rgba(210, 210, 210, 0.12)',
-                                    outline: 'none',
-                                    color: 'rgba(210, 210, 210, 0.40)',
-                                    fontFamily: "'SF Pro Rounded', sans-serif",
-                                    fontSize: '14px',
-                                    padding: '0 2px',
-                                    paddingBottom: '2px',
-                                    margin: '0 2px',
-                                    width: '80px',
-                                    lineHeight: '8px',
-                                    textAlign: 'center'
-                                }}
-                                className="book-input"
-                            />
-                            from
-                            <input
-                                type="text"
-                                value={formData.company}
-                                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                placeholder="company name"
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    borderBottom: '1px solid rgba(210, 210, 210, 0.12)',
-                                    outline: 'none',
-                                    color: 'rgba(210, 210, 210, 0.40)',
-                                    fontFamily: "'SF Pro Rounded', sans-serif",
-                                    fontSize: '14px',
-                                    padding: '0 2px',
-                                    paddingBottom: '2px',
-                                    margin: '0 2px',
-                                    width: '120px',
-                                    lineHeight: '8px',
-                                    textAlign: 'center'
-                                }}
-                                className="book-input"
-                            />
-                        </div>
-                        <div className="text-list-item" style={{ lineHeight: '8px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: "'SF Pro Rounded', sans-serif" }}>
-                            I want to chat about designs for my
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '2px' }}>
-                                {['Web app', 'Mobile app', 'Website'].map((type) => (
-                                    <button
-                                        key={type}
-                                        onClick={() => setSelectedType(type)}
-                                        className={`type-button ${selectedType === type ? 'selected' : ''}`}
-                                        style={{
-                                            background: selectedType === type ? '#7DACF9' : 'rgba(210, 210, 210, 0.08)',
-                                            border: '0.4px solid rgba(210, 210, 210, 0.12)',
-                                            borderRadius: '6px',
-                                            padding: selectedType === type ? '2px 10px 2px 20px' : '2px 8px',
-                                            color: selectedType === type ? '#000000' : 'rgba(210, 210, 210, 0.32)',
-                                            fontFamily: "'SF Pro Rounded', sans-serif",
-                                            fontSize: '12px',
-                                            fontWeight: '500',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            position: 'relative',
-                                            transition: 'background 0.5s cubic-bezier(0.23, 1, 0.32, 1), padding 0.5s cubic-bezier(0.23, 1, 0.32, 1), color 0.5s cubic-bezier(0.23, 1, 0.32, 1), border 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
-                                            whiteSpace: 'nowrap',
-                                            outline: 'none'
-                                        }}
-                                    >
-                                        {selectedType === type && (
-                                            <span style={{
-                                                opacity: selectedType === type ? 1 : 0,
-                                                transition: 'opacity 0.4s ease',
-                                                position: 'absolute',
-                                                left: '10px',
-                                                zIndex: 0,
-                                                fontSize: '16px',
-                                                lineHeight: '0',
-                                                animation: selectedType === type ? 'textBounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56)' : 'none'
-                                            }}>*</span>
-                                        )}
-                                        <span style={{
-                                            position: 'relative',
-                                            zIndex: 1,
-                                            animation: selectedType === type ? 'textBounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56)' : 'none'
-                                        }}>
-                                            {type}
-                                        </span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="text-list-item" style={{ lineHeight: '8px', display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '2px', fontFamily: "'SF Pro Rounded', sans-serif" }}>
-                            You can reach me at
-                            <input
-                                type="text"
-                                value={formData.contact}
-                                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                                placeholder="email or phone"
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    borderBottom: '1px solid rgba(210, 210, 210, 0.12)',
-                                    outline: 'none',
-                                    color: 'rgba(210, 210, 210, 0.40)',
-                                    fontFamily: "'SF Pro Rounded', sans-serif",
-                                    fontSize: '14px',
-                                    padding: '0 2px',
-                                    paddingBottom: '2px',
-                                    margin: '0 2px',
-                                    width: '120px',
-                                    lineHeight: '8px',
-                                    textAlign: 'center'
-                                }}
-                                className="book-input"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-            </div>
 
         </div>
     );
