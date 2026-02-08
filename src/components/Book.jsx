@@ -94,7 +94,7 @@ const ThreadGrid = () => {
 
         const rightBoxStartCol = leftBoxStartCol; // Align with left box (vertically stacked)
         const rightBoxStartRow = leftBoxStartRow + leftBoxHeight + 2; // Position below first box with 2 row gap
-        const rightBoxHeight = textHeightRows; // Decreased by 5 rows (was textHeightRows + 5)
+        const rightBoxHeight = textHeightRows + 1; // Increased by 1 row
         // row range: 5 to 14
 
         // Identify candidate dots
@@ -372,8 +372,8 @@ const ThreadGrid = () => {
 
             // Generate Dashed Lines for the grid area covered by text - EDGES ONLY
 
-            // Horizontal lines (Top and Bottom edges)
-            const horizontalRows = [0, 1]; // Top box is 1 row tall
+            // Horizontal lines (Bottom edge of top box only)
+            const horizontalRows = [1]; // Top box is 1 row tall, we only want the bottom edge (index 1) which is where threads drop from
             horizontalRows.forEach(r => {
                 for (let c = 0; c < effectiveLeftBoxWidth; c++) {
                     const d1 = dots.find(d => d.col === startCol + c && d.row === targetRow + r);
@@ -390,23 +390,8 @@ const ThreadGrid = () => {
                 }
             });
 
-            // Vertical lines (Left and Right edges)
-            const verticalCols = [0, effectiveLeftBoxWidth];
-            verticalCols.forEach(c => {
-                for (let r = 0; r < 1; r++) { // Top box is 1 row tall
-                    const d1 = dots.find(d => d.col === startCol + c && d.row === targetRow + r);
-                    const d2 = dots.find(d => d.col === startCol + c && d.row === targetRow + r + 1);
-                    if (d1 && d2) {
-                        dashedLines.push({
-                            id: `v-edge-${c}-${r}`,
-                            x1: d1.x,
-                            y1: d1.y,
-                            x2: d2.x,
-                            y2: d2.y
-                        });
-                    }
-                }
-            });
+            // Vertical lines - REMOVED for top box
+            // const verticalCols = [0, effectiveLeftBoxWidth];
 
             // Duplicate Grid Box (Right 5 cols, Down 2 rows from CENTER origin)
             // original box top-left = (startCol, targetRow)
@@ -424,7 +409,7 @@ const ThreadGrid = () => {
             // "move 2 row up" -> relative to current position (+2) -> becomes (+0).
             // "increase this grid box height by moving its bottom edge down by 5 rows" -> height increases by 5.
 
-            const dupHeightRows = textHeightRows; // Decreased by 5 rows
+            const dupHeightRows = textHeightRows + 1; // Increased by 1 row
             const dupHorizontalRows = [0, dupHeightRows]; // Top and Bottom edges
 
             // Horizontal lines (Top and Bottom edges) for DUPLICATE
@@ -468,7 +453,8 @@ const ThreadGrid = () => {
                 secondTextPosition = {
                     left: `${secondAnchorDot.x}px`,
                     top: `${secondAnchorDot.y}px`,
-                    width: `${effectiveDupWidth * cellSize}px`
+                    width: `${effectiveDupWidth * cellSize}px`,
+                    height: `${(textHeightRows + 1) * cellSize}px`
                 };
             }
         }
@@ -588,23 +574,23 @@ const ThreadGrid = () => {
             ))}
 
             {/* First Text Container - With "Hello" */}
-            <div style={{ ...textStyle, ...textPosition }}>
+            <div style={{ ...textStyle, ...textPosition, alignItems: 'center' }}>
                 <div style={{
                     padding: '0 20px',
                     backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(5px)',
-                    textAlign: 'left'
+                    textAlign: 'center'
                 }}>
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '20px',
-                        letterSpacing: '-0.8px',
+                        fontSize: '13px',
+                        letterSpacing: '-0.03px',
                         lineHeight: '18px',
                         fontWeight: 400,
-                        color: '#373434ff',
+                        color: '#94a697ff',
                         margin: 0
                     }}>
-                        Hello
+                        2 spots left in February
                     </h2>
                 </div>
             </div>
@@ -617,20 +603,20 @@ const ThreadGrid = () => {
                 }}>
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '20px',
-                        letterSpacing: '-0.8px',
-                        lineHeight: '22px',
-                        fontWeight: 400,
+                        fontSize: '22px',
+                        letterSpacing: '-0.2px',
+                        lineHeight: '26px',
+                        fontWeight: 450,
                         color: '#373434ff',
                         margin: 0
                     }}>
-                        Creative team for<br />
-                        startups & scaleups
+                        Design and Development for<br />
+                        startups and scaleups
                     </h2>
                 </div>
 
                 <div style={{
-                    padding: '4px 20px 0 20px',
+                    padding: '2px 20px 0 20px',
                     textAlign: 'left',
                     marginLeft: '2px'
                 }}>
@@ -639,12 +625,49 @@ const ThreadGrid = () => {
                         fontSize: '13px',
                         lineHeight: '16px',
                         fontWeight: 400,
-                        color: '#878585ff',
+                        color: '#787676ff',
                         margin: 0
                     }}>
-                        With senior designers, developers and managers;<br />
-                        embedded in your team. Ship in weeks.
+
+                        Skip hiring and ship in weeks with senior PMs, PDs<br />
+                        and Developers embedded in your team.
                     </p>
+                </div>
+
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '12px',
+                    paddingLeft: '20px',
+                    marginTop: 'auto',
+                    marginBottom: '20px',
+                    pointerEvents: 'auto'
+                }}>
+                    <button style={{
+                        padding: '8px 18px',
+                        background: '#373434',
+                        color: '#FFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontFamily: '"Rethink Sans", sans-serif',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        boxShadow: 'inset 0 3px 6px rgba(255, 255, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.3)'
+                    }}>
+                        Get in touch
+                    </button>
+                    <button style={{
+                        padding: '8px 18px',
+                        background: 'transparent',
+                        color: '#373434',
+                        border: '1px solid #E6E6E6',
+                        borderRadius: '8px',
+                        fontFamily: '"Rethink Sans", sans-serif',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                    }}>
+                        See our work
+                    </button>
                 </div>
             </div>
         </div>
