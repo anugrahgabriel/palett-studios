@@ -565,7 +565,7 @@ const ThreadGrid = () => {
                         stroke="#B0B0B0"
                         strokeWidth="1"
                         strokeDasharray="4 4" // Dashed pattern
-                        strokeOpacity="0.9"
+                        strokeOpacity="0.64"
                     />
                 ))}
             </svg>
