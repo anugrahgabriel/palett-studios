@@ -61,7 +61,7 @@ const ThreadGrid = () => {
             }
         }
 
-        setDots(generatedDots);
+
 
         // Create threads connections between:
         // 1. Bottom edge of LEFT grid box (original, shifted left)
@@ -108,6 +108,17 @@ const ThreadGrid = () => {
 
         // Target Dots: Top edge of Right/Second Box (Width increased by 1)
         const effectiveRightBoxWidth = textWidthCols + 1;
+
+        // Filter and set dots (exclude inside of bottom box)
+        const finalDots = generatedDots.filter(d => {
+            const isInsideBottomBox =
+                d.col > rightBoxStartCol &&
+                d.col < rightBoxStartCol + effectiveRightBoxWidth &&
+                d.row > rightBoxStartRow &&
+                d.row < rightBoxStartRow + rightBoxHeight;
+            return !isInsideBottomBox;
+        });
+        setDots(finalDots);
         const targetDots = generatedDots.filter(d =>
             d.row === rightBoxStartRow &&
             d.col >= rightBoxStartCol &&
@@ -133,91 +144,71 @@ const ThreadGrid = () => {
 
             // "now of every edge dot in thsi connection pattern, set in-out 6 threads"
             // Start with 3 threads from each source dot to 3 spread-out targets
-            const colors = ['#F1E9E9', '#E491C9', '#982598', '#15173D'];
-            const connectionsPerSide = 6; // Increased to total 12 threads per dot area (6 out, 6 in-ish)
+            const colors = ['#FFDEB9', '#FE6244', '#DC0E0E', '#62109F'];
+            // NEW LOGIC: Drop straight threads from bottom edge of top grid box with high density
+            // Interpolate 8 dots between every 2 dots on the bottom edge
+            const dropHeight = 2 * cellSize; // 2 rows height
 
-            // 1. Source -> Target (6 threads per source dot, excluding same column)
-            sourceDots.forEach((source, i) => {
-                let connectionsCreated = 0;
-                let attemptOffset = 0;
+            // Sort sourceDots by column to ensure sequential interpolation
+            sourceDots.sort((a, b) => a.col - b.col);
 
-                while (connectionsCreated < connectionsPerSide && attemptOffset < targetDots.length * 2) {
-                    const targetIndex = (Math.floor(i * (targetDots.length / sourceDots.length)) + attemptOffset) % targetDots.length;
-                    const target = targetDots[targetIndex];
+            for (let i = 0; i < sourceDots.length - 1; i++) {
+                const startDot = sourceDots[i];
+                const endDot = sourceDots[i + 1];
 
-                    // Only connect if NOT in the same column
-                    if (source.col !== target.col) {
-                        const baseSag = Math.random() * 140 - 60;
+                // Ensure they are adjacent horizontally
+                if (endDot.col === startDot.col + 1 && endDot.row === startDot.row) {
+                    const steps = 9; // 1 start + 8 interpolated = 9 intervals to next dot
+                    const stepX = (endDot.x - startDot.x) / steps;
+
+                    for (let k = 0; k < steps; k++) {
+                        const x = startDot.x + k * stepX;
+                        const y = startDot.y;
+
+                        const sourcePoint = { x, y, col: startDot.col, row: startDot.row }; // Mock dot object
+                        const targetPoint = { x, y: y + dropHeight };
+
+                        // Vertical Drop Thread
+                        const baseSag = Math.random() * 20 - 10; // Minimal sag for straight drop, or variance
+
+                        // For animation: Start control point at top (y), target is mid (y + dropHeight/2) + gravity
+                        // Actually, existing physics uses mid + offset.
+                        // To start at top: offset.y should make the curve flat at top.
+                        // midY = y + dropHeight/2.
+                        // We want control point at y.
+                        // So offset.y = y - midY = y - (y + dropHeight/2) = -dropHeight/2.
+                        const midY = (sourcePoint.y + targetPoint.y) / 2;
+
                         generatedConnections.push({
                             id: connectionId++,
-                            start: source,
-                            end: target,
-                            baseSag: baseSag, // Store unique target sag
-                            controlOffset: { x: 0, y: baseSag },
+                            start: sourcePoint,
+                            end: targetPoint, // Fixed point in space
+                            baseSag: baseSag,
+                            controlOffset: { x: 0, y: sourcePoint.y - midY }, // Start high
                             isHovered: false,
-                            color: colors[(connectionId) % 4]
+                            color: colors[Math.floor(Math.random() * colors.length)]
                         });
-                        connectionsCreated++;
                     }
-                    attemptOffset++;
                 }
-            });
+            }
 
-            // 2. Target -> Source (6 threads per target dot, excluding same column)
-            targetDots.forEach((target, i) => {
-                let connectionsCreated = 0;
-                let attemptOffset = 0;
+            // Handle the very last dot (not covered by loop intervals)
+            if (sourceDots.length > 0) {
+                const lastDot = sourceDots[sourceDots.length - 1];
+                const sourcePoint = { x: lastDot.x, y: lastDot.y, col: lastDot.col, row: lastDot.row };
+                const targetPoint = { x: lastDot.x, y: lastDot.y + dropHeight };
+                const midY = (sourcePoint.y + targetPoint.y) / 2;
 
-                while (connectionsCreated < connectionsPerSide && attemptOffset < sourceDots.length * 2) {
-                    const sourceIndex = (Math.floor(i * (sourceDots.length / targetDots.length)) + attemptOffset + 1) % sourceDots.length;
-                    const source = sourceDots[sourceIndex];
-
-                    // Only connect if NOT in the same column
-                    if (source.col !== target.col) {
-                        const baseSag = Math.random() * 140 - 60;
-                        generatedConnections.push({
-                            id: connectionId++,
-                            start: source,
-                            end: target,
-                            baseSag: baseSag, // Store unique target sag
-                            controlOffset: { x: 0, y: baseSag },
-                            isHovered: false,
-                            color: colors[(connectionId) % 4]
-                        });
-                        connectionsCreated++;
-                    }
-                    attemptOffset++;
-                }
-            });
-
-            // 3. Horizontal connections on top edge (same row) - excluding immediate neighbors
-            sourceDots.forEach((source, i) => {
-                // Connect to other dots in the same row, but skip immediate neighbor (col ± 1)
-                const horizontalConnectionsPerDot = 3; // Number of horizontal connections per dot
-                let connectionsCreated = 0;
-                let attemptOffset = 2; // Start at offset 2 to skip immediate neighbor
-
-                while (connectionsCreated < horizontalConnectionsPerDot && attemptOffset < sourceDots.length) {
-                    const targetIndex = (i + attemptOffset) % sourceDots.length;
-                    const target = sourceDots[targetIndex];
-
-                    // Only connect if in the same row AND not immediate neighbor (skip col ± 1)
-                    if (source.row === target.row && Math.abs(source.col - target.col) > 1) {
-                        const baseSag = Math.random() * 160 - 80;
-                        generatedConnections.push({
-                            id: connectionId++,
-                            start: source,
-                            end: target,
-                            baseSag: baseSag, // Store unique target sag
-                            controlOffset: { x: 0, y: 0 }, // Start at 0 to drop on start
-                            isHovered: false,
-                            color: colors[(connectionId) % 4]
-                        });
-                        connectionsCreated++;
-                    }
-                    attemptOffset++;
-                }
-            });
+                generatedConnections.push({
+                    id: connectionId++,
+                    start: sourcePoint,
+                    end: targetPoint,
+                    baseSag: 0,
+                    controlOffset: { x: 0, y: sourcePoint.y - midY },
+                    isHovered: false,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
         }
 
         setConnections(generatedConnections);
@@ -264,19 +255,21 @@ const ThreadGrid = () => {
             setConnections(prevConnections => {
                 return prevConnections.map((conn, index) => {
                     let targetOffsetX = 0;
-                    const gravity = 180; // Increased base downward pull
+                    const gravity = 120; // Base downward pull
                     let targetOffsetY = gravity + (conn.baseSag || 0); // Gravity + unique variance
 
-                    // Only apply repulsion if this thread is hovered
-                    if (conn.isHovered) {
-                        const midX = (conn.start.x + conn.end.x) / 2;
-                        const midY = (conn.start.y + conn.end.y) / 2;
-                        const dx = mousePos.x - midX;
-                        const dy = mousePos.y - midY;
+                    // Calculate distance from mouse to thread midpoint
+                    const midX = (conn.start.x + conn.end.x) / 2;
+                    const midY = (conn.start.y + conn.end.y) / 2 + (gravity / 2); // Approximation of thread center with gravity
+                    const dx = mousePos.x - midX;
+                    const dy = mousePos.y - midY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const repelRadius = 200; // Area of effect
 
-                        // Apply smooth, floaty repulsion that adds to the sag
-                        targetOffsetX = -dx * 0.9;
-                        targetOffsetY = gravity + (conn.baseSag || 0) + (-dy * 0.9); // Maintain unique sag + gravity + repulsion
+                    if (dist < repelRadius) {
+                        const force = (1 - dist / repelRadius) * 120; // Modified repulsion force
+                        targetOffsetX = -(dx / dist) * force;
+                        targetOffsetY += -(dy / dist) * force;
                     }
 
                     // Current position
@@ -285,8 +278,8 @@ const ThreadGrid = () => {
 
                     // Calculate spring force (like a rubber band)
                     // Softer spring for more floaty feel
-                    const springStrength = 0.08; // Reduced for smoother movement
-                    const damping = 0.85; // Lower damping = more float and oscillation
+                    const springStrength = 0.05; // Reduced for smoother movement
+                    const damping = 0.95; // Higher damping = more momentum/oscillation
 
                     const forceX = (targetOffsetX - currentOffsetX) * springStrength;
                     const forceY = (targetOffsetY - currentOffsetY) * springStrength;
@@ -322,7 +315,7 @@ const ThreadGrid = () => {
                 cancelAnimationFrame(animationFrameId);
             }
         };
-    }, [mousePos]);
+    }, [mousePos, connections.length]);
 
     // Calculate position for text container relative to grid
     // Center column, row ~25% down
@@ -504,20 +497,7 @@ const ThreadGrid = () => {
                     zIndex: 1
                 }}
             >
-                {/* Grid Dashed Lines */}
-                {dashedLines.map(line => (
-                    <line
-                        key={line.id}
-                        x1={line.x1}
-                        y1={line.y1}
-                        x2={line.x2}
-                        y2={line.y2}
-                        stroke="#B0B0B0"
-                        strokeWidth="1"
-                        strokeDasharray="4 4" // Dashed pattern
-                        strokeOpacity="0.4"
-                    />
-                ))}
+
 
                 {connections.map((conn, index) => {
                     const midX = (conn.start.x + conn.end.x) / 2 + (conn.controlOffset?.x || 0);
@@ -535,7 +515,7 @@ const ThreadGrid = () => {
                             style={{
                                 cursor: 'default',
                                 pointerEvents: 'stroke',
-                                opacity: 0.2
+                                opacity: 0.6
                             }}
                             onMouseEnter={() => {
                                 setConnections(prev => prev.map(c =>
@@ -552,6 +532,44 @@ const ThreadGrid = () => {
                 })}
             </svg>
 
+            {/* Bottom Grid Background Layer */}
+            <div
+                style={{
+                    ...textStyle,
+                    ...secondTextPosition,
+                    zIndex: 5,
+                    backgroundColor: '#FFF9F9',
+                    pointerEvents: 'none'
+                }}
+            />
+
+            {/* Grid Lines Layer */}
+            <svg
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'none',
+                    zIndex: 6
+                }}
+            >
+                {dashedLines.map(line => (
+                    <line
+                        key={line.id}
+                        x1={line.x1}
+                        y1={line.y1}
+                        x2={line.x2}
+                        y2={line.y2}
+                        stroke="#B0B0B0"
+                        strokeWidth="1"
+                        strokeDasharray="4 4" // Dashed pattern
+                        strokeOpacity="0.9"
+                    />
+                ))}
+            </svg>
+
             {/* Dots */}
             {dots.map(dot => (
                 <div
@@ -564,7 +582,7 @@ const ThreadGrid = () => {
                         height: `${dot.size}px`,
                         borderRadius: '50%',
                         backgroundColor: dot.color,
-                        zIndex: 2
+                        zIndex: 6
                     }}
                 />
             ))}
@@ -592,16 +610,16 @@ const ThreadGrid = () => {
             </div>
 
             {/* Second Text Container - With Content */}
-            <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-end', paddingBottom: '24px' }}>
+            <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <div style={{
                     padding: '0 20px 4px 20px',
                     textAlign: 'left'
                 }}>
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '24px',
+                        fontSize: '20px',
                         letterSpacing: '-0.8px',
-                        lineHeight: '26px',
+                        lineHeight: '22px',
                         fontWeight: 400,
                         color: '#373434ff',
                         margin: 0
@@ -614,7 +632,7 @@ const ThreadGrid = () => {
                 <div style={{
                     padding: '4px 20px 0 20px',
                     textAlign: 'left',
-                    marginLeft: '3px'
+                    marginLeft: '2px'
                 }}>
                     <p style={{
                         fontFamily: '"Rethink Sans", sans-serif',
