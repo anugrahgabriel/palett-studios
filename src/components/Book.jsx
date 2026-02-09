@@ -643,19 +643,9 @@ const ThreadGrid = () => {
                     marginBottom: '20px',
                     pointerEvents: 'auto'
                 }}>
-                    <button style={{
-                        padding: '8px 18px',
-                        background: '#373434',
-                        color: '#FFF',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        boxShadow: 'inset 0 3px 6px rgba(255, 255, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.3)'
-                    }}>
+                    <ThreadButton>
                         Get in touch
-                    </button>
+                    </ThreadButton>
                     <button style={{
                         padding: '8px 18px',
                         background: 'transparent',
@@ -671,6 +661,251 @@ const ThreadGrid = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+// Thread Button Component
+const ThreadButton = ({ children, onClick }) => {
+    const [hovered, setHovered] = useState(false);
+    const [threads, setThreads] = useState([]);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const buttonRef = useRef(null);
+    const velocitiesRef = useRef([]);
+
+    useEffect(() => {
+        // Generate threads when component mounts
+        // Gradient: light on edges, dark in center (left to right: light → dark → light)
+        const lightColor = { r: 0xB8, g: 0xB6, b: 0xD9 }; // #B8B6D9 (light edges)
+        const darkColor = { r: 0x07, g: 0x0F, b: 0x2B };   // #070F2B (dark center)
+
+        const threadCount = 28;
+        const newThreads = [];
+
+        // Helper function to interpolate between two colors
+        const interpolateColor = (start, end, factor) => {
+            const r = Math.round(start.r + (end.r - start.r) * factor);
+            const g = Math.round(start.g + (end.g - start.g) * factor);
+            const b = Math.round(start.b + (end.b - start.b) * factor);
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        };
+
+        for (let i = 0; i < threadCount; i++) {
+            const xPercent = (i + 1) * (100 / (threadCount + 1));
+
+            // Calculate distance from center (0 at edges, 1 at center)
+            const normalizedPosition = i / (threadCount - 1); // 0 to 1
+            const distanceFromCenter = Math.abs(normalizedPosition - 0.5) * 2; // 0 at center, 1 at edges
+            const colorFactor = 1 - distanceFromCenter; // 1 at center (dark), 0 at edges (light)
+
+            newThreads.push({
+                id: i,
+                xPercent: xPercent,
+                originalXPercent: xPercent,
+                color: interpolateColor(lightColor, darkColor, colorFactor),
+                offset: 0 // Start at original position
+            });
+        }
+        setThreads(newThreads);
+        velocitiesRef.current = newThreads.map(() => 0);
+    }, []);
+
+    // Track mouse position relative to button
+    const handleMouseMove = (e) => {
+        if (!buttonRef.current) return;
+        const rect = buttonRef.current.getBoundingClientRect();
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+    };
+
+    // Physics animation loop for repulsion
+    useEffect(() => {
+        if (threads.length === 0 || !hovered) return;
+
+        let animationFrameId;
+        const animate = () => {
+            if (!buttonRef.current) return;
+
+            const buttonWidth = buttonRef.current.offsetWidth;
+
+            setThreads(prevThreads => {
+                return prevThreads.map((thread, index) => {
+                    const threadX = (thread.xPercent / 100) * buttonWidth;
+                    const dx = mousePos.x - threadX;
+                    const dist = Math.abs(dx);
+                    const repelRadius = 50;
+
+                    let targetOffset = 0;
+                    if (dist < repelRadius) {
+                        const force = (1 - dist / repelRadius) * 25;
+                        targetOffset = -(dx / Math.max(dist, 1)) * force;
+                    }
+
+                    // Spring physics
+                    const springStrength = 0.1;
+                    const damping = 0.9;
+
+                    const springForce = (targetOffset - thread.offset) * springStrength;
+                    velocitiesRef.current[index] += springForce;
+                    velocitiesRef.current[index] *= damping;
+
+                    const newOffset = thread.offset + velocitiesRef.current[index];
+
+                    return {
+                        ...thread,
+                        offset: newOffset
+                    };
+                });
+            });
+
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [threads.length, mousePos, hovered]);
+
+    return (
+        <button
+            ref={buttonRef}
+            onClick={onClick}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => {
+                setHovered(false);
+                // Reset offsets when mouse leaves
+                setThreads(prev => prev.map(t => ({ ...t, offset: 0 })));
+                velocitiesRef.current = velocitiesRef.current.map(() => 0);
+            }}
+            onMouseMove={handleMouseMove}
+            style={{
+                position: 'relative',
+                padding: '8px 18px',
+                border: '0.6px solid rgba(38, 38, 91, 0.35)',
+                borderRadius: '9px',
+                fontFamily: '"Rethink Sans", sans-serif',
+                fontSize: '13px',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                background: 'transparent',
+                boxShadow: hovered ? '0 2px 2px rgba(38, 38, 91, 0.1)' : 'none',
+                transition: 'box-shadow 0.3s ease, padding-right 0.3s ease',
+                paddingRight: hovered ? '46px' : '18px'
+            }}
+        >
+            {/* Background Layer - z-index 1 */}
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: '#070F2B',
+                    borderRadius: '8px',
+                    boxShadow: 'inset 0 3px 6px rgba(6, 25, 122, 0.53), inset 0 -3px 6px rgba(135, 135, 224, 0.4)',
+                    opacity: hovered ? 0.9 : 1,
+                    transition: 'opacity 0.3s ease, box-shadow 0.3s ease',
+                    zIndex: 1,
+                    overflow: 'hidden'
+                }}
+            />
+
+            {/* Threads Layer - z-index 2 */}
+            <svg
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                    filter: hovered ? 'blur(6px)' : 'none',
+                    opacity: hovered ? 1 : 0,
+                    transition: 'filter 0.3s ease, opacity 0.3s ease',
+                    overflow: 'hidden'
+                }}
+            >
+                {threads.map(thread => {
+                    const x = `${thread.xPercent + (thread.offset || 0)}%`;
+                    return (
+                        <line
+                            key={thread.id}
+                            x1={x}
+                            y1="0"
+                            x2={x}
+                            y2="100%"
+                            stroke={thread.color}
+                            strokeWidth="2"
+                            strokeOpacity="0.7"
+                        />
+                    );
+                })}
+            </svg>
+
+            {/* Text Layer - z-index 3 */}
+            <span
+                style={{
+                    position: 'relative',
+                    zIndex: 3,
+                    color: '#FFF',
+                    pointerEvents: 'none'
+                }}
+            >
+                {children}
+            </span>
+
+            {/* Arrow Dots Layer - z-index 4 */}
+            {hovered && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        right: '30px',
+                        top: '50%',
+                        transform: 'translateY(calc(-50% - 1px))',
+                        zIndex: 4,
+                        pointerEvents: 'none',
+                        opacity: hovered ? 1 : 0,
+                        transition: 'opacity 0.3s ease 0.2s'
+                    }}
+                >
+                    {/* Right-pointing arrow made of dots with more dots */}
+                    {[
+                        // Arrow shape coordinates (x, y) - fuller right-pointing arrow
+                        [0, 2], [1, 2], [2, 2], [3, 2],  // Horizontal line (4 dots)
+                        [3, 1], [4, 0],                   // Upper diagonal (2 dots)
+                        [3, 3], [4, 4],                   // Lower diagonal (2 dots)
+                        [1, 1], [1, 3],                   // Additional vertical dots
+                        [2, 1]                            // Additional dot for fullness
+                    ].map((pos, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                position: 'absolute',
+                                left: `${pos[0] * 3}px`,
+                                top: `${pos[1] * 3 - 6}px`,
+                                width: '1.5px',
+                                height: '1.5px',
+                                borderRadius: '50%',
+                                backgroundColor: '#9290C3',
+                                opacity: 0.8,
+                                animation: `blink ${2 + Math.random() * 2.5}s ease-in-out infinite`,
+                                animationDelay: `${Math.random() * 2}s`
+                            }}
+                        />
+                    ))}
+                    <style>
+                        {`
+                            @keyframes blink {
+                                0%, 100% { opacity: 0.95; }
+                                50% { opacity: 0.2; }
+                            }
+                        `}
+                    </style>
+                </div>
+            )}
+        </button>
     );
 };
 
