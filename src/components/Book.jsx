@@ -584,10 +584,10 @@ const ThreadGrid = () => {
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
                         fontSize: '13px',
-                        letterSpacing: '-0.03px',
+                        letterSpacing: '-0.02px',
                         lineHeight: '18px',
-                        fontWeight: 400,
-                        color: '#a0b4a4ff',
+                        fontWeight: 340,
+                        color: '#3fac55ff',
                         marginBottom: '-8px'
                     }}>
                         2 spots left in February
