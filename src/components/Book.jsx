@@ -587,8 +587,8 @@ const ThreadGrid = () => {
                         letterSpacing: '-0.03px',
                         lineHeight: '18px',
                         fontWeight: 400,
-                        color: '#94a697ff',
-                        margin: 0
+                        color: '#a0b4a4ff',
+                        marginBottom: '-8px'
                     }}>
                         2 spots left in February
                     </h2>
