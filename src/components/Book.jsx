@@ -603,9 +603,9 @@ const ThreadGrid = () => {
                 }}>
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '22px',
+                        fontSize: '20px',
                         letterSpacing: '-0.2px',
-                        lineHeight: '26px',
+                        lineHeight: '24px',
                         fontWeight: 450,
                         color: '#373434ff',
                         margin: 0
@@ -638,7 +638,8 @@ const ThreadGrid = () => {
                     display: 'flex',
                     flexDirection: 'row',
                     gap: '12px',
-                    paddingLeft: '20px',
+                    width: '100%',
+                    padding: '0 20px',
                     marginTop: 'auto',
                     marginBottom: '20px',
                     pointerEvents: 'auto'
@@ -647,14 +648,15 @@ const ThreadGrid = () => {
                         Get in touch
                     </ThreadButton>
                     <button style={{
-                        padding: '8px 18px',
+                        padding: '8px 11px',
                         background: 'transparent',
                         color: '#373434',
-                        border: '1px solid #E6E6E6',
+                        border: 'none',
                         borderRadius: '8px',
                         fontFamily: '"Rethink Sans", sans-serif',
                         fontSize: '13px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        marginLeft: 'auto'
                     }}>
                         See our work
                     </button>
