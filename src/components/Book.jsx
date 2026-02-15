@@ -11,6 +11,86 @@ const ArrowIcon = () => (
     </svg>
 );
 
+// Rotating Text Component with Blur Transitions
+const RotatingText = () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const words = ['Brand', 'Product', 'Website'];
+    const allWords = ['Brand', 'Product', 'Website', 'App', 'Platform', 'Service', 'System']; // Extended list for scroll effect
+    // Fixed widths for each word to enable smooth transitions
+    const widths = ['77px', '100px', '102px'];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIsTransitioning(true);
+            window.dispatchEvent(new CustomEvent('rotating-text-scroll'));
+            setTimeout(() => {
+                setCurrentIndex((prev) => (prev + 1) % words.length);
+                setIsTransitioning(false);
+            }, 400); // Transition happens midway through animation
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <span style={{
+            position: 'relative',
+            top: '-0.027em', // Relative unit for responsiveness
+            display: 'inline-block',
+            width: widths[currentIndex],
+            height: '30px',
+            overflow: 'hidden',
+            transition: 'width 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
+        }}>
+            {/* Show scrolling words during transition */}
+            {isTransitioning && allWords.map((word, idx) => (
+                <span
+                    key={`scroll-${idx}`}
+                    style={{
+                        opacity: 0.15,
+                        filter: 'blur(4px)',
+                        transform: `translateY(${-70 + (idx * 34)}px)`,
+                        transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        whiteSpace: 'nowrap',
+                        animation: 'scrollUp 0.6s ease-out'
+                    }}
+                >
+                    {word}
+                </span>
+            ))}
+
+            {/* Main target word */}
+            <span
+                style={{
+                    opacity: isTransitioning ? 0 : 0.6,
+                    filter: isTransitioning ? 'blur(4px)' : 'blur(0px)',
+                    transform: isTransitioning ? 'translateY(34px)' : 'translateY(0px)',
+                    transition: 'opacity 0.4s ease-in-out, filter 0.4s ease-in-out, transform 0.4s ease-in-out',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    whiteSpace: 'nowrap'
+                }}
+            >
+                {words[currentIndex]}
+            </span>
+
+            <style>{`
+                @keyframes scrollUp {
+                    from { transform: translateY(100px); }
+                    to { transform: translateY(-100px); }
+                }
+            `}</style>
+        </span>
+    );
+};
+
 // Thread Grid Component with Physics
 const ThreadGrid = () => {
     const containerRef = useRef(null);
@@ -18,6 +98,7 @@ const ThreadGrid = () => {
     const [dots, setDots] = useState([]);
     const [connections, setConnections] = useState([]);
     const threadRefs = useRef([]);
+    const virtualMouseRef = useRef({ x: -1000, y: -1000 }); // Off-screen initially
 
     // Grid configuration
     const circleSize = 2; // Decreased slightly more
@@ -41,7 +122,7 @@ const ThreadGrid = () => {
         // Center calculation or just start from 0 with slight offset to center?
         // Let's just start slightly off-screen to cover edges.
         const startX = (viewportWidth - (cols * cellSize)) / 2;
-        const startY = (viewportHeight - (rows * cellSize)) / 2;
+        const startY = (viewportHeight - (rows * cellSize)) / 2 + 8; // Add 8px top visual padding
 
         let dotIndex = 0;
 
@@ -76,13 +157,13 @@ const ThreadGrid = () => {
         // Width = textWidthCols (7), Height = textHeightRows (4)
         // Bottom Edge: row = targetRow + textHeightRows, cols = startCol to startCol + textWidthCols
 
-        const textWidthCols = 7;
+        const textWidthCols = 25;
         const textHeightRows = 4;
-        const totalCols = Math.floor((window.innerWidth - 2 * padding) / cellSize);
-        const centerCol = Math.floor(totalCols / 2);
+        // Use the same column count as dot generation for consistent centering
+        const centerCol = Math.round((cols - 1) / 2);
 
-        const leftBoxStartCol = centerCol - Math.floor(textWidthCols / 2) + 1; // Center aligned + 1 col right
-        const leftBoxStartRow = 5;
+        const leftBoxStartCol = centerCol - Math.floor(textWidthCols / 2) - 1; // Adjusted to keep left edge fixed while shrinking right
+        const leftBoxStartRow = 1;
         const leftBoxHeight = 1; // Top grid height is 1 row
         const leftBoxBottomRow = leftBoxStartRow + leftBoxHeight;
 
@@ -109,14 +190,46 @@ const ThreadGrid = () => {
         // Target Dots: Top edge of Right/Second Box (Width increased by 1)
         const effectiveRightBoxWidth = textWidthCols + 1;
 
-        // Filter and set dots (exclude inside of bottom box)
+        // Filter and set dots (exclude inside of bottom box AND triplicate box)
+
+        // Calculate params for triplicate box (same logic as later used for drawing)
+        // We need to pre-calculate these to filter dots during initialization
+        // But 'dupStartRow' etc are defined later inside the component logic.
+        // We need to replicate that logic here or move variables up.
+
+        // Re-defining logic here for filtering:
+        const centerStartCol = centerCol - Math.floor(textWidthCols / 2);
+        // const leftBoxStartCol used above
+
+        // Duplicate Box Params
+        const dupStartCol = leftBoxStartCol;
+        const dupStartRow = leftBoxStartRow + leftBoxHeight + 2; // targetRow + 1 + 2 = 2 + 1 + 2 = 5
+        const dupHeightRows_Filter = textHeightRows + 1; // 5
+
+        // Triplicate Box Params (Bottom of Duplicate)
+        const tripStartCol = dupStartCol;
+        const tripStartRow = dupStartRow + dupHeightRows_Filter; // 5 + 5 = 10
+        const tripHeightRows_Filter = dupHeightRows_Filter + 7; // 5 + 7 = 12 (Increased by 2)
+
+        // Width is standardized
+        const filterBoxWidth = textWidthCols + 1;
+
         const finalDots = generatedDots.filter(d => {
-            const isInsideBottomBox =
-                d.col > rightBoxStartCol &&
-                d.col < rightBoxStartCol + effectiveRightBoxWidth &&
-                d.row > rightBoxStartRow &&
-                d.row < rightBoxStartRow + rightBoxHeight;
-            return !isInsideBottomBox;
+            // Check Duplicate Box
+            const isInsideDupBox =
+                d.col > dupStartCol &&
+                d.col < dupStartCol + filterBoxWidth &&
+                d.row > dupStartRow &&
+                d.row < dupStartRow + dupHeightRows_Filter;
+
+            // Check Triplicate Box
+            const isInsideTripBox =
+                d.col > tripStartCol &&
+                d.col < tripStartCol + filterBoxWidth &&
+                d.row > tripStartRow && // > 10
+                d.row < tripStartRow + tripHeightRows_Filter; // < 20
+
+            return !isInsideDupBox && !isInsideTripBox;
         });
         setDots(finalDots);
         const targetDots = generatedDots.filter(d =>
@@ -229,13 +342,59 @@ const ThreadGrid = () => {
         const container = containerRef.current;
         if (container) {
             container.addEventListener('mousemove', handleMouseMove);
+            return () => {
+                if (container) {
+                    container.removeEventListener('mousemove', handleMouseMove);
+                }
+            };
         }
+    }, []);
 
-        return () => {
-            if (container) {
-                container.removeEventListener('mousemove', handleMouseMove);
-            }
+    // Listen for rotating text scroll event
+    useEffect(() => {
+        const handleTextScroll = () => {
+            // Animate virtual mouse from bottom-left to top-left of the text area
+            // Approximate text position based on grid (calculated below, but hardcoded estimates for effect are fine)
+            // Text starts around center-left.
+            // Let's sweep "from left up".
+
+            const startX = window.innerWidth / 2 - 675; // Start at left edge of centered content
+            const startY = window.innerHeight * 0.4; // 40% down
+            const endY = window.innerHeight * 0.2; // Move up to 20%
+
+            // Reset to start
+            virtualMouseRef.current = { x: startX, y: startY };
+
+            // Animate with delay
+            setTimeout(() => {
+                const startTime = Date.now();
+                const duration = 500; // ms (Even faster speed)
+
+                const animateVirtualMouse = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Use Quartic ease out for sharper "fast start, slow mid/end"
+                    const ease = 1 - Math.pow(1 - progress, 4);
+
+                    virtualMouseRef.current = {
+                        x: startX + (progress * 50), // Slight right movement
+                        y: startY - (ease * (startY - endY)) // Move up
+                    };
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateVirtualMouse);
+                    } else {
+                        // Reset off-screen after animation
+                        virtualMouseRef.current = { x: -1000, y: -1000 };
+                    }
+                };
+
+                requestAnimationFrame(animateVirtualMouse);
+            }, 250);
         };
+
+        window.addEventListener('rotating-text-scroll', handleTextScroll);
+        return () => window.removeEventListener('rotating-text-scroll', handleTextScroll);
     }, []);
 
     // Physics animation for threads with momentum
@@ -268,8 +427,19 @@ const ThreadGrid = () => {
 
                     if (dist < repelRadius) {
                         const force = (1 - dist / repelRadius) * 120; // Modified repulsion force
-                        targetOffsetX = -(dx / dist) * force;
+                        targetOffsetX += -(dx / dist) * force; // Changed to += to accumulate forces
                         targetOffsetY += -(dy / dist) * force;
+                    }
+
+                    // Virtual Mouse Force (from text scroll)
+                    const vDx = virtualMouseRef.current.x - midX;
+                    const vDy = virtualMouseRef.current.y - midY;
+                    const vDist = Math.sqrt(vDx * vDx + vDy * vDy);
+
+                    if (vDist < repelRadius) {
+                        const vForce = (1 - vDist / repelRadius) * 30; // Reduced force for subtler effect
+                        targetOffsetX += -(vDx / vDist) * vForce;
+                        targetOffsetY += -(vDy / vDist) * vForce;
                     }
 
                     // Current position
@@ -324,8 +494,9 @@ const ThreadGrid = () => {
     // Let's define a width in "grid columns"
     // And a start position centered horizontally.
 
-    const textWidthCols = 7; // Estimated width in columns
+    const textWidthCols = 25; // Estimated width in columns
     const textHeightRows = 4; // Estimated height in rows (roughly based on visual content)
+    const leftBoxStartRow = 1; // Top grid row index
 
     const textStyle = {
         position: 'absolute',
@@ -343,19 +514,20 @@ const ThreadGrid = () => {
 
     let textPosition = {};
     let secondTextPosition = {};
+    let navBoxStyle = {};
     let dashedLines = [];
 
     if (dots.length > 0) {
         // Find center column
-        const viewportWidth = window.innerWidth;
-        const totalCols = Math.floor((viewportWidth - 2 * padding) / cellSize);
-        const centerCol = Math.floor(totalCols / 2);
+        // Calculate center column from generated dots to ensure alignment
+        const maxCol = dots.reduce((max, d) => Math.max(max, d.col), 0);
+        const centerCol = Math.round(maxCol / 2);
 
         // Target row around 20-25% height
-        const targetRow = 5; // Reverted to 5 (was 5-2)
+        const targetRow = 1; // Reverted to 5 (was 5-2)
 
         // Start col to center the box
-        const startCol = centerCol - Math.floor(textWidthCols / 2) + 1; // Center aligned + 1 col right
+        const startCol = centerCol - Math.floor(textWidthCols / 2) - 1; // Adjusted to keep left edge fixed while shrinking right
 
         // Find specific dot
         const anchorDot = dots.find(d => d.col === startCol && d.row === targetRow);
@@ -370,25 +542,55 @@ const ThreadGrid = () => {
                 height: `${1 * cellSize}px` // Override height for 1-row top box
             };
 
+            navBoxStyle = {
+                position: 'absolute',
+                top: `${anchorDot.y}px`, // Aligned with the top row
+                left: 0,
+                width: '100%',
+                height: `${1 * cellSize}px`, // Match grid row height
+                zIndex: 50,
+                pointerEvents: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 20px', // Default padding
+                borderTop: '8px solid #FFF9F9', // Border matching bg color
+                boxSizing: 'border-box' // Ensure border is included in height/layout
+            };
+
             // Generate Dashed Lines for the grid area covered by text - EDGES ONLY
 
-            // Horizontal lines (Bottom edge of top box only)
-            const horizontalRows = [1]; // Top box is 1 row tall, we only want the bottom edge (index 1) which is where threads drop from
-            horizontalRows.forEach(r => {
-                for (let c = 0; c < effectiveLeftBoxWidth; c++) {
-                    const d1 = dots.find(d => d.col === startCol + c && d.row === targetRow + r);
-                    const d2 = dots.find(d => d.col === startCol + c + 1 && d.row === targetRow + r);
-                    if (d1 && d2) {
-                        dashedLines.push({
-                            id: `h-edge-${r}-${c}`,
-                            x1: d1.x,
-                            y1: d1.y,
-                            x2: d2.x,
-                            y2: d2.y
-                        });
-                    }
+            // Horizontal lines (Top and Bottom edges of top box)
+            // Bottom edge (1) - FULL SCREEN WIDTH (Thread start line)
+            // Find min and max cols in dots to cover screen width
+            // Note: minCol/maxCol are calculated again below for top line, but we can reuse or recalculate.
+            // Let's just use the same range.
+
+            const rangeMinCol = dots.reduce((min, d) => Math.min(min, d.col), Infinity);
+            const rangeMaxCol = dots.reduce((max, d) => Math.max(max, d.col), 0);
+
+            for (let c = rangeMinCol; c < rangeMaxCol; c++) {
+                const d1 = dots.find(d => d.col === c && d.row === targetRow + 1); // Row 1
+                const d2 = dots.find(d => d.col === c + 1 && d.row === targetRow + 1);
+
+                if (d1 && d2) {
+                    let x1 = d1.x;
+                    let x2 = d2.x;
+
+                    if (c === rangeMinCol) x1 = 0;
+                    if (c === rangeMaxCol - 1) x2 = window.innerWidth;
+
+                    dashedLines.push({
+                        id: `thread-line-full-${c}`,
+                        x1: x1,
+                        y1: d1.y,
+                        x2: x2,
+                        y2: d2.y
+                    });
                 }
-            });
+            }
+
+
+
 
             // Vertical lines - REMOVED for top box
             // const verticalCols = [0, effectiveLeftBoxWidth];
@@ -429,19 +631,58 @@ const ThreadGrid = () => {
                 }
             });
 
-            // Vertical lines (Left and Right edges) for DUPLICATE
-            const dupVerticalCols = [0, effectiveDupWidth];
-            dupVerticalCols.forEach(c => {
-                for (let r = 0; r < dupHeightRows; r++) { // Iterate up to new height
-                    const d1 = dots.find(d => d.col === dupStartCol + c && d.row === dupTargetRow + r);
-                    const d2 = dots.find(d => d.col === dupStartCol + c && d.row === dupTargetRow + r + 1);
+
+
+            // --- TRIPLICATE Grid Box (Bottom of Duplicate) ---
+            const tripStartCol = dupStartCol;
+            const tripTargetRow = dupTargetRow + dupHeightRows; // Start exactly at bottom of previous box
+            const tripHeightRows = dupHeightRows + 7; // Height increased by 7 rows (was 5)
+            const effectiveTripWidth = effectiveDupWidth;
+
+            const tripHorizontalRows = [0, tripHeightRows]; // Top and Bottom edges
+
+            // Horizontal lines for TRIPLICATE
+            tripHorizontalRows.forEach(r => {
+                for (let c = 0; c < effectiveTripWidth; c++) {
+                    const d1 = dots.find(d => d.col === tripStartCol + c && d.row === tripTargetRow + r);
+                    const d2 = dots.find(d => d.col === tripStartCol + c + 1 && d.row === tripTargetRow + r);
                     if (d1 && d2) {
                         dashedLines.push({
-                            id: `dup-v-edge-${c}-${r}`,
+                            id: `trip-h-edge-${r}-${c}`,
                             x1: d1.x,
                             y1: d1.y,
                             x2: d2.x,
                             y2: d2.y
+                        });
+                    }
+                }
+            });
+
+            // --- Continuous Vertical Lines (Left and Right edges) ---
+            // Extend from top of SECOND box (dupTargetRow) to very bottom of screen
+            // Find max row in dots matching our column to be safe, or just max row overall
+            const maxRow = dots.reduce((max, d) => Math.max(max, d.row), 0);
+
+            const globalStartRow = dupTargetRow; // Start from duplicate box top
+            const globalEndRow = maxRow + 1; // Extend to bottom of screen (last row + 1)
+            const totalVerticalHeight = globalEndRow - globalStartRow;
+
+            const verticalEdgeCols = [0, effectiveLeftBoxWidth];
+
+            verticalEdgeCols.forEach(c => {
+                for (let r = 0; r < totalVerticalHeight; r++) {
+                    const currentRow = globalStartRow + r;
+                    const d1 = dots.find(d => d.col === startCol + c && d.row === currentRow);
+                    const d2 = dots.find(d => d.col === startCol + c && d.row === currentRow + 1);
+
+                    if (d1 && d2) {
+                        dashedLines.push({
+                            id: `vert-edge-${c}-${currentRow}`,
+                            x1: d1.x,
+                            y1: d1.y,
+                            x2: d2.x,
+                            y2: d2.y,
+                            opacity: 0.60 // 0.04 lesser than default 0.64
                         });
                     }
                 }
@@ -551,48 +792,38 @@ const ThreadGrid = () => {
                         stroke="#B0B0B0"
                         strokeWidth="1"
                         strokeDasharray="4 4" // Dashed pattern
-                        strokeOpacity="0.64"
+                        strokeOpacity={line.opacity || 0.64}
                     />
                 ))}
             </svg>
 
             {/* Dots */}
-            {dots.map(dot => (
-                <div
-                    key={dot.id}
-                    style={{
-                        position: 'absolute',
-                        left: `${dot.x - dot.size / 2}px`,
-                        top: `${dot.y - dot.size / 2}px`,
-                        width: `${dot.size}px`,
-                        height: `${dot.size}px`,
-                        borderRadius: '50%',
-                        backgroundColor: dot.color,
-                        zIndex: 6
-                    }}
-                />
-            ))}
+            {dots.map(dot => {
+                // Hide dots for the top rows (covering row 0 and the top box row 1)
+                if (dot.row <= leftBoxStartRow) return null;
 
-            {/* First Text Container - With "Hello" */}
-            <div style={{ ...textStyle, ...textPosition, alignItems: 'center' }}>
-                <div style={{
-                    padding: '0 20px',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(5px)',
-                    textAlign: 'center'
-                }}>
-                    <h2 style={{
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '13px',
-                        letterSpacing: '-0.02px',
-                        lineHeight: '18px',
-                        fontWeight: 340,
-                        color: '#3fac55ff',
-                        marginBottom: '-8px'
-                    }}>
-                        2 spots left in February
-                    </h2>
-                </div>
+                return (
+                    <div
+                        key={dot.id}
+                        style={{
+                            position: 'absolute',
+                            left: `${dot.x - dot.size / 2}px`,
+                            top: `${dot.y - dot.size / 2}px`,
+                            width: `${dot.size}px`,
+                            height: `${dot.size}px`,
+                            borderRadius: '50%',
+                            backgroundColor: dot.color,
+                            zIndex: 6
+                        }}
+                    />
+                );
+            })}
+
+
+
+            {/* Navigation Box Container */}
+            <div style={navBoxStyle}>
+                {/* Navigation content will go here */}
             </div>
 
             {/* Second Text Container - With Content */}
@@ -603,14 +834,16 @@ const ThreadGrid = () => {
                 }}>
                     <h2 style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '20px',
+                        fontSize: '26px',
                         letterSpacing: '-0.2px',
-                        lineHeight: '24px',
-                        fontWeight: 450,
+                        lineHeight: '30px',
+                        fontWeight: 460,
                         color: '#373434ff',
                         margin: 0
                     }}>
-                        Design and Development for<br />
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.04em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
+                            <RotatingText /> Design and Development for
+                        </span>
                         startups and scaleups
                     </h2>
                 </div>
@@ -622,10 +855,10 @@ const ThreadGrid = () => {
                 }}>
                     <p style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '13px',
-                        lineHeight: '16px',
+                        fontSize: '14px',
+                        lineHeight: '18px',
                         fontWeight: 400,
-                        color: '#787676ff',
+                        color: '#8b8a8aff',
                         margin: 0
                     }}>
 
@@ -637,7 +870,7 @@ const ThreadGrid = () => {
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '12px',
+                    gap: '6px',
                     width: '100%',
                     padding: '0 20px',
                     marginTop: 'auto',
@@ -647,6 +880,25 @@ const ThreadGrid = () => {
                     <ThreadButton>
                         Get in touch
                     </ThreadButton>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0 4px'
+                    }}>
+                        <h2 style={{
+                            fontFamily: '"Rethink Sans", sans-serif',
+                            fontSize: '13px',
+                            letterSpacing: '-0.02px',
+                            lineHeight: '18px',
+                            fontWeight: 340,
+                            color: '#3fac55ff',
+                            margin: 0,
+                            whiteSpace: 'nowrap'
+                        }}>
+                            2 spots left in February
+                        </h2>
+                    </div>
                     <button style={{
                         padding: '8px 11px',
                         background: 'transparent',
