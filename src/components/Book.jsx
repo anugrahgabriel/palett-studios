@@ -2,8 +2,12 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './Book.css';
-import leftPageImg from '../assets/1.jpg';
-import rightPageImg from '../assets/2.jpg';
+// Page images removed because files were deleted
+const leftPageImg = "";
+const rightPageImg = "";
+import slide1 from '../../pics/1-slide.png';
+import slide2 from '../../pics/2-slide.png';
+import slide3 from '../../pics/3-slide.png';
 
 const ArrowIcon = () => (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '12px', marginRight: '8px' }}>
@@ -90,6 +94,115 @@ const RotatingText = () => {
         </span>
     );
 };
+
+// Image Carousel Component for the 3rd Grid Box
+const ImageCarousel = React.memo(({ images, width, height }) => {
+    const scrollRef = useRef(null);
+    const [imagesLoaded, setImagesLoaded] = useState(0);
+    const tweenRef = useRef(null);
+
+    useGSAP(() => {
+        if (!scrollRef.current || imagesLoaded < images.length) return;
+
+        // Force a recount
+        const el = scrollRef.current;
+        const totalWidth = el.scrollWidth / 2;
+
+        // Clear any previous animations
+        if (tweenRef.current) tweenRef.current.kill();
+        gsap.killTweensOf(el);
+
+        // Reset position
+        gsap.set(el, { x: -totalWidth });
+
+        // Left to right movement: animate to 0
+        tweenRef.current = gsap.to(el, {
+            x: 0,
+            duration: 60, // Much slower movement
+            ease: "none",
+            repeat: -1,
+            onRepeat: () => {
+                // Ensure it jumps back precisely
+                gsap.set(el, { x: -totalWidth });
+            }
+        });
+    }, [imagesLoaded, width, images.length]);
+
+    const handleImageLoad = () => {
+        setImagesLoaded(prev => prev + 1);
+    };
+
+    const handleMouseEnter = (e) => {
+        gsap.to(e.currentTarget, {
+            y: -4, // More subtle push up
+            duration: 0.6,
+            ease: "power2.out"
+        });
+        if (tweenRef.current) {
+            gsap.to(tweenRef.current, {
+                timeScale: 0.7, // Subtle slow down
+                duration: 0.6
+            });
+        }
+    };
+
+    const handleMouseLeave = (e) => {
+        gsap.to(e.currentTarget, {
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out"
+        });
+        if (tweenRef.current) {
+            gsap.to(tweenRef.current, {
+                timeScale: 1,
+                duration: 0.6
+            });
+        }
+    };
+
+    return (
+        <div style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: width,
+            height: height,
+            overflow: 'hidden',
+            pointerEvents: 'auto',
+        }}>
+            <div ref={scrollRef} style={{
+                display: 'flex',
+                height: '100%',
+                gap: '20px',
+                width: 'max-content',
+                alignItems: 'center',
+                willChange: 'transform',
+                pointerEvents: 'auto'
+            }}>
+                {[...images, ...images].map((img, i) => (
+                    <img
+                        key={i}
+                        src={img}
+                        alt=""
+                        onLoad={handleImageLoad}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        style={{
+                            height: 'calc(85% - 2px)',
+                            objectFit: 'contain',
+                            borderRadius: '12px',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                            cursor: 'pointer',
+                            pointerEvents: 'auto',
+                            transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
+                        }}
+                    />
+                ))}
+            </div>
+
+        </div>
+    );
+});
 
 // Thread Grid Component with Physics
 const ThreadGrid = () => {
@@ -514,6 +627,7 @@ const ThreadGrid = () => {
 
     let textPosition = {};
     let secondTextPosition = {};
+    let tripBoxPosition = {};
     let navBoxStyle = {};
     let dashedLines = [];
     let targetRow = 1; // Move to higher scope for JSX access
@@ -764,6 +878,17 @@ const ThreadGrid = () => {
                     top: `${secondAnchorDot.y}px`,
                     width: `${effectiveDupWidth * cellSize}px`,
                     height: `${(textHeightRows + 1) * cellSize}px`
+                };
+            }
+
+            // Calculate position for Triplicate Box (for carousel)
+            const tripAnchorDot = dots.find(d => d.col === tripStartCol && d.row === tripTargetRow);
+            if (tripAnchorDot) {
+                tripBoxPosition = {
+                    left: `${tripAnchorDot.x}px`,
+                    top: `${tripAnchorDot.y}px`,
+                    width: `${effectiveTripWidth * cellSize}px`,
+                    height: `${tripHeightRows * cellSize}px`
                 };
             }
         }
@@ -1118,6 +1243,22 @@ const ThreadGrid = () => {
                     </button>
                 </div>
             </div>
+
+            {/* 3rd Grid Box Carousel */}
+            {tripBoxPosition.left && (
+                <div style={{
+                    position: 'absolute',
+                    ...tripBoxPosition,
+                    zIndex: 4, // Behind text but above grid/background
+                    pointerEvents: 'auto'
+                }}>
+                    <ImageCarousel
+                        images={[slide1, slide2, slide3]}
+                        width={tripBoxPosition.width}
+                        height={tripBoxPosition.height}
+                    />
+                </div>
+            )}
 
             {/* Scroll Spacer */}
             <div style={{ height: '150vh', width: '100%', pointerEvents: 'none' }} />
