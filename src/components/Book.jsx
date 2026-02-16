@@ -516,6 +516,7 @@ const ThreadGrid = () => {
     let secondTextPosition = {};
     let navBoxStyle = {};
     let dashedLines = [];
+    let targetRow = 1; // Move to higher scope for JSX access
 
     if (dots.length > 0) {
         // Find center column
@@ -524,7 +525,7 @@ const ThreadGrid = () => {
         const centerCol = Math.round(maxCol / 2);
 
         // Target row around 20-25% height
-        const targetRow = 1; // Reverted to 5 (was 5-2)
+        targetRow = 1; // Reverted to 5 (was 5-2)
 
         // Start col to center the box
         const startCol = centerCol - Math.floor(textWidthCols / 2) - 1; // Adjusted to keep left edge fixed while shrinking right
@@ -543,51 +544,24 @@ const ThreadGrid = () => {
             };
 
             navBoxStyle = {
-                position: 'absolute',
-                top: `${anchorDot.y}px`, // Aligned with the top row
-                left: 0,
-                width: '100%',
-                height: `${1 * cellSize}px`, // Match grid row height
+                position: 'fixed',
+                top: 0, // Align to very top of screen
+                left: 0, // Stretch to left edge
+                width: '100%', // Full screen width
+                height: `${anchorDot.y + cellSize}px`, // Cover from top to bottom of first row
                 zIndex: 50,
                 pointerEvents: 'auto',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 20px', // Default padding
-                borderTop: '8px solid #FFF9F9', // Border matching bg color
+                justifyContent: 'space-between',
+                padding: `${anchorDot.y}px 30px 0 30px`, // Horizontal padding 32 (20 + 12)
+                backgroundColor: '#FFF9F9', // Site background color
                 boxSizing: 'border-box' // Ensure border is included in height/layout
             };
 
             // Generate Dashed Lines for the grid area covered by text - EDGES ONLY
 
-            // Horizontal lines (Top and Bottom edges of top box)
-            // Bottom edge (1) - FULL SCREEN WIDTH (Thread start line)
-            // Find min and max cols in dots to cover screen width
-            // Note: minCol/maxCol are calculated again below for top line, but we can reuse or recalculate.
-            // Let's just use the same range.
 
-            const rangeMinCol = dots.reduce((min, d) => Math.min(min, d.col), Infinity);
-            const rangeMaxCol = dots.reduce((max, d) => Math.max(max, d.col), 0);
-
-            for (let c = rangeMinCol; c < rangeMaxCol; c++) {
-                const d1 = dots.find(d => d.col === c && d.row === targetRow + 1); // Row 1
-                const d2 = dots.find(d => d.col === c + 1 && d.row === targetRow + 1);
-
-                if (d1 && d2) {
-                    let x1 = d1.x;
-                    let x2 = d2.x;
-
-                    if (c === rangeMinCol) x1 = 0;
-                    if (c === rangeMaxCol - 1) x2 = window.innerWidth;
-
-                    dashedLines.push({
-                        id: `thread-line-full-${c}`,
-                        x1: x1,
-                        y1: d1.y,
-                        x2: x2,
-                        y2: d2.y
-                    });
-                }
-            }
 
 
 
@@ -601,12 +575,18 @@ const ThreadGrid = () => {
             // Usually this means relative to the ORIGINAL center start position.
 
             const centerStartCol = centerCol - Math.floor(textWidthCols / 2);
-            const centerTargetRow = 5;
+            // const centerTargetRow = 5; // Unused variable remove
 
             const dupStartCol = startCol; // Align with first box (vertically stacked)
-            const dupTargetRow = targetRow + 1 + 2; // Position below first box (1 row tall) with 2 row gap
+            // Fix dupStartRow to be relative to the first box
+            const firstBoxBottomRow = targetRow + 1; // Row 2 (if targetRow is 1)
+            const gapRows = 2;
+            const dupStartRow = firstBoxBottomRow + gapRows; // 2 + 2 = 4
 
-            const effectiveDupWidth = textWidthCols + 1; // Width + 1
+            const dupTargetRow = dupStartRow; // Rename for clarity or keep consistent
+
+            const effectiveDupWidth = textWidthCols + 1; // Width + 1 
+
             // Or if user meant "start from center + 2 rows up", then it's centerTargetRow - 2.
             // "move 2 row up" -> relative to current position (+2) -> becomes (+0).
             // "increase this grid box height by moving its bottom edge down by 5 rows" -> height increases by 5.
@@ -639,22 +619,59 @@ const ThreadGrid = () => {
             const tripHeightRows = dupHeightRows + 7; // Height increased by 7 rows (was 5)
             const effectiveTripWidth = effectiveDupWidth;
 
-            const tripHorizontalRows = [0, tripHeightRows]; // Top and Bottom edges
+            // Find columns that are comfortably within the visible screen area (for line extensions and markers)
+            const visibleDots = dots.filter(d => d.x > 40 && d.x < window.innerWidth - 40);
+            const screenVisibleMinCol = visibleDots.reduce((min, d) => Math.min(min, d.col), Infinity);
+            const screenVisibleMaxCol = visibleDots.reduce((max, d) => Math.max(max, d.col), 0);
+
+
+            const tripHorizontalRows = [tripHeightRows]; // Only Bottom edge (Top edge removed)
 
             // Horizontal lines for TRIPLICATE
             tripHorizontalRows.forEach(r => {
-                for (let c = 0; c < effectiveTripWidth; c++) {
-                    const d1 = dots.find(d => d.col === tripStartCol + c && d.row === tripTargetRow + r);
-                    const d2 = dots.find(d => d.col === tripStartCol + c + 1 && d.row === tripTargetRow + r);
+                const fullMin = screenVisibleMinCol;
+                const fullMax = screenVisibleMaxCol;
+
+
+                for (let c = fullMin; c < fullMax; c++) {
+                    const currentRow = tripTargetRow + r;
+                    const d1 = dots.find(d => d.col === c && d.row === currentRow);
+                    const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
+
                     if (d1 && d2) {
                         dashedLines.push({
-                            id: `trip-h-edge-${r}-${c}`,
+                            id: `trip-h-full-${r}-${c}`,
                             x1: d1.x,
                             y1: d1.y,
                             x2: d2.x,
                             y2: d2.y
                         });
                     }
+                }
+            });
+
+            // --- Corner Plus Icons for 3rd Grid Box ---
+            // Top-Left: (tripStartCol, tripTargetRow)
+            // Top-Right: (tripStartCol + effectiveTripWidth, tripTargetRow)
+            // Bottom-Left: (tripStartCol, tripTargetRow + tripHeightRows)
+            // Bottom-Right: (tripStartCol + effectiveTripWidth, tripTargetRow + tripHeightRows)
+
+            const cornerCoords = [
+                { col: tripStartCol, row: tripTargetRow },
+                { col: tripStartCol + effectiveTripWidth, row: tripTargetRow },
+                { col: tripStartCol, row: tripTargetRow + tripHeightRows },
+                { col: tripStartCol + effectiveTripWidth, row: tripTargetRow + tripHeightRows }
+            ];
+
+            cornerCoords.forEach((coord, idx) => {
+                const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
+                if (dot) {
+                    dashedLines.push({
+                        id: `corner-plus-${idx}`,
+                        x1: dot.x,
+                        y1: dot.y,
+                        type: 'corner-plus'
+                    });
                 }
             });
 
@@ -688,6 +705,57 @@ const ThreadGrid = () => {
                 }
             });
 
+            // Graph Markers (Timestamps/Numbers)
+            // "put the numbers pattern on the screen left edge from below the navbar area to the row before 3rd grid bottom edge."
+
+            // Navbar is at `targetRow`. Below navbar is `targetRow + 1`.
+            // Bottom edge of 3rd grid is `tripTargetRow + tripHeightRows`.
+            // User said "to the row before 3rd grid bottom edge." -> tripTargetRow + tripHeightRows - 1.
+
+            const markerStartRow = targetRow + 1;
+            const markerEndRow = tripTargetRow + tripHeightRows;
+
+            // Aligned with the screen left and right edges
+            // Use the same visible bounds calculated earlier
+            const markerLCol = screenVisibleMinCol;
+            const markerRCol = screenVisibleMaxCol;
+
+
+            let rowNumber = 1;
+
+            for (let r = markerStartRow; r <= markerEndRow; r++) {
+                const dotL = dots.find(d => d.col === markerLCol && d.row === r);
+                const dotR = dots.find(d => d.col === markerRCol && d.row === r);
+
+                if (dotL || dotR) {
+                    const num = rowNumber.toString().padStart(2, '0');
+
+                    if (dotL) {
+                        dashedLines.push({
+                            id: `marker-left-${r}`,
+                            x1: dotL.x,
+                            y1: dotL.y,
+                            type: 'marker',
+                            label: `${num} "`,
+                            isLeft: true
+                        });
+                    }
+
+                    if (dotR) {
+                        dashedLines.push({
+                            id: `marker-right-${r}`,
+                            x1: dotR.x,
+                            y1: dotR.y,
+                            type: 'marker',
+                            label: `" ${num}`,
+                            isLeft: false
+                        });
+                    }
+
+                    rowNumber++;
+                }
+            }
+
             // Calculate position for second text container (in duplicate/second box)
             const secondAnchorDot = dots.find(d => d.col === dupStartCol && d.row === dupTargetRow);
             if (secondAnchorDot) {
@@ -709,7 +777,9 @@ const ThreadGrid = () => {
                 height: '100vh',
                 background: '#FFF9F9',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'auto',
+                overflowX: 'hidden', // Prevent horizontal scroll if not needed
+                scrollBehavior: 'smooth'
             }}
         >
             {/* SVG for threads */}
@@ -782,7 +852,7 @@ const ThreadGrid = () => {
                     zIndex: 6
                 }}
             >
-                {dashedLines.map(line => (
+                {dashedLines.filter(l => !l.type).map(line => (
                     <line
                         key={line.id}
                         x1={line.x1}
@@ -795,35 +865,169 @@ const ThreadGrid = () => {
                         strokeOpacity={line.opacity || 0.64}
                     />
                 ))}
+
+                {/* Graph Markers */}
+                {dashedLines.filter(l => l.type === 'marker').map(marker => (
+                    <g key={marker.id}>
+                        {/* Dot - REMOVED as requested */}
+                        {/* <circle 
+                            cx={marker.x1} 
+                            cy={marker.y1} 
+                            r="2" 
+                            fill="#373434"
+                        /> */}
+                        {/* Label */}
+                        <text
+                            x={marker.isLeft ? marker.x1 - 12 : marker.x1 + 12}
+                            y={marker.y1}
+                            dy="0.3em"
+                            textAnchor={marker.isLeft ? "end" : "start"}
+                            style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '8px',
+                                fill: '#8b8a8aff', // Fixed color
+                                fontWeight: 400
+                            }}
+                        >
+                            {marker.label}
+                        </text>
+                    </g>
+                ))}
+
+                {/* Corner Plus Icons */}
+                {dashedLines.filter(l => l.type === 'corner-plus').map(plus => (
+                    <g key={plus.id}>
+                        {/* Horizontal Line */}
+                        <line
+                            x1={plus.x1 - 3}
+                            y1={plus.y1}
+                            x2={plus.x1 + 3}
+                            y2={plus.y1}
+                            stroke="#373434"
+                            strokeWidth="1"
+                        />
+                        {/* Vertical Line */}
+                        <line
+                            x1={plus.x1}
+                            y1={plus.y1 - 3}
+                            x2={plus.x1}
+                            y2={plus.y1 + 3}
+                            stroke="#373434"
+                            strokeWidth="1"
+                        />
+                    </g>
+                ))}
             </svg>
 
             {/* Dots */}
-            {dots.map(dot => {
-                // Hide dots for the top rows (covering row 0 and the top box row 1)
-                if (dot.row <= leftBoxStartRow) return null;
+            {
+                dots.map(dot => {
+                    // Hide dots for the top rows (covering row 0 and the top box row 1)
+                    if (dot.row <= leftBoxStartRow) return null;
 
-                return (
-                    <div
-                        key={dot.id}
-                        style={{
-                            position: 'absolute',
-                            left: `${dot.x - dot.size / 2}px`,
-                            top: `${dot.y - dot.size / 2}px`,
-                            width: `${dot.size}px`,
-                            height: `${dot.size}px`,
-                            borderRadius: '50%',
-                            backgroundColor: dot.color,
-                            zIndex: 6
-                        }}
-                    />
-                );
-            })}
+                    return (
+                        <div
+                            key={dot.id}
+                            style={{
+                                position: 'absolute',
+                                left: `${dot.x - dot.size / 2}px`,
+                                top: `${dot.y - dot.size / 2}px`,
+                                width: `${dot.size}px`,
+                                height: `${dot.size}px`,
+                                borderRadius: '50%',
+                                backgroundColor: dot.color,
+                                zIndex: 6
+                            }}
+                        />
+                    );
+                })
+            }
 
 
 
             {/* Navigation Box Container */}
             <div style={navBoxStyle}>
-                {/* Navigation content will go here */}
+                {/* Inner Child 1: Text (Logo Part 1) */}
+                <span style={{
+                    fontFamily: '"Cocosharp Trial", sans-serif',
+                    fontSize: '18px',
+                    letterSpacing: '-1px',
+                    fontWeight: 510,
+                    color: '#373434',
+                    width: '100px' // Give fixed width to balance left/right
+                }}>
+                    Pallet
+                </span>
+
+                {/* Inner Child 2: 4 Menu Options (Middle Aligned) */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    flex: 1,
+                    justifyContent: 'center'
+                }}>
+                    {['Work', 'Services', 'About', 'Contact'].map((item) => (
+                        <span key={item} style={{
+                            fontFamily: '"Rethink Sans", sans-serif',
+                            fontSize: '13px',
+                            fontWeight: 400,
+                            color: '#605a5aff'
+                        }}>
+                            {item}
+                        </span>
+                    ))}
+                </div>
+
+                {/* Inner Child 3: Text (Logo Part 2) */}
+                <span style={{
+                    fontFamily: '"Cocosharp Trial", sans-serif',
+                    fontSize: '18px',
+                    letterSpacing: '-1px',
+                    fontWeight: 510,
+                    color: '#373434',
+                    width: '100px',
+                    textAlign: 'right'
+                }}>
+                    Studio
+                </span>
+
+                {/* Bottom Stroke with Dots and Connecting Line */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '1px',
+                    pointerEvents: 'none'
+                }}>
+                    <svg style={{ position: 'absolute', width: '100%', height: '1px', bottom: 0 }}>
+                        <line
+                            x1="0"
+                            y1="0.5"
+                            x2="100%"
+                            y2="0.5"
+                            stroke="#B0B0B0"
+                            strokeDasharray="4 4"
+                            strokeOpacity="0.6"
+                        />
+                    </svg>
+                    {dots.filter(d => d.row === targetRow + 1).map(dot => (
+                        <div
+                            key={`nav-dot-${dot.id}`}
+                            style={{
+                                position: 'absolute',
+                                left: `${dot.x}px`,
+                                top: '0.5px', // Center on the line
+                                width: `${dot.size}px`,
+                                height: `${dot.size}px`,
+                                borderRadius: '50%',
+                                backgroundColor: dot.color,
+                                transform: 'translate(-50%, -50%)',
+                            }}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/* Second Text Container - With Content */}
@@ -870,7 +1074,7 @@ const ThreadGrid = () => {
                 <div style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '6px',
+                    gap: '8px',
                     width: '100%',
                     padding: '0 20px',
                     marginTop: 'auto',
@@ -914,7 +1118,10 @@ const ThreadGrid = () => {
                     </button>
                 </div>
             </div>
-        </div>
+
+            {/* Scroll Spacer */}
+            <div style={{ height: '150vh', width: '100%', pointerEvents: 'none' }} />
+        </div >
     );
 };
 
