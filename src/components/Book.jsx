@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import './Book.css';
@@ -205,13 +206,44 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
 });
 
 // Thread Grid Component with Physics
-const ThreadGrid = () => {
+const ThreadGrid = ({ hideContent = false }) => {
+    const navigate = useNavigate();
     const containerRef = useRef(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [dots, setDots] = useState([]);
     const [connections, setConnections] = useState([]);
     const threadRefs = useRef([]);
     const virtualMouseRef = useRef({ x: -1000, y: -1000 }); // Off-screen initially
+
+    // Animate content on Mount
+    useGSAP(() => {
+        if (dots.length > 0) {
+            gsap.fromTo(".fade-anim-box2",
+                { autoAlpha: 0, filter: 'blur(1px)', y: -6 },
+                {
+                    autoAlpha: 1,
+                    filter: 'blur(0px)',
+                    y: 0,
+                    duration: 1.3,
+                    delay: 0.15,
+                    ease: "power2.out"
+                }
+            );
+
+            // Box 3 content fades in second
+            gsap.fromTo(".fade-anim-box3",
+                { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
+                {
+                    autoAlpha: 1,
+                    filter: 'blur(0px)',
+                    y: 0,
+                    duration: 1.3,
+                    delay: 0.55,
+                    ease: "power2.out"
+                }
+            );
+        }
+    }, { dependencies: [dots.length], revertOnUpdate: true });
 
     // Grid configuration
     const circleSize = 2; // Decreased slightly more
@@ -517,8 +549,13 @@ const ThreadGrid = () => {
         if (connections.length === 0) return;
 
         // Initialize velocities if needed
-        if (velocitiesRef.current.length !== connections.length) {
-            velocitiesRef.current = connections.map(() => ({ x: 0, y: 0 }));
+        const isFirstInit = velocitiesRef.current.length !== connections.length;
+        if (isFirstInit) {
+            velocitiesRef.current = connections.map((_, i) => ({
+                // Alternate direction: even threads swing right, odd swing left
+                x: (i % 2 === 0 ? 1 : -1) * (6 + Math.random() * 6),
+                y: 0
+            }));
         }
 
         let animationFrameId;
@@ -977,7 +1014,8 @@ const ThreadGrid = () => {
                     zIndex: 6
                 }}
             >
-                {dashedLines.filter(l => !l.type).map(line => (
+                {/* Static Lines */}
+                {dashedLines.filter(l => !l.type && !l.id.startsWith('dup-h-edge') && !l.id.startsWith('trip-h-full')).map(line => (
                     <line
                         key={line.id}
                         x1={line.x1}
@@ -990,6 +1028,29 @@ const ThreadGrid = () => {
                         strokeOpacity={line.opacity || 0.64}
                     />
                 ))}
+
+                {/* Animated Lines */}
+                <g>
+                    {dashedLines.filter(l => !l.type && (l.id.startsWith('dup-h-edge') || l.id.startsWith('trip-h-full'))).map(line => (
+                        <line
+                            key={line.id}
+                            x1={line.x1}
+                            y1={line.y1}
+                            x2={line.x2}
+                            y2={line.y2}
+                            stroke="#B0B0B0"
+                            strokeWidth="1"
+                            strokeDasharray="4 4"
+                            strokeOpacity={line.opacity || 0.64}
+                        />
+                    ))}
+                    {dashedLines.filter(l => l.type === 'corner-plus').map(plus => (
+                        <g key={plus.id}>
+                            <line x1={plus.x1 - 3} y1={plus.y1} x2={plus.x1 + 3} y2={plus.y1} stroke="#373434" strokeWidth="1" />
+                            <line x1={plus.x1} y1={plus.y1 - 3} x2={plus.x1} y2={plus.y1 + 3} stroke="#373434" strokeWidth="1" />
+                        </g>
+                    ))}
+                </g>
 
                 {/* Graph Markers */}
                 {dashedLines.filter(l => l.type === 'marker').map(marker => (
@@ -1019,29 +1080,7 @@ const ThreadGrid = () => {
                     </g>
                 ))}
 
-                {/* Corner Plus Icons */}
-                {dashedLines.filter(l => l.type === 'corner-plus').map(plus => (
-                    <g key={plus.id}>
-                        {/* Horizontal Line */}
-                        <line
-                            x1={plus.x1 - 3}
-                            y1={plus.y1}
-                            x2={plus.x1 + 3}
-                            y2={plus.y1}
-                            stroke="#373434"
-                            strokeWidth="1"
-                        />
-                        {/* Vertical Line */}
-                        <line
-                            x1={plus.x1}
-                            y1={plus.y1 - 3}
-                            x2={plus.x1}
-                            y2={plus.y1 + 3}
-                            stroke="#373434"
-                            strokeWidth="1"
-                        />
-                    </g>
-                ))}
+                {/* Corner Plus Icons removed here (moved to animated lines group) */}
             </svg>
 
             {/* Dots */}
@@ -1073,13 +1112,14 @@ const ThreadGrid = () => {
             {/* Navigation Box Container */}
             <div style={navBoxStyle}>
                 {/* Inner Child 1: Text (Logo Part 1) */}
-                <span style={{
+                <span onClick={() => navigate('/')} style={{
                     fontFamily: '"Cocosharp Trial", sans-serif',
                     fontSize: '18px',
                     letterSpacing: '-1px',
                     fontWeight: 510,
                     color: '#373434',
-                    width: '100px' // Give fixed width to balance left/right
+                    width: '100px', // Give fixed width to balance left/right
+                    cursor: 'pointer'
                 }}>
                     Pallet
                 </span>
@@ -1157,91 +1197,95 @@ const ThreadGrid = () => {
 
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
-                <div style={{
-                    padding: '0 20px 4px 20px',
-                    textAlign: 'left'
-                }}>
-                    <h2 style={{
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '26px',
-                        letterSpacing: '-0.2px',
-                        lineHeight: '30px',
-                        fontWeight: 460,
-                        color: '#373434ff',
-                        margin: 0
-                    }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.04em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
-                            <RotatingText /> Design and Development for
-                        </span>
-                        startups and scaleups
-                    </h2>
-                </div>
-
-                <div style={{
-                    padding: '2px 20px 0 20px',
-                    textAlign: 'left',
-                    marginLeft: '2px'
-                }}>
-                    <p style={{
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '18px',
-                        fontWeight: 400,
-                        color: '#8b8a8aff',
-                        margin: 0
-                    }}>
-
-                        Skip hiring and ship in weeks with senior PMs, PDs<br />
-                        and Developers embedded in your team.
-                    </p>
-                </div>
-
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '8px',
-                    width: '100%',
-                    padding: '0 20px',
-                    marginTop: 'auto',
-                    marginBottom: '20px',
-                    pointerEvents: 'auto'
-                }}>
-                    <ThreadButton>
-                        Get in touch
-                    </ThreadButton>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '0 4px'
-                    }}>
-                        <h2 style={{
-                            fontFamily: '"Rethink Sans", sans-serif',
-                            fontSize: '13px',
-                            letterSpacing: '-0.02px',
-                            lineHeight: '18px',
-                            fontWeight: 340,
-                            color: '#3fac55ff',
-                            margin: 0,
-                            whiteSpace: 'nowrap'
+                {!hideContent && (
+                    <div className="fade-anim-box2" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', opacity: 0 }}>
+                        <div style={{
+                            padding: '0 20px 4px 20px',
+                            textAlign: 'left'
                         }}>
-                            2 spots left in February
-                        </h2>
+                            <h2 style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '26px',
+                                letterSpacing: '-0.2px',
+                                lineHeight: '30px',
+                                fontWeight: 460,
+                                color: '#373434ff',
+                                margin: 0
+                            }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.04em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
+                                    <RotatingText /> Design and Development for
+                                </span>
+                                startups and scaleups
+                            </h2>
+                        </div>
+
+                        <div style={{
+                            padding: '2px 20px 0 20px',
+                            textAlign: 'left',
+                            marginLeft: '2px'
+                        }}>
+                            <p style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '14px',
+                                lineHeight: '18px',
+                                fontWeight: 400,
+                                color: '#8b8a8aff',
+                                margin: 0
+                            }}>
+
+                                Skip hiring and ship in weeks with senior PMs, PDs<br />
+                                and Developers embedded in your team.
+                            </p>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: '8px',
+                            width: '100%',
+                            padding: '0 20px',
+                            marginTop: 'auto',
+                            marginBottom: '20px',
+                            pointerEvents: 'auto'
+                        }}>
+                            <ThreadButton onClick={() => navigate('/get-in-touch')}>
+                                Get in touch
+                            </ThreadButton>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0 4px'
+                            }}>
+                                <h2 style={{
+                                    fontFamily: '"Rethink Sans", sans-serif',
+                                    fontSize: '13px',
+                                    letterSpacing: '-0.02px',
+                                    lineHeight: '18px',
+                                    fontWeight: 340,
+                                    color: '#3fac55ff',
+                                    margin: 0,
+                                    whiteSpace: 'nowrap'
+                                }}>
+                                    2 spots left in February
+                                </h2>
+                            </div>
+                            <button style={{
+                                padding: '8px 11px',
+                                background: 'transparent',
+                                color: '#373434',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '13px',
+                                cursor: 'pointer',
+                                marginLeft: 'auto'
+                            }}>
+                                See our work
+                            </button>
+                        </div>
                     </div>
-                    <button style={{
-                        padding: '8px 11px',
-                        background: 'transparent',
-                        color: '#373434',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        marginLeft: 'auto'
-                    }}>
-                        See our work
-                    </button>
-                </div>
+                )}
             </div>
 
             {/* 3rd Grid Box Carousel */}
@@ -1252,11 +1296,15 @@ const ThreadGrid = () => {
                     zIndex: 4, // Behind text but above grid/background
                     pointerEvents: 'auto'
                 }}>
-                    <ImageCarousel
-                        images={[slide1, slide2, slide3]}
-                        width={tripBoxPosition.width}
-                        height={tripBoxPosition.height}
-                    />
+                    {!hideContent && (
+                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', opacity: 0 }}>
+                            <ImageCarousel
+                                images={[slide1, slide2, slide3]}
+                                width={tripBoxPosition.width}
+                                height={tripBoxPosition.height}
+                            />
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -1382,7 +1430,7 @@ const ThreadButton = ({ children, onClick }) => {
             onMouseMove={handleMouseMove}
             style={{
                 position: 'relative',
-                padding: '8px 18px',
+                padding: '9px 19px',
                 border: '0.6px solid rgba(38, 38, 91, 0.35)',
                 borderRadius: '9px',
                 fontFamily: '"Rethink Sans", sans-serif',
@@ -1392,7 +1440,7 @@ const ThreadButton = ({ children, onClick }) => {
                 background: 'transparent',
                 boxShadow: hovered ? '0 2px 2px rgba(38, 38, 91, 0.1)' : 'none',
                 transition: 'box-shadow 0.3s ease, padding-right 0.3s ease',
-                paddingRight: hovered ? '46px' : '18px'
+                paddingRight: hovered ? '47px' : '19px'
             }}
         >
             {/* Background Layer - z-index 1 */}
@@ -1511,7 +1559,7 @@ const ThreadButton = ({ children, onClick }) => {
     );
 };
 
-const Book = () => {
+const Book = ({ hideContent = false }) => {
     const containerRef = useRef(null);
     const leftWrapperRef = useRef(null); // Controls Position & Float
     const rightWrapperRef = useRef(null);
@@ -1625,7 +1673,7 @@ const Book = () => {
     return (
         <div className="book-wrapper" style={{ width: '100%', position: 'relative' }}>
             {/* Thread Grid with Physics */}
-            <ThreadGrid />
+            <ThreadGrid hideContent={hideContent} />
 
 
         </div>
