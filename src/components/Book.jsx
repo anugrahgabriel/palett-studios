@@ -665,7 +665,22 @@ const ThreadGrid = ({ hideContent = false }) => {
     let textPosition = {};
     let secondTextPosition = {};
     let tripBoxPosition = {};
-    let navBoxStyle = {};
+    // Nav always starts with base styles (invisible) so it doesn't snap/glitch on first render
+    let navBoxStyle = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        zIndex: 50,
+        pointerEvents: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#FFF9F9',
+        boxSizing: 'border-box',
+        opacity: 0,           // hidden until dots are ready
+        transition: 'opacity 0.35s ease',
+    };
     let dashedLines = [];
     let targetRow = 1; // Move to higher scope for JSX access
 
@@ -695,19 +710,10 @@ const ThreadGrid = ({ hideContent = false }) => {
             };
 
             navBoxStyle = {
-                position: 'fixed',
-                top: 0, // Align to very top of screen
-                left: 0, // Stretch to left edge
-                width: '100%', // Full screen width
-                height: `${anchorDot.y + cellSize}px`, // Cover from top to bottom of first row
-                zIndex: 50,
-                pointerEvents: 'auto',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: `${anchorDot.y}px 30px 0 30px`, // Horizontal padding 32 (20 + 12)
-                backgroundColor: '#FFF9F9', // Site background color
-                boxSizing: 'border-box' // Ensure border is included in height/layout
+                ...navBoxStyle,                              // keep base styles
+                height: `${anchorDot.y + cellSize}px`,      // computed height
+                padding: `${anchorDot.y}px 30px 0 30px`,    // computed padding
+                opacity: 1,                                  // now visible
             };
 
             // Generate Dashed Lines for the grid area covered by text - EDGES ONLY
