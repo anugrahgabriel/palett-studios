@@ -113,18 +113,17 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
         if (tweenRef.current) tweenRef.current.kill();
         gsap.killTweensOf(el);
 
-        // Reset position
-        gsap.set(el, { x: -totalWidth });
+        // Reset position to start
+        gsap.set(el, { x: 0 });
 
-        // Left to right movement: animate to 0
+        // Right to left movement: animate to -totalWidth
         tweenRef.current = gsap.to(el, {
-            x: 0,
-            duration: 60, // Much slower movement
+            x: -totalWidth,
+            duration: 60,
             ease: "none",
             repeat: -1,
             onRepeat: () => {
-                // Ensure it jumps back precisely
-                gsap.set(el, { x: -totalWidth });
+                gsap.set(el, { x: 0 });
             }
         });
     }, [imagesLoaded, width, images.length]);
@@ -170,6 +169,8 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
             height: height,
             overflow: 'hidden',
             pointerEvents: 'auto',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
         }}>
             <div ref={scrollRef} style={{
                 display: 'flex',
@@ -204,6 +205,102 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
         </div>
     );
 });
+
+// Single rolling digit — slides up when value changes
+const RollingDigit = ({ value }) => {
+    const [current, setCurrent] = useState(value);
+    const [next, setNext] = useState(value);
+    const [rolling, setRolling] = useState(false);
+
+    useEffect(() => {
+        if (value !== current) {
+            setNext(value);
+            setRolling(true);
+            setTimeout(() => {
+                setCurrent(value);
+                setRolling(false);
+            }, 280);
+        }
+    }, [value, current]);
+
+    return (
+        <span style={{
+            display: 'inline-block',
+            overflow: 'hidden',
+            height: '1em',
+            lineHeight: '1em',
+            position: 'relative',
+            width: '0.65em'
+        }}>
+            <span style={{
+                display: 'block',
+                transform: rolling ? 'translateY(-100%)' : 'translateY(0)',
+                transition: rolling ? 'transform 0.28s ease-in' : 'none',
+            }}>{current}</span>
+            <span style={{
+                display: 'block',
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                transform: rolling ? 'translateY(-100%)' : 'translateY(0)',
+                transition: rolling ? 'transform 0.28s ease-in' : 'none',
+            }}>{next}</span>
+        </span>
+    );
+};
+
+// Live IST clock with rolling digits
+const LiveIST = () => {
+    const getIST = () => {
+        const ist = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+        return {
+            hh: String(ist.getHours()).padStart(2, '0'),
+            mm: String(ist.getMinutes()).padStart(2, '0'),
+            ss: String(ist.getSeconds()).padStart(2, '0'),
+        };
+    };
+
+    const [time, setTime] = useState(getIST());
+
+    useEffect(() => {
+        const interval = setInterval(() => setTime(getIST()), 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const sep = <span style={{ opacity: 0.5, marginBottom: '0.5px' }}>:</span>;
+
+    return (
+        <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            fontFamily: '"Rethink Sans", sans-serif',
+            fontSize: '9px',
+            fontWeight: 400,
+            color: '#8b8a8a',
+            opacity: 0.8,
+            letterSpacing: '0.3px',
+            lineHeight: 1
+        }}>
+            <RollingDigit value={time.hh[0]} />
+            <RollingDigit value={time.hh[1]} />
+            {sep}
+            <RollingDigit value={time.mm[0]} />
+            <RollingDigit value={time.mm[1]} />
+            {sep}
+            <RollingDigit value={time.ss[0]} />
+            <RollingDigit value={time.ss[1]} />
+            <span style={{ marginLeft: '4px', letterSpacing: '0.5px', opacity: 0.6 }}>IST</span>
+        </span>
+    );
+};
+
+// Message icon for nav
+const MessageIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+            stroke="#605a5a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
 
 // Thread Grid Component with Physics
 const ThreadGrid = ({ hideContent = false }) => {
@@ -676,7 +773,7 @@ const ThreadGrid = ({ hideContent = false }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#FFF9F9',
+        backgroundColor: '#FFFFFF',
         boxSizing: 'border-box',
         opacity: 0,           // hidden until dots are ready
         transition: 'opacity 0.35s ease',
@@ -784,13 +881,9 @@ const ThreadGrid = ({ hideContent = false }) => {
 
             const tripHorizontalRows = [tripHeightRows]; // Only Bottom edge (Top edge removed)
 
-            // Horizontal lines for TRIPLICATE
+            // Horizontal lines for TRIPLICATE - only box 3 width (not full screen)
             tripHorizontalRows.forEach(r => {
-                const fullMin = screenVisibleMinCol;
-                const fullMax = screenVisibleMaxCol;
-
-
-                for (let c = fullMin; c < fullMax; c++) {
+                for (let c = tripStartCol; c < tripStartCol + effectiveTripWidth; c++) {
                     const currentRow = tripTargetRow + r;
                     const d1 = dots.find(d => d.col === c && d.row === currentRow);
                     const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
@@ -1003,7 +1096,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     ...textStyle,
                     ...secondTextPosition,
                     zIndex: 5,
-                    backgroundColor: '#FFF9F9',
+                    backgroundColor: '#FFFFFF',
                     pointerEvents: 'none'
                 }}
             />
@@ -1150,18 +1243,45 @@ const ThreadGrid = ({ hideContent = false }) => {
                     ))}
                 </div>
 
-                {/* Inner Child 3: Text (Logo Part 2) */}
-                <span style={{
-                    fontFamily: '"Cocosharp Trial", sans-serif',
-                    fontSize: '18px',
-                    letterSpacing: '-1px',
-                    fontWeight: 510,
-                    color: '#373434',
-                    width: '100px',
-                    textAlign: 'right'
+                {/* Inner Child 3: Right cluster — time | separator | message icon | Studio */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    justifyContent: 'flex-end',
+                    minWidth: '160px'
                 }}>
-                    Studio
-                </span>
+                    <LiveIST />
+                    {/* Vertical separator */}
+                    <div style={{ width: '1px', height: '11px', backgroundColor: '#D2D2D2', borderRadius: '1px', flexShrink: 0 }} />
+                    {/* Message icon → get in touch */}
+                    <button
+                        onClick={() => navigate('/get-in-touch')}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '3px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            opacity: 0.75,
+                            transition: 'opacity 0.2s ease'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                        onMouseLeave={e => e.currentTarget.style.opacity = 0.75}
+                    >
+                        <MessageIcon />
+                    </button>
+                    <span style={{
+                        fontFamily: '"Cocosharp Trial", sans-serif',
+                        fontSize: '18px',
+                        letterSpacing: '-1px',
+                        fontWeight: 510,
+                        color: '#373434'
+                    }}>
+                        Studio
+                    </span>
+                </div>
 
                 {/* Bottom Stroke with Dots and Connecting Line */}
                 <div style={{
@@ -1299,7 +1419,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                 <div style={{
                     position: 'absolute',
                     ...tripBoxPosition,
-                    zIndex: 4, // Behind text but above grid/background
+                    zIndex: 4,
                     pointerEvents: 'auto'
                 }}>
                     {!hideContent && (
