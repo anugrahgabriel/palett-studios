@@ -9,6 +9,13 @@ const rightPageImg = "";
 import slide1 from '../../pics/1-slide.png';
 import slide2 from '../../pics/2-slide.png';
 import slide3 from '../../pics/3-slide.png';
+import slide4 from '../../pics/4-slide.png';
+import slide5 from '../../pics/5-slide.png';
+import slide6 from '../../pics/6-slide.png';
+import slide7 from '../../pics/7-slide.png';
+import slide8 from '../../pics/8-slide.png';
+import slide9 from '../../pics/9-slide.png';
+import slide10 from '../../pics/10-slide.png';
 
 const ArrowIcon = () => (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '12px', marginRight: '8px' }}>
@@ -116,14 +123,14 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
         // Reset position to start
         gsap.set(el, { x: 0 });
 
-        // Right to left movement: animate to -totalWidth
+        // Continuously extend x so modifiers can wrap it — no hard reset
         tweenRef.current = gsap.to(el, {
-            x: -totalWidth,
+            x: `-=${totalWidth}`,
             duration: 60,
             ease: "none",
             repeat: -1,
-            onRepeat: () => {
-                gsap.set(el, { x: 0 });
+            modifiers: {
+                x: gsap.utils.unitize(x => parseFloat(x) % totalWidth)
             }
         });
     }, [imagesLoaded, width, images.length]);
@@ -177,29 +184,86 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                 height: '100%',
                 gap: '20px',
                 width: 'max-content',
-                alignItems: 'center',
+                alignItems: 'flex-start',
+                paddingTop: '18px',
+                paddingBottom: '14px',
+                boxSizing: 'border-box',
                 willChange: 'transform',
                 pointerEvents: 'auto'
             }}>
-                {[...images, ...images].map((img, i) => (
-                    <img
-                        key={i}
-                        src={img}
-                        alt=""
-                        onLoad={handleImageLoad}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                            height: 'calc(85% - 2px)',
-                            objectFit: 'contain',
-                            borderRadius: '12px',
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
-                            cursor: 'pointer',
-                            pointerEvents: 'auto',
-                            transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
-                        }}
-                    />
-                ))}
+                {[...images, ...images].map((img, i) => {
+                    const labels = [
+                        // Slides 1–3: N3XT
+                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
+                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
+                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
+                        // Slides 4–7: Quotient
+                        { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
+                        { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
+                        { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
+                        { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
+                        // Slides 8–9: Blockview
+                        { tags: ['blockview (now heroes)', 'Product design', 'Portfolio & trading'] },
+                        { tags: ['blockview (now heroes)', 'Product design', 'Portfolio & trading'] },
+                        // Slide 10: Runable
+                        { tags: ['Runable', 'Product', 'General AI'] },
+                    ];
+                    const label = labels[i % labels.length];
+                    return (
+                        <div
+                            key={i}
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                height: '100%',
+                                flexShrink: 0,
+                                paddingLeft: '6px',
+                                pointerEvents: 'auto'
+                            }}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                        >
+                            <img
+                                src={img}
+                                alt=""
+                                onLoad={handleImageLoad}
+                                style={{
+                                    height: 'calc(78% - 2px)',
+                                    objectFit: 'contain',
+                                    borderRadius: '12px',
+                                    outline: '0.4px solid rgba(150, 150, 150, 0.25)',
+                                    outlineOffset: '0px',
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                                    cursor: 'pointer',
+                                    pointerEvents: 'auto',
+                                    display: 'block',
+                                    transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
+                                }}
+                            />
+                            {/* Tags row */}
+                            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '0px', paddingLeft: '2px' }}>
+                                {label.tags.map((tag, ti) => (
+                                    <span key={ti} style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span style={{
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '12px',
+                                            fontWeight: ti === 0 ? 500 : 400,
+                                            color: ti === 0 ? '#4a4a4a' : '#8b8a8a',
+                                            letterSpacing: '0.1px',
+                                            whiteSpace: 'nowrap'
+                                        }}>{ti === 0 ? tag.charAt(0).toUpperCase() + tag.slice(1) : tag}</span>
+                                        {ti < label.tags.length - 1 && (
+                                            <span style={{ color: '#c8c8c8', fontSize: '11px', margin: '0 5px' }}>·</span>
+                                        )}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
         </div>
@@ -327,7 +391,20 @@ const ThreadGrid = ({ hideContent = false }) => {
                 }
             );
 
-            // Box 3 content fades in second
+            // New Box content fades in second
+            gsap.fromTo(".fade-anim-newbox",
+                { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
+                {
+                    autoAlpha: 1,
+                    filter: 'blur(0px)',
+                    y: 0,
+                    duration: 1.3,
+                    delay: 0.4,
+                    ease: "power2.out"
+                }
+            );
+
+            // Box 3 (carousel) fades in third
             gsap.fromTo(".fade-anim-box3",
                 { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
                 {
@@ -335,7 +412,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     filter: 'blur(0px)',
                     y: 0,
                     duration: 1.3,
-                    delay: 0.55,
+                    delay: 0.65,
                     ease: "power2.out"
                 }
             );
@@ -343,10 +420,25 @@ const ThreadGrid = ({ hideContent = false }) => {
     }, { dependencies: [dots.length], revertOnUpdate: true });
 
     // Grid configuration
-    const circleSize = 2; // Decreased slightly more
-    const gap = 48; // Fixed gap
+    const circleSize = 2;
+    const gap = 48;
     const padding = 20;
     const cellSize = circleSize + gap;
+
+    // ─── Shared Layout Constants ────────────────────────────────────────────────
+    // Change values HERE — dot filter, line drawing and box positioning all use
+    // these same numbers so everything stays in sync automatically.
+    const BOX_WIDTH_COLS = 25;          // All boxes share the same column width
+    const BOX_2_START_ROW = 1;           // Nav row (row 1)
+    const BOX_2_HEIGHT = 1;           // Top thin box (1 row)
+    const BOX_3_HEIGHT = 5;           // Box 2 (content) height in rows
+    const BOX_NEW_HEIGHT = 12;           // New middle box height in rows
+    const BOX_TRIP_HEIGHT = BOX_3_HEIGHT + 7; // Box 3 (carousel) height
+    // Derived start rows — change a height above and the rows below auto-update
+    const BOX_3_START_ROW = BOX_2_START_ROW + BOX_2_HEIGHT + 2; // +2 gap below nav
+    const BOX_NEW_START_ROW = BOX_3_START_ROW + BOX_3_HEIGHT;
+    const BOX_TRIP_START_ROW = BOX_NEW_START_ROW + BOX_NEW_HEIGHT;
+    // ────────────────────────────────────────────────────────────────────────────
 
     useEffect(() => {
         // Generate dots
@@ -357,14 +449,15 @@ const ThreadGrid = ({ hideContent = false }) => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Add extra rows/cols to ensure full coverage
+        // Add extra rows/cols to ensure full coverage + extra rows for extending downwards
         const cols = Math.ceil(viewportWidth / cellSize) + 2;
-        const rows = Math.ceil(viewportHeight / cellSize) + 2;
+        const baseRows = Math.ceil(viewportHeight / cellSize) + 2;
+        const rows = baseRows + 11; // Extend grid vertically downwards
 
         // Center calculation or just start from 0 with slight offset to center?
         // Let's just start slightly off-screen to cover edges.
         const startX = (viewportWidth - (cols * cellSize)) / 2;
-        const startY = (viewportHeight - (rows * cellSize)) / 2 + 8; // Add 8px top visual padding
+        const startY = (viewportHeight - (baseRows * cellSize)) / 2 + 8; // Add 8px top visual padding
 
         let dotIndex = 0;
 
@@ -440,21 +533,25 @@ const ThreadGrid = ({ hideContent = false }) => {
         // We need to replicate that logic here or move variables up.
 
         // Re-defining logic here for filtering:
-        const centerStartCol = centerCol - Math.floor(textWidthCols / 2);
-        // const leftBoxStartCol used above
+        const centerStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2);
 
         // Duplicate Box Params
-        const dupStartCol = leftBoxStartCol;
-        const dupStartRow = leftBoxStartRow + leftBoxHeight + 2; // targetRow + 1 + 2 = 2 + 1 + 2 = 5
-        const dupHeightRows_Filter = textHeightRows + 1; // 5
+        const dupStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2) - 1;
+        const dupStartRow = BOX_3_START_ROW;
+        const dupHeightRows_Filter = BOX_3_HEIGHT;
 
-        // Triplicate Box Params (Bottom of Duplicate)
+        // New Box Params
+        const newStartCol = dupStartCol;
+        const newStartRow = BOX_NEW_START_ROW;
+        const newHeightRows_Filter = BOX_NEW_HEIGHT;
+
+        // Triplicate Box Params (Bottom of New Box)
         const tripStartCol = dupStartCol;
-        const tripStartRow = dupStartRow + dupHeightRows_Filter; // 5 + 5 = 10
-        const tripHeightRows_Filter = dupHeightRows_Filter + 7; // 5 + 7 = 12 (Increased by 2)
+        const tripStartRow = BOX_TRIP_START_ROW;
+        const tripHeightRows_Filter = BOX_TRIP_HEIGHT;
 
         // Width is standardized
-        const filterBoxWidth = textWidthCols + 1;
+        const filterBoxWidth = BOX_WIDTH_COLS + 1;
 
         const finalDots = generatedDots.filter(d => {
             // Check Duplicate Box
@@ -464,14 +561,21 @@ const ThreadGrid = ({ hideContent = false }) => {
                 d.row > dupStartRow &&
                 d.row < dupStartRow + dupHeightRows_Filter;
 
+            // Check New Box
+            const isInsideNewBox =
+                d.col > newStartCol &&
+                d.col < newStartCol + filterBoxWidth &&
+                d.row > newStartRow &&
+                d.row < newStartRow + newHeightRows_Filter;
+
             // Check Triplicate Box
             const isInsideTripBox =
                 d.col > tripStartCol &&
                 d.col < tripStartCol + filterBoxWidth &&
-                d.row > tripStartRow && // > 10
-                d.row < tripStartRow + tripHeightRows_Filter; // < 20
+                d.row > tripStartRow &&
+                d.row < tripStartRow + tripHeightRows_Filter;
 
-            return !isInsideDupBox && !isInsideTripBox;
+            return !isInsideDupBox && !isInsideNewBox && !isInsideTripBox;
         });
         setDots(finalDots);
         const targetDots = generatedDots.filter(d =>
@@ -761,6 +865,7 @@ const ThreadGrid = ({ hideContent = false }) => {
 
     let textPosition = {};
     let secondTextPosition = {};
+    let newBoxPosition = {};
     let tripBoxPosition = {};
     // Nav always starts with base styles (invisible) so it doesn't snap/glitch on first render
     let navBoxStyle = {
@@ -828,24 +933,15 @@ const ThreadGrid = ({ hideContent = false }) => {
             // "duplicate grid box, to right by 5 columns and dowm by 2 rows"
             // Usually this means relative to the ORIGINAL center start position.
 
-            const centerStartCol = centerCol - Math.floor(textWidthCols / 2);
-            // const centerTargetRow = 5; // Unused variable remove
+            const centerStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2);
 
             const dupStartCol = startCol; // Align with first box (vertically stacked)
-            // Fix dupStartRow to be relative to the first box
-            const firstBoxBottomRow = targetRow + 1; // Row 2 (if targetRow is 1)
-            const gapRows = 2;
-            const dupStartRow = firstBoxBottomRow + gapRows; // 2 + 2 = 4
+            const dupStartRow = BOX_3_START_ROW;
+            const dupTargetRow = dupStartRow;
 
-            const dupTargetRow = dupStartRow; // Rename for clarity or keep consistent
+            const effectiveDupWidth = BOX_WIDTH_COLS + 1;
 
-            const effectiveDupWidth = textWidthCols + 1; // Width + 1 
-
-            // Or if user meant "start from center + 2 rows up", then it's centerTargetRow - 2.
-            // "move 2 row up" -> relative to current position (+2) -> becomes (+0).
-            // "increase this grid box height by moving its bottom edge down by 5 rows" -> height increases by 5.
-
-            const dupHeightRows = textHeightRows + 1; // Increased by 1 row
+            const dupHeightRows = BOX_3_HEIGHT;
             const dupHorizontalRows = [0, dupHeightRows]; // Top and Bottom edges
 
             // Horizontal lines (Top and Bottom edges) for DUPLICATE
@@ -867,10 +963,56 @@ const ThreadGrid = ({ hideContent = false }) => {
 
 
 
-            // --- TRIPLICATE Grid Box (Bottom of Duplicate) ---
+            // --- NEW Grid Box (Directly below Box 2) ---
+            const newStartCol = dupStartCol;
+            const newTargetRow = BOX_NEW_START_ROW;
+            const newHeightRows = BOX_NEW_HEIGHT;
+            const effectiveNewWidth = effectiveDupWidth;
+
+            // Horizontal lines for NEW Box (bottom edge)
+            const newHorizontalRows = [newHeightRows];
+            newHorizontalRows.forEach(r => {
+                for (let c = newStartCol; c < newStartCol + effectiveNewWidth; c++) {
+                    const currentRow = newTargetRow + r;
+                    const d1 = dots.find(d => d.col === c && d.row === currentRow);
+                    const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
+
+                    if (d1 && d2) {
+                        dashedLines.push({
+                            id: `new-h-full-${r}-${c}`,
+                            x1: d1.x,
+                            y1: d1.y,
+                            x2: d2.x,
+                            y2: d2.y
+                        });
+                    }
+                }
+            });
+
+            // Corner Plus Icons for NEW Box
+            const newCornerCoords = [
+                { col: newStartCol, row: newTargetRow },
+                { col: newStartCol + effectiveNewWidth, row: newTargetRow },
+                { col: newStartCol, row: newTargetRow + newHeightRows },
+                { col: newStartCol + effectiveNewWidth, row: newTargetRow + newHeightRows }
+            ];
+
+            newCornerCoords.forEach((coord, idx) => {
+                const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
+                if (dot) {
+                    dashedLines.push({
+                        id: `new-corner-plus-${idx}`,
+                        x1: dot.x,
+                        y1: dot.y,
+                        type: 'corner-plus'
+                    });
+                }
+            });
+
+            // --- TRIPLICATE Grid Box (Bottom of New Box) ---
             const tripStartCol = dupStartCol;
-            const tripTargetRow = dupTargetRow + dupHeightRows; // Start exactly at bottom of previous box
-            const tripHeightRows = dupHeightRows + 7; // Height increased by 7 rows (was 5)
+            const tripTargetRow = BOX_TRIP_START_ROW;
+            const tripHeightRows = BOX_TRIP_HEIGHT;
             const effectiveTripWidth = effectiveDupWidth;
 
             // Find columns that are comfortably within the visible screen area (for line extensions and markers)
@@ -879,7 +1021,7 @@ const ThreadGrid = ({ hideContent = false }) => {
             const screenVisibleMaxCol = visibleDots.reduce((max, d) => Math.max(max, d.col), 0);
 
 
-            const tripHorizontalRows = [tripHeightRows]; // Only Bottom edge (Top edge removed)
+            const tripHorizontalRows = [0, tripHeightRows]; // Restored Top and Bottom edges
 
             // Horizontal lines for TRIPLICATE - only box 3 width (not full screen)
             tripHorizontalRows.forEach(r => {
@@ -931,7 +1073,7 @@ const ThreadGrid = ({ hideContent = false }) => {
             const maxRow = dots.reduce((max, d) => Math.max(max, d.row), 0);
 
             const globalStartRow = dupTargetRow; // Start from duplicate box top
-            const globalEndRow = maxRow + 1; // Extend to bottom of screen (last row + 1)
+            const globalEndRow = tripTargetRow + tripHeightRows; // Stop exactly at Box 3 bottom edge
             const totalVerticalHeight = globalEndRow - globalStartRow;
 
             const verticalEdgeCols = [0, effectiveLeftBoxWidth];
@@ -1017,6 +1159,17 @@ const ThreadGrid = ({ hideContent = false }) => {
                 };
             }
 
+            // Calculate position for New Grid Box (between Box 2 and Box 3)
+            const newAnchorDot = dots.find(d => d.col === newStartCol && d.row === newTargetRow);
+            if (newAnchorDot) {
+                newBoxPosition = {
+                    left: `${newAnchorDot.x}px`,
+                    top: `${newAnchorDot.y}px`,
+                    width: `${effectiveNewWidth * cellSize}px`,
+                    height: `${newHeightRows * cellSize}px`
+                };
+            }
+
             // Calculate position for Triplicate Box (for carousel)
             const tripAnchorDot = dots.find(d => d.col === tripStartCol && d.row === tripTargetRow);
             if (tripAnchorDot) {
@@ -1050,7 +1203,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     top: 0,
                     left: 0,
                     width: '100%',
-                    height: '100%',
+                    height: dots.length > 0 ? `${Math.max(...dots.map(d => d.y)) + 200}px` : '100%',
                     pointerEvents: 'auto',
                     zIndex: 1
                 }}
@@ -1108,7 +1261,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     top: 0,
                     left: 0,
                     width: '100%',
-                    height: '100%',
+                    height: dots.length > 0 ? `${Math.max(...dots.map(d => d.y)) + 200}px` : '100%',
                     pointerEvents: 'none',
                     zIndex: 6
                 }}
@@ -1414,28 +1567,85 @@ const ThreadGrid = ({ hideContent = false }) => {
                 )}
             </div>
 
+            {/* New Middle Box Area */}
+            {newBoxPosition.left && (
+                <div style={{
+                    position: 'absolute',
+                    ...newBoxPosition,
+                    zIndex: 4,
+                    pointerEvents: 'auto'
+                }}>
+                    {!hideContent && (
+                        <div className="fade-anim-newbox" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0 }}>
+                            {/* Empty container ready for content */}
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* 3rd Grid Box Carousel */}
             {tripBoxPosition.left && (
                 <div style={{
                     position: 'absolute',
                     ...tripBoxPosition,
                     zIndex: 4,
-                    pointerEvents: 'auto'
+                    pointerEvents: 'auto',
+                    backgroundColor: '#f3f3f3ff'
                 }}>
                     {!hideContent && (
-                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', opacity: 0 }}>
+                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative', opacity: 0 }}>
+                            {/* Carousel fills full box */}
                             <ImageCarousel
-                                images={[slide1, slide2, slide3]}
+                                images={[slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8, slide9, slide10]}
                                 width={tripBoxPosition.width}
                                 height={tripBoxPosition.height}
                             />
+
+                            {/* Right-side overlay panel */}
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                width: '32%',
+                                height: '100%',
+                                background: 'linear-gradient(to right, rgba(243,243,243,0) 0%, #f3f3f3 20%)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: '24px 20px 24px 32px',
+                                boxSizing: 'border-box',
+                                gap: '16px',
+                                pointerEvents: 'auto',
+                                zIndex: 5
+                            }}>
+                                {/* ── Content placeholder slots ── */}
+                                {/* Slot A — top content */}
+                                <div style={{ flex: '0 0 auto' }}>
+                                    {/* content here */}
+                                </div>
+
+                                {/* Slot B — middle / growing content */}
+                                <div style={{ flex: 1 }}>
+                                    {/* content here */}
+                                </div>
+
+                                {/* Slot C — bottom content */}
+                                <div style={{ flex: '0 0 auto' }}>
+                                    {/* content here */}
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
             )}
 
-            {/* Scroll Spacer */}
-            <div style={{ height: '150vh', width: '100%', pointerEvents: 'none' }} />
+            {/* Scroll Spacer — sized to Box 3's bottom edge + comfortable padding */}
+            <div style={{
+                height: tripBoxPosition.top
+                    ? `${parseFloat(tripBoxPosition.top) + parseFloat(tripBoxPosition.height) + 120}px`
+                    : '150vh',
+                width: '100%',
+                pointerEvents: 'none'
+            }} />
         </div >
     );
 };
