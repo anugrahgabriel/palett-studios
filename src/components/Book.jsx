@@ -50,7 +50,7 @@ const RotatingText = () => {
     return (
         <span style={{
             position: 'relative',
-            top: '-0.027em', // Relative unit for responsiveness
+            top: '-0.026em', // Relative unit for responsiveness
             display: 'inline-block',
             width: widths[currentIndex],
             height: '30px',
@@ -439,6 +439,7 @@ const ThreadGrid = ({ hideContent = false }) => {
     const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
     const [displayQuoteIndex, setDisplayQuoteIndex] = useState(0);
     const quoteContentRef = useRef(null);
+    const [hoveredMosaicIdx, setHoveredMosaicIdx] = useState(null);
 
     const quotes = [
         {
@@ -564,15 +565,7 @@ const ThreadGrid = ({ hideContent = false }) => {
         return () => clearInterval(interval);
     }, [activeQuoteIndex, quotes.length]);
 
-    // Grid configuration
-    const circleSize = 2;
-    const gap = 48;
-    const padding = 20;
-    const cellSize = circleSize + gap;
-
     // ─── Shared Layout Constants ────────────────────────────────────────────────
-    // Change values HERE — dot filter, line drawing and box positioning all use
-    // these same numbers so everything stays in sync automatically.
     const BOX_WIDTH_COLS = 23;          // All boxes share the same column width
     const BOX_2_START_ROW = 1;           // Nav row (row 1)
     const BOX_2_HEIGHT = 1;           // Top thin box (1 row)
@@ -580,42 +573,47 @@ const ThreadGrid = ({ hideContent = false }) => {
     const BOX_NEW_HEIGHT = 10;           // New middle box height in rows
     const BOX_NEW2_HEIGHT = 2;           // Lower part of the new middle box
     const BOX_TRIP_HEIGHT = 12; // Box 3 (carousel) height
-    // Derived start rows — change a height above and the rows below auto-update
+    // Derived start rows
     const BOX_3_START_ROW = BOX_2_START_ROW + BOX_2_HEIGHT + 2; // +2 gap below nav
     const BOX_NEW_START_ROW = BOX_3_START_ROW + BOX_3_HEIGHT;
     const BOX_NEW2_START_ROW = BOX_NEW_START_ROW + BOX_NEW_HEIGHT;
     const BOX_TRIP_START_ROW = BOX_NEW2_START_ROW + BOX_NEW2_HEIGHT;
     // ────────────────────────────────────────────────────────────────────────────
 
+    // Grid configuration & measurements
+    const circleSize = 2;
+    const gap = 48;
+    const padding = 20;
+    const cellSize = circleSize + gap;
+
+    // Use current viewport size (Note: Grid doesn't reactively rebuild on resize)
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Add extra rows/cols to ensure full coverage + extra rows for extending downwards
+    const cols = Math.ceil(viewportWidth / cellSize) + 2;
+    const baseRows = Math.ceil(viewportHeight / cellSize) + 2;
+    const rowsCount = baseRows + 31; // Total rows including vertical extension
+
+    // Start offsets for centering
+    const gridStartX = (viewportWidth - (cols * cellSize)) / 2;
+    const gridStartY = (viewportHeight - (baseRows * cellSize)) / 2 + 8; // Add 8px top visual padding
+
     useEffect(() => {
         // Generate dots
         const generatedDots = [];
         const colors = ['#D9D9D9', '#9B9494'];
 
-        // Use window dimensions but ensure we overshoot a bit to avoid edges
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        // Add extra rows/cols to ensure full coverage + extra rows for extending downwards
-        const cols = Math.ceil(viewportWidth / cellSize) + 2;
-        const baseRows = Math.ceil(viewportHeight / cellSize) + 2;
-        const rows = baseRows + 31; // Extend grid vertically downwards
-
-        // Center calculation or just start from 0 with slight offset to center?
-        // Let's just start slightly off-screen to cover edges.
-        const startX = (viewportWidth - (cols * cellSize)) / 2;
-        const startY = (viewportHeight - (baseRows * cellSize)) / 2 + 8; // Add 8px top visual padding
-
         let dotIndex = 0;
 
-        for (let row = 0; row < rows; row++) {
+        for (let row = 0; row < rowsCount; row++) {
             for (let col = 0; col < cols; col++) {
                 const color = colors[Math.floor(Math.random() * 2)];
 
                 generatedDots.push({
                     id: dotIndex++,
-                    x: startX + col * cellSize + circleSize / 2,
-                    y: startY + row * cellSize + circleSize / 2,
+                    x: gridStartX + col * cellSize + circleSize / 2,
+                    y: gridStartY + row * cellSize + circleSize / 2,
                     col,
                     row,
                     color,
@@ -624,63 +622,8 @@ const ThreadGrid = ({ hideContent = false }) => {
             }
         }
 
-
-
-        // Create threads connections between:
-        // 1. Bottom edge of LEFT grid box (original, shifted left)
-        // 2. Left edge of RIGHT grid box (duplicate, shifted right)
-
-        const generatedConnections = [];
-        const threadColors = ['#E2C6AB', '#274DF5', '#802F64', '#802F64', '#555789'];
-        let connectionId = 0;
-
-        // --- Define Grid Box Areas ---
-        // Left Box (Original): startCol = center - width/2 - 6, targetRow = 5 - 2 (row 3)
-        // Width = textWidthCols (7), Height = textHeightRows (4)
-        // Bottom Edge: row = targetRow + textHeightRows, cols = startCol to startCol + textWidthCols
-
-        const textWidthCols = 23;
-        const textHeightRows = 4;
-        // Use the same column count as dot generation for consistent centering
-        const centerCol = Math.round((cols - 1) / 2);
-
-        const leftBoxStartCol = centerCol - Math.floor(textWidthCols / 2) - 1; // Adjusted to keep left edge fixed while shrinking right
-        const leftBoxStartRow = 1;
-        const leftBoxHeight = 1; // Top grid height is 1 row
-        const leftBoxBottomRow = leftBoxStartRow + leftBoxHeight;
-
-        // Left Box Width increased by 1 from right edge -> effective width is textWidthCols + 1
-
-        // Right Box (Duplicate): startCol = center - width/2 + 5, targetRow = 5 + 0 (row 5)
-        // Width = textWidthCols (7), Height = dupHeightRows (textHeightRows + 5 = 9)
-        // Left Edge: col = dupStartCol, rows = dupStartRow to dupStartRow + dupHeightRows
-
-        const rightBoxStartCol = leftBoxStartCol; // Align with left box (vertically stacked)
-        const rightBoxStartRow = leftBoxStartRow + leftBoxHeight + 2; // Position below first box with 2 row gap
-        const rightBoxHeight = textHeightRows + 1; // Increased by 1 row
-        // row range: 5 to 14
-
-        // Identify candidate dots
-        // Source Dots: Bottom edge of Left Box (Width increased by 1)
-        const effectiveLeftBoxWidth = textWidthCols + 1;
-        const sourceDots = generatedDots.filter(d =>
-            d.row === leftBoxBottomRow &&
-            d.col >= leftBoxStartCol &&
-            d.col <= leftBoxStartCol + effectiveLeftBoxWidth
-        );
-
-        // Target Dots: Top edge of Right/Second Box (Width increased by 1)
-        const effectiveRightBoxWidth = textWidthCols + 1;
-
         // Filter and set dots (exclude inside of bottom box AND triplicate box)
-
-        // Calculate params for triplicate box (same logic as later used for drawing)
-        // We need to pre-calculate these to filter dots during initialization
-        // But 'dupStartRow' etc are defined later inside the component logic.
-        // We need to replicate that logic here or move variables up.
-
-        // Re-defining logic here for filtering:
-        const centerStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2);
+        const centerCol = Math.round((cols - 1) / 2);
 
         // Duplicate Box Params
         const dupStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2) - 1;
@@ -737,18 +680,31 @@ const ThreadGrid = ({ hideContent = false }) => {
             return !isInsideDupBox && !isInsideNewBox && !isInsideNew2Box && !isInsideTripBox;
         });
         setDots(finalDots);
+
+        // Identify candidate dots for connections
+        const leftBoxStartCol = dupStartCol;
+        const leftBoxStartRow = BOX_2_START_ROW;
+        const leftBoxHeight = BOX_2_HEIGHT;
+        const leftBoxBottomRow = leftBoxStartRow + leftBoxHeight;
+
+        const rightBoxStartCol = leftBoxStartCol;
+        const rightBoxStartRow = BOX_3_START_ROW;
+
+        const sourceDots = generatedDots.filter(d =>
+            d.row === leftBoxBottomRow &&
+            d.col >= leftBoxStartCol &&
+            d.col <= leftBoxStartCol + BOX_WIDTH_COLS + 1
+        );
+
         const targetDots = generatedDots.filter(d =>
             d.row === rightBoxStartRow &&
             d.col >= rightBoxStartCol &&
-            d.col <= rightBoxStartCol + effectiveRightBoxWidth
+            d.col <= rightBoxStartCol + BOX_WIDTH_COLS + 1
         );
 
-        // Create connections
-        // We want randomized threads count from sources to targets.
-        // Let's iterate through sources and try to connect to a random target?
-        // Or create X amount of random connections between these sets.
-
-        // Ensure connectivity for every edge dot + add density
+        const generatedConnections = [];
+        const threadColors = ['#E2C6AB', '#274DF5', '#802F64', '#802F64', '#555789'];
+        let connectionId = 0;
 
         if (sourceDots.length > 0 && targetDots.length > 0) {
             // "just have one thread between every dot to dot, in our pattern"
@@ -858,14 +814,13 @@ const ThreadGrid = ({ hideContent = false }) => {
     // Listen for rotating text scroll event
     useEffect(() => {
         const handleTextScroll = () => {
-            // Animate virtual mouse from bottom-left to top-left of the text area
-            // Approximate text position based on grid (calculated below, but hardcoded estimates for effect are fine)
-            // Text starts around center-left.
-            // Let's sweep "from left up".
+            // Sweeping "from left up" specifically where RotatingText is
+            const centerCol_Scroll = Math.round((cols - 1) / 2);
+            const dupStartCol_Scroll = centerCol_Scroll - Math.floor(BOX_WIDTH_COLS / 2) - 1;
+            const startX = gridStartX + (dupStartCol_Scroll * cellSize) + 20;
 
-            const startX = window.innerWidth / 2 - 675; // Start at left edge of centered content
-            const startY = window.innerHeight * 0.4; // 40% down
-            const endY = window.innerHeight * 0.2; // Move up to 20%
+            const startY = gridStartY + (BOX_3_START_ROW * cellSize) + 20; // Correctly start relative to box row
+            const endY = gridStartY + ((BOX_3_START_ROW - 4) * cellSize); // Move up 4 rows into threads
 
             // Reset to start
             virtualMouseRef.current = { x: startX, y: startY };
@@ -873,7 +828,7 @@ const ThreadGrid = ({ hideContent = false }) => {
             // Animate with delay
             setTimeout(() => {
                 const startTime = Date.now();
-                const duration = 500; // ms (Even faster speed)
+                const duration = 650; // ms (Slightly slower for more grace)
 
                 const animateVirtualMouse = () => {
                     const elapsed = Date.now() - startTime;
@@ -882,7 +837,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     const ease = 1 - Math.pow(1 - progress, 4);
 
                     virtualMouseRef.current = {
-                        x: startX + (progress * 50), // Slight right movement
+                        x: startX + (progress * 120), // Sweep across the '0 -> 1' text area
                         y: startY - (ease * (startY - endY)) // Move up
                     };
 
@@ -946,8 +901,13 @@ const ThreadGrid = ({ hideContent = false }) => {
                     const vDy = virtualMouseRef.current.y - midY;
                     const vDist = Math.sqrt(vDx * vDx + vDy * vDy);
 
-                    if (vDist < repelRadius) {
-                        const vForce = (1 - vDist / repelRadius) * 30; // Reduced force for subtler effect
+                    // Re-calculate box start column for filtering
+                    const centerCol_Physics = Math.round((cols - 1) / 2);
+                    const dupStartCol_Physics = centerCol_Physics - Math.floor(BOX_WIDTH_COLS / 2) - 1;
+
+                    // Only apply virtual mouse force to threads near the scroll text (left side of content box)
+                    if (vDist < repelRadius && conn.start.col >= dupStartCol_Physics && conn.start.col <= dupStartCol_Physics + 7) {
+                        const vForce = (1 - vDist / repelRadius) * 15; // Even gentler localized force
                         targetOffsetX += -(vDx / vDist) * vForce;
                         targetOffsetY += -(vDy / vDist) * vForce;
                     }
@@ -1682,10 +1642,20 @@ const ThreadGrid = ({ hideContent = false }) => {
                 {/* Inner Child 3: Right cluster — Studio */}
                 <div style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'baseline',
                     justifyContent: 'flex-end',
-                    minWidth: '160px'
+                    minWidth: '160px',
+                    gap: '6px'
                 }}>
+                    <span style={{
+                        fontFamily: '"Share Tech Mono", monospace',
+                        fontSize: '9px',
+                        letterSpacing: '-0.1px',
+                        fontWeight: 400,
+                        color: '#8b8a8aff'
+                    }}>
+                        @2025
+                    </span>
                     <span style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '18px',
@@ -1738,31 +1708,84 @@ const ThreadGrid = ({ hideContent = false }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 {!hideContent && (
-                    <div className="fade-anim-box2" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', opacity: 0 }}>
-                        <div style={{
-                            padding: '0 20px 4px 20px',
-                            textAlign: 'left'
-                        }}>
-                            <h2 style={{
-                                fontFamily: '"Rethink Sans", sans-serif',
-                                fontSize: '24px',
-                                letterSpacing: '-0.2px',
-                                lineHeight: '30px',
-                                fontWeight: 460,
-                                color: '#373434ff',
-                                margin: 0
+                    <div className="fade-anim-box2" style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        opacity: 0,
+                        position: 'relative'
+                    }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{
+                                width: '100%',
+                                padding: '0 20px'
                             }}>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.04em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
-                                    <RotatingText /> Design and Development shop
-                                </span>
-                                for startups and scaleups
-                            </h2>
+                                <div style={{
+                                    textAlign: 'left',
+                                    paddingTop: '0'
+                                }}>
+                                    <h2 style={{
+                                        fontFamily: '"Rethink Sans", sans-serif',
+                                        fontSize: '24px',
+                                        letterSpacing: '-0.2px',
+                                        lineHeight: '30px',
+                                        fontWeight: 460,
+                                        color: '#373434ff',
+                                        margin: 0
+                                    }}>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
+                                            <RotatingText /> Design and Development shop
+                                        </span>
+                                        for startups and scaleups
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                gap: '8px',
+                                width: '100%',
+                                padding: '0 20px',
+                                marginTop: '48px',
+                                marginBottom: '20px',
+                                pointerEvents: 'auto',
+                                alignItems: 'flex-start'
+                            }}>
+                                <ThreadButton extraPadding={1} onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}>
+                                    Get in touch
+                                </ThreadButton>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'center',
+                                    padding: '9px 4px 0 4px'
+                                }}>
+                                    <h2 style={{
+                                        fontFamily: '"Rethink Sans", sans-serif',
+                                        fontSize: '12px',
+                                        letterSpacing: '-0.02px',
+                                        lineHeight: '18px',
+                                        fontWeight: 340,
+                                        color: '#3fac55ff',
+                                        margin: 0,
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                        2 spots left in February
+                                    </h2>
+                                </div>
+                            </div>
                         </div>
 
+                        {/* Description - Absolute Positioned to avoid header push */}
                         <div style={{
-                            padding: '2px 20px 0 20px',
+                            position: 'absolute',
+                            left: '50.1%',
+                            top: '0',
+                            paddingTop: '7px',
                             textAlign: 'left',
-                            marginLeft: '2px'
+                            pointerEvents: 'none'
                         }}>
                             <p style={{
                                 fontFamily: '"Rethink Sans", sans-serif',
@@ -1770,58 +1793,113 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 lineHeight: '18px',
                                 fontWeight: 400,
                                 color: '#8b8a8aff',
-                                margin: 0
+                                margin: 0,
+                                pointerEvents: 'auto'
                             }}>
-
                                 We design and build interfaces for AI x B2B compaines.<br />
-                                One team obsessed with not so regular craft. </p>
+                                A shop radically obsessed with not so regular craft.
+                            </p>
                         </div>
 
+                        {/* Bottom Area Div */}
                         <div style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: '8px',
+                            flex: 1,
                             width: '100%',
-                            padding: '0 20px',
-                            marginTop: 'auto',
-                            marginBottom: '20px',
-                            pointerEvents: 'auto'
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '0 20px 20px 20px'
                         }}>
-                            <ThreadButton extraPadding={1} onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}>
-                                Get in touch
-                            </ThreadButton>
                             <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '0 4px'
+                                flex: 1,
+                                width: '100%',
+                                backgroundColor: '#f8f8f8ff',
+                                borderRadius: '0',
+                                pointerEvents: 'auto',
+                                border: '0.8px solid rgba(203, 203, 203, 0.08)'
                             }}>
-                                <h2 style={{
-                                    fontFamily: '"Rethink Sans", sans-serif',
-                                    fontSize: '12px',
-                                    letterSpacing: '-0.02px',
-                                    lineHeight: '18px',
-                                    fontWeight: 340,
-                                    color: '#3fac55ff',
-                                    margin: 0,
-                                    whiteSpace: 'nowrap'
+                                {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1.5fr 0.8fr 1.1fr 0.9fr',
+                                    gridTemplateRows: '1.2fr 1.0fr 1.1fr 0.7fr',
+                                    width: '100%',
+                                    height: '100%',
+                                    gap: '0'
                                 }}>
-                                    2 spots left in February
-                                </h2>
+                                    {[
+                                        { area: '1 / 1 / 2 / 3', label: '#FFDEB9', title: 'Product design' },
+                                        { area: '1 / 3 / 3 / 4', label: '#FE6244', title: 'Product development' },
+                                        { area: '1 / 4 / 3 / 5', label: '#DC0E0E', title: 'Website & no-code' },
+                                        { area: '2 / 1 / 5 / 2', label: '#62109F', title: 'Brand identity' },
+                                        { area: '3 / 2 / 5 / 5', label: '#274DF5', title: 'Motion & 3D' },
+                                        { area: '2 / 2 / 3 / 3', label: '#E2C6AB', title: 'Marketing collateral' }
+                                    ].map((block, i) => (
+                                        <div
+                                            key={i}
+                                            onMouseEnter={() => setHoveredMosaicIdx(i)}
+                                            onMouseLeave={() => setHoveredMosaicIdx(null)}
+                                            style={{
+                                                gridArea: block.area,
+                                                width: '100%',
+                                                height: '100%',
+                                                border: '0.4px solid rgba(0, 0, 0, 0.04)',
+                                                backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
+                                                backgroundSize: '12px 12px',
+                                                backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
+                                                padding: '8px',
+                                                display: 'flex',
+                                                alignItems: 'flex-end',
+                                                justifyContent: 'flex-end',
+                                                boxSizing: 'border-box',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.3s ease'
+                                            }}
+                                        >
+                                            <div style={{
+                                                position: 'relative',
+                                                width: '100%',
+                                                height: '14px', // Fixed height for alignment
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'flex-end',
+                                                pointerEvents: 'none'
+                                            }}>
+                                                {/* Hex Label - Fades Out */}
+                                                <span style={{
+                                                    position: 'absolute',
+                                                    right: 0,
+                                                    fontFamily: '"Share Tech Mono", monospace',
+                                                    fontSize: '10px',
+                                                    color: 'rgba(55, 52, 52, 0.3)',
+                                                    opacity: hoveredMosaicIdx === i ? 0 : 1,
+                                                    transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
+                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    {block.label}
+                                                </span>
+
+                                                {/* Service Title - Fades In */}
+                                                <span style={{
+                                                    position: 'absolute',
+                                                    right: 0,
+                                                    fontFamily: '"Rethink Sans", sans-serif',
+                                                    fontSize: '11px',
+                                                    fontWeight: 450,
+                                                    color: 'rgba(55, 52, 52, 0.85)',
+                                                    letterSpacing: '-0.2px',
+                                                    opacity: hoveredMosaicIdx === i ? 1 : 0,
+                                                    transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
+                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                    {block.title}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <button style={{
-                                padding: '8px 11px',
-                                background: 'transparent',
-                                color: '#373434',
-                                border: 'none',
-                                borderRadius: '8px',
-                                fontFamily: '"Rethink Sans", sans-serif',
-                                fontSize: '12px',
-                                cursor: 'pointer',
-                                marginLeft: 'auto'
-                            }}>
-                                See our work
-                            </button>
                         </div>
                     </div>
                 )}
@@ -1854,7 +1932,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 }}>
                                     <p style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '14px',
+                                        fontSize: '12px',
                                         lineHeight: '18px',
                                         fontWeight: 400,
                                         color: '#8b8a8aff',
@@ -2253,11 +2331,11 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
             onMouseMove={handleMouseMove}
             style={{
                 position: 'relative',
-                padding: `${8 + extraPadding}px ${18 + extraPadding}px`,
+                padding: `${7.5 + extraPadding}px ${16.5 + extraPadding}px`,
                 border: '0.6px solid rgba(38, 38, 91, 0.35)',
                 borderRadius: '9px',
                 fontFamily: '"Rethink Sans", sans-serif',
-                fontSize: '13px',
+                fontSize: '12px',
                 cursor: 'pointer',
                 overflow: 'hidden',
                 background: 'transparent',
