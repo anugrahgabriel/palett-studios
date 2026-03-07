@@ -263,7 +263,7 @@ const LiveIST = () => {
             display: 'inline-flex',
             alignItems: 'center',
             fontFamily: '"Rethink Sans", sans-serif',
-            fontSize: '11px',
+            fontSize: '12px',
             fontWeight: 400,
             color: '#8b8a8a',
             opacity: 0.8,
@@ -713,7 +713,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             start: sourcePoint,
                             end: targetPoint, // Fixed point in space
                             baseSag: baseSag,
-                            controlOffset: { x: 0, y: sourcePoint.y - midY }, // Start high
+                            controlOffset: { x: 0, y: 120 + baseSag }, // Start at equilibrium (gravity=120)
                             isHovered: false,
                             color: colors[Math.floor(Math.random() * colors.length)]
                         });
@@ -733,7 +733,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     start: sourcePoint,
                     end: targetPoint,
                     baseSag: 0,
-                    controlOffset: { x: 0, y: sourcePoint.y - midY },
+                    controlOffset: { x: 0, y: 120 }, // Start at equilibrium (gravity=120)
                     isHovered: false,
                     color: colors[Math.floor(Math.random() * colors.length)]
                 });
@@ -778,8 +778,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
         const isFirstInit = velocitiesRef.current.length !== connections.length;
         if (isFirstInit) {
             velocitiesRef.current = connections.map((_, i) => ({
-                // Alternate direction: even threads swing right, odd swing left
-                x: (i % 2 === 0 ? 1 : -1) * (6 + Math.random() * 6),
+                x: 0,
                 y: 0
             }));
         }
@@ -1490,38 +1489,37 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
+                    gap: '16px',
                     flex: 1,
                     justifyContent: 'center'
                 }}>
                     <LiveIST />
-                    {/* Vertical separator */}
-                    <div style={{ width: '1px', height: '11px', backgroundColor: '#D2D2D2', borderRadius: '1px', flexShrink: 0 }} />
-                    {/* Message icon → get in touch */}
-                    <button
+                    {/* Dot separator */}
+                    <div style={{ width: '3.5px', height: '3.5px', backgroundColor: '#D2D2D2', borderRadius: '50%', flexShrink: 0 }} />
+                    {/* Contact Link */}
+                    <span
                         onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}
                         style={{
-                            background: 'none',
-                            border: 'none',
+                            fontFamily: '"Rethink Sans", sans-serif',
+                            fontSize: '12px',
+                            fontWeight: 500,
+                            color: '#504d4dff',
                             cursor: 'pointer',
-                            padding: '3px',
-                            display: 'flex',
-                            alignItems: 'center',
                             opacity: 0.75,
                             transition: 'opacity 0.2s ease'
                         }}
                         onMouseEnter={e => e.currentTarget.style.opacity = 1}
                         onMouseLeave={e => e.currentTarget.style.opacity = 0.75}
                     >
-                        <MessageIcon />
-                    </button>
-                    {/* Vertical separator */}
-                    <div style={{ width: '1px', height: '11px', backgroundColor: '#D2D2D2', borderRadius: '1px', flexShrink: 0 }} />
+                        Contact
+                    </span>
+                    {/* Dot separator */}
+                    <div style={{ width: '3.5px', height: '3.5px', backgroundColor: '#D2D2D2', borderRadius: '50%', flexShrink: 0 }} />
                     {/* Join Us Link */}
                     <span style={{
                         fontFamily: '"Rethink Sans", sans-serif',
                         fontSize: '12px',
-                        fontWeight: 400,
+                        fontWeight: 500,
                         color: '#504d4dff',
                         cursor: 'pointer'
                     }}>
@@ -1931,9 +1929,9 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 <div style={{ flex: '0 0 auto' }}>
                                     <h2 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '23px',
+                                        fontSize: '21px',
                                         letterSpacing: '-0.2px',
-                                        lineHeight: '29px',
+                                        lineHeight: '27px',
                                         fontWeight: 460,
                                         color: '#373434ff',
                                         margin: 0,
