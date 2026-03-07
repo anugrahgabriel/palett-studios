@@ -1498,7 +1498,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     <div style={{ width: '3.5px', height: '3.5px', backgroundColor: '#D2D2D2', borderRadius: '50%', flexShrink: 0 }} />
                     {/* Contact Link */}
                     <span
-                        onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}
+                        onClick={() => navigate('/get-in-touch')}
                         style={{
                             fontFamily: '"Rethink Sans", sans-serif',
                             fontSize: '12px',
