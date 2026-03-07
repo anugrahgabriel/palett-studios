@@ -1,7 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger);
 import './Book.css';
 // Page images removed because files were deleted
 const leftPageImg = "";
@@ -25,85 +28,7 @@ const ArrowIcon = () => (
     </svg>
 );
 
-// Rotating Text Component with Blur Transitions
-const RotatingText = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isTransitioning, setIsTransitioning] = useState(false);
-    const words = ['0 → 1', 'Brand', 'Product', 'Website'];
-    const allWords = ['0 → 1', 'Brand', 'Product', 'Website', 'App', 'Platform', 'Service', 'System']; // Extended list for scroll effect
-    // Fixed widths for each word to enable smooth transitions
-    const widths = ['73px', '72px', '94px', '96px'];
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setIsTransitioning(true);
-            window.dispatchEvent(new CustomEvent('rotating-text-scroll'));
-            setTimeout(() => {
-                setCurrentIndex((prev) => (prev + 1) % words.length);
-                setIsTransitioning(false);
-            }, 400); // Transition happens midway through animation
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <span style={{
-            position: 'relative',
-            top: '-0.026em', // Relative unit for responsiveness
-            display: 'inline-block',
-            width: widths[currentIndex],
-            height: '30px',
-            overflow: 'hidden',
-            transition: 'width 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
-        }}>
-            {/* Show scrolling words during transition */}
-            {isTransitioning && allWords.map((word, idx) => (
-                <span
-                    key={`scroll-${idx}`}
-                    style={{
-                        opacity: 0.15,
-                        filter: 'blur(4px)',
-                        transform: `translateY(${-70 + (idx * 34)}px)`,
-                        transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        whiteSpace: 'nowrap',
-                        animation: 'scrollUp 0.6s ease-out'
-                    }}
-                >
-                    {word}
-                </span>
-            ))}
-
-            {/* Main target word */}
-            <span
-                style={{
-                    opacity: isTransitioning ? 0 : 0.6,
-                    filter: isTransitioning ? 'blur(4px)' : 'blur(0px)',
-                    transform: isTransitioning ? 'translateY(34px)' : 'translateY(0px)',
-                    transition: 'opacity 0.4s ease-in-out, filter 0.4s ease-in-out, transform 0.4s ease-in-out',
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    whiteSpace: 'nowrap'
-                }}
-            >
-                {words[currentIndex]}
-            </span>
-
-            <style>{`
-                @keyframes scrollUp {
-                    from { transform: translateY(100px); }
-                    to { transform: translateY(-100px); }
-                }
-            `}</style>
-        </span>
-    );
-};
 
 // Image Carousel Component for the 3rd Grid Box
 const ImageCarousel = React.memo(({ images, width, height }) => {
@@ -427,14 +352,13 @@ const ExpandableListBlock = ({ title, children }) => {
 };
 
 // Thread Grid Component with Physics
-const ThreadGrid = ({ hideContent = false }) => {
+const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const navigate = useNavigate();
     const containerRef = useRef(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [dots, setDots] = useState([]);
     const [connections, setConnections] = useState([]);
     const threadRefs = useRef([]);
-    const virtualMouseRef = useRef({ x: -1000, y: -1000 }); // Off-screen initially
     const [picHover, setPicHover] = useState(false);
     const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
     const [displayQuoteIndex, setDisplayQuoteIndex] = useState(0);
@@ -478,9 +402,20 @@ const ThreadGrid = ({ hideContent = false }) => {
         { area: '2 / 2 / 5 / 3', label: '#E2C6AB', title: 'Marketing collateral' }
     ];
 
-    // Animate content on Mount
+    // Scroll to top instantly when in get-in-touch mode
+    useEffect(() => {
+        if (mode === 'get-in-touch') {
+            window.scrollTo(0, 0);
+            if (containerRef.current) {
+                containerRef.current.scrollTop = 0;
+            }
+        }
+    }, [mode]);
+
+    // Animate content on Scroll & Mount
     useGSAP(() => {
         if (dots.length > 0) {
+            // Above the fold - Hero content fades in on mount
             gsap.fromTo(".fade-anim-box2",
                 { autoAlpha: 0, filter: 'blur(1px)', y: -6 },
                 {
@@ -493,46 +428,41 @@ const ThreadGrid = ({ hideContent = false }) => {
                 }
             );
 
-            // New Box content fades in second
-            gsap.fromTo(".fade-anim-newbox",
-                { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
-                {
-                    autoAlpha: 1,
-                    filter: 'blur(0px)',
-                    y: 0,
-                    duration: 1.3,
-                    delay: 0.4,
-                    ease: "power2.out"
-                }
-            );
+            // Beyond the fold - Use ScrollTrigger
+            const scrollElements = [
+                { class: ".fade-anim-mosaic", delay: 0 },
+                { class: ".fade-anim-newbox", delay: 0.8 }, // Significantly increased delay
+                { class: ".fade-anim-newbox2", delay: 1.0 },
+                { class: ".fade-anim-box3", delay: 1.2 }
+            ];
 
-            // New Box 2 fades in alongside
-            gsap.fromTo(".fade-anim-newbox2",
-                { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
-                {
-                    autoAlpha: 1,
-                    filter: 'blur(0px)',
-                    y: 0,
-                    duration: 1.3,
-                    delay: 0.45,
-                    ease: "power2.out"
-                }
-            );
+            scrollElements.forEach(el => {
+                gsap.fromTo(el.class,
+                    { autoAlpha: 0, filter: 'blur(5px)', y: 25 },
+                    {
+                        autoAlpha: 1,
+                        filter: 'blur(0px)',
+                        y: 0,
+                        duration: 2.2, // Ultra-slow majestic transition
+                        delay: el.delay,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: el.class,
+                            scroller: containerRef.current,
+                            start: "top 98%",
+                            toggleActions: "play none none none",
+                            invalidateOnRefresh: true
+                        }
+                    }
+                );
+            });
 
-            // Box 3 (carousel) fades in third
-            gsap.fromTo(".fade-anim-box3",
-                { autoAlpha: 0, filter: 'blur(3px)', y: 6 },
-                {
-                    autoAlpha: 1,
-                    filter: 'blur(0px)',
-                    y: 0,
-                    duration: 1.3,
-                    delay: 0.65,
-                    ease: "power2.out"
-                }
-            );
+            // Small delay to ensure the grid has settled before calculating trigger points
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 500);
         }
-    }, { dependencies: [dots.length], revertOnUpdate: true });
+    }, { dependencies: [dots.length, mode], scope: containerRef });
 
     // Handle symmetrical exit and entry transitions
     useEffect(() => {
@@ -614,7 +544,9 @@ const ThreadGrid = ({ hideContent = false }) => {
     // Add extra rows/cols to ensure full coverage + extra rows for extending downwards
     const cols = Math.ceil(viewportWidth / cellSize) + 2;
     const baseRows = Math.ceil(viewportHeight / cellSize) + 2;
-    const rowsCount = baseRows + 31; // Total rows including vertical extension
+    const rowsCount = mode === 'get-in-touch'
+        ? (BOX_3_START_ROW + BOX_3_HEIGHT + 3)
+        : (baseRows + 31); // Total rows including vertical extension
 
     // Start offsets for centering
     const gridStartX = (viewportWidth - (cols * cellSize)) / 2;
@@ -670,28 +602,30 @@ const ThreadGrid = ({ hideContent = false }) => {
         const filterBoxWidth = BOX_WIDTH_COLS + 1;
 
         const finalDots = generatedDots.filter(d => {
-            // Check Duplicate Box
+            // Check Duplicate Box (First Content Box)
             const isInsideDupBox =
                 d.col > dupStartCol &&
                 d.col < dupStartCol + filterBoxWidth &&
                 d.row > dupStartRow &&
                 d.row < dupStartRow + dupHeightRows_Filter;
 
-            // Check New Box
+            if (mode === 'get-in-touch') {
+                return !isInsideDupBox;
+            }
+
+            // Check other boxes (Only in Full Mode)
             const isInsideNewBox =
                 d.col > newStartCol &&
                 d.col < newStartCol + filterBoxWidth &&
                 d.row > newStartRow &&
                 d.row < newStartRow + newHeightRows_Filter;
 
-            // Check New Box 2
             const isInsideNew2Box =
                 d.col > new2StartCol &&
                 d.col < new2StartCol + filterBoxWidth &&
                 d.row > new2StartRow &&
                 d.row < new2StartRow + new2HeightRows_Filter;
 
-            // Check Triplicate Box
             const isInsideTripBox =
                 d.col > tripStartCol &&
                 d.col < tripStartCol + filterBoxWidth &&
@@ -807,7 +741,7 @@ const ThreadGrid = ({ hideContent = false }) => {
         }
 
         setConnections(generatedConnections);
-    }, []);
+    }, [mode]);
 
     // Mouse tracking
     useEffect(() => {
@@ -832,51 +766,7 @@ const ThreadGrid = ({ hideContent = false }) => {
         }
     }, []);
 
-    // Listen for rotating text scroll event
-    useEffect(() => {
-        const handleTextScroll = () => {
-            // Sweeping "from left up" specifically where RotatingText is
-            const centerCol_Scroll = Math.round((cols - 1) / 2);
-            const dupStartCol_Scroll = centerCol_Scroll - Math.floor(BOX_WIDTH_COLS / 2) - 1;
-            const startX = gridStartX + (dupStartCol_Scroll * cellSize) + 20;
 
-            const startY = gridStartY + (BOX_3_START_ROW * cellSize) + 20; // Correctly start relative to box row
-            const endY = gridStartY + ((BOX_3_START_ROW - 4) * cellSize); // Move up 4 rows into threads
-
-            // Reset to start
-            virtualMouseRef.current = { x: startX, y: startY };
-
-            // Animate with delay
-            setTimeout(() => {
-                const startTime = Date.now();
-                const duration = 650; // ms (Slightly slower for more grace)
-
-                const animateVirtualMouse = () => {
-                    const elapsed = Date.now() - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    // Use Quartic ease out for sharper "fast start, slow mid/end"
-                    const ease = 1 - Math.pow(1 - progress, 4);
-
-                    virtualMouseRef.current = {
-                        x: startX + (progress * 120), // Sweep across the '0 -> 1' text area
-                        y: startY - (ease * (startY - endY)) // Move up
-                    };
-
-                    if (progress < 1) {
-                        requestAnimationFrame(animateVirtualMouse);
-                    } else {
-                        // Reset off-screen after animation
-                        virtualMouseRef.current = { x: -1000, y: -1000 };
-                    }
-                };
-
-                requestAnimationFrame(animateVirtualMouse);
-            }, 250);
-        };
-
-        window.addEventListener('rotating-text-scroll', handleTextScroll);
-        return () => window.removeEventListener('rotating-text-scroll', handleTextScroll);
-    }, []);
 
     // Physics animation for threads with momentum
     const velocitiesRef = useRef([]);
@@ -917,21 +807,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                         targetOffsetY += -(dy / dist) * force;
                     }
 
-                    // Virtual Mouse Force (from text scroll)
-                    const vDx = virtualMouseRef.current.x - midX;
-                    const vDy = virtualMouseRef.current.y - midY;
-                    const vDist = Math.sqrt(vDx * vDx + vDy * vDy);
 
-                    // Re-calculate box start column for filtering
-                    const centerCol_Physics = Math.round((cols - 1) / 2);
-                    const dupStartCol_Physics = centerCol_Physics - Math.floor(BOX_WIDTH_COLS / 2) - 1;
-
-                    // Only apply virtual mouse force to threads near the scroll text (left side of content box)
-                    if (vDist < repelRadius && conn.start.col >= dupStartCol_Physics && conn.start.col <= dupStartCol_Physics + 7) {
-                        const vForce = (1 - vDist / repelRadius) * 15; // Even gentler localized force
-                        targetOffsetX += -(vDx / vDist) * vForce;
-                        targetOffsetY += -(vDy / vDist) * vForce;
-                    }
 
                     // Current position
                     const currentOffsetX = conn.controlOffset?.x || 0;
@@ -1103,156 +979,144 @@ const ThreadGrid = ({ hideContent = false }) => {
             });
 
 
-
-            // --- NEW Grid Box (Directly below Box 2) ---
+            // --- NEW, NEW2 and TRIPLICATE Grid Box Parameters (Needed for positioning) ---
             const newStartCol = dupStartCol;
             const newTargetRow = BOX_NEW_START_ROW;
             const newHeightRows = BOX_NEW_HEIGHT;
             const effectiveNewWidth = effectiveDupWidth;
 
-            // Horizontal lines for NEW Box (bottom edge)
-            const newHorizontalRows = [newHeightRows];
-            newHorizontalRows.forEach(r => {
-                for (let c = newStartCol; c < newStartCol + effectiveNewWidth; c++) {
-                    const currentRow = newTargetRow + r;
-                    const d1 = dots.find(d => d.col === c && d.row === currentRow);
-                    const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
-
-                    if (d1 && d2) {
-                        dashedLines.push({
-                            id: `new-h-full-${r}-${c}`,
-                            x1: d1.x,
-                            y1: d1.y,
-                            x2: d2.x,
-                            y2: d2.y
-                        });
-                    }
-                }
-            });
-
-            // Corner Plus Icons for NEW Box
-            const newCornerCoords = [
-                { col: newStartCol, row: newTargetRow },
-                { col: newStartCol + effectiveNewWidth, row: newTargetRow },
-                { col: newStartCol, row: newTargetRow + newHeightRows },
-                { col: newStartCol + effectiveNewWidth, row: newTargetRow + newHeightRows }
-            ];
-
-            newCornerCoords.forEach((coord, idx) => {
-                const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
-                if (dot) {
-                    dashedLines.push({
-                        id: `new-corner-plus-${idx}`,
-                        x1: dot.x,
-                        y1: dot.y,
-                        type: 'corner-plus'
-                    });
-                }
-            });
-
-            // --- NEW Grid Box 2 ---
             const new2StartCol = dupStartCol;
             const new2TargetRow = BOX_NEW2_START_ROW;
             const new2HeightRows = BOX_NEW2_HEIGHT;
             const effectiveNew2Width = effectiveDupWidth;
 
-            // Horizontal lines for NEW Box 2 (bottom edge)
-            const new2HorizontalRows = [new2HeightRows];
-            new2HorizontalRows.forEach(r => {
-                for (let c = new2StartCol; c < new2StartCol + effectiveNew2Width; c++) {
-                    const currentRow = new2TargetRow + r;
-                    const d1 = dots.find(d => d.col === c && d.row === currentRow);
-                    const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
-
-                    if (d1 && d2) {
-                        dashedLines.push({
-                            id: `new2-h-full-${r}-${c}`,
-                            x1: d1.x,
-                            y1: d1.y,
-                            x2: d2.x,
-                            y2: d2.y
-                        });
-                    }
-                }
-            });
-
-            // Corner Plus Icons for NEW Box 2
-            const new2CornerCoords = [
-                { col: new2StartCol, row: new2TargetRow },
-                { col: new2StartCol + effectiveNew2Width, row: new2TargetRow },
-                { col: new2StartCol, row: new2TargetRow + new2HeightRows },
-                { col: new2StartCol + effectiveNew2Width, row: new2TargetRow + new2HeightRows }
-            ];
-
-            new2CornerCoords.forEach((coord, idx) => {
-                const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
-                if (dot) {
-                    dashedLines.push({
-                        id: `new2-corner-plus-${idx}`,
-                        x1: dot.x,
-                        y1: dot.y,
-                        type: 'corner-plus'
-                    });
-                }
-            });
-
-            // --- TRIPLICATE Grid Box (Bottom of New Box) ---
             const tripStartCol = dupStartCol;
             const tripTargetRow = BOX_TRIP_START_ROW;
             const tripHeightRows = BOX_TRIP_HEIGHT;
             const effectiveTripWidth = effectiveDupWidth;
 
-            // Find columns that are comfortably within the visible screen area (for line extensions and markers)
-            const visibleDots = dots.filter(d => d.x > 40 && d.x < window.innerWidth - 40);
-            const screenVisibleMinCol = visibleDots.reduce((min, d) => Math.min(min, d.col), Infinity);
-            const screenVisibleMaxCol = visibleDots.reduce((max, d) => Math.max(max, d.col), 0);
+            // --- Generate Grid Lines - Only in Full Mode ---
+            if (mode !== 'get-in-touch') {
+                // Horizontal lines for NEW Box (bottom edge)
+                const newHorizontalRows = [newHeightRows];
+                newHorizontalRows.forEach(r => {
+                    for (let c = newStartCol; c < newStartCol + effectiveNewWidth; c++) {
+                        const currentRow = newTargetRow + r;
+                        const d1 = dots.find(d => d.col === c && d.row === currentRow);
+                        const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
 
+                        if (d1 && d2) {
+                            dashedLines.push({
+                                id: `new-h-full-${r}-${c}`,
+                                x1: d1.x,
+                                y1: d1.y,
+                                x2: d2.x,
+                                y2: d2.y
+                            });
+                        }
+                    }
+                });
 
-            const tripHorizontalRows = [0, tripHeightRows]; // Restored Top and Bottom edges
+                // Corner Plus Icons for NEW Box
+                const newCornerCoords = [
+                    { col: newStartCol, row: newTargetRow },
+                    { col: newStartCol + effectiveNewWidth, row: newTargetRow },
+                    { col: newStartCol, row: newTargetRow + newHeightRows },
+                    { col: newStartCol + effectiveNewWidth, row: newTargetRow + newHeightRows }
+                ];
 
-            // Horizontal lines for TRIPLICATE - only box 3 width (not full screen)
-            tripHorizontalRows.forEach(r => {
-                for (let c = tripStartCol; c < tripStartCol + effectiveTripWidth; c++) {
-                    const currentRow = tripTargetRow + r;
-                    const d1 = dots.find(d => d.col === c && d.row === currentRow);
-                    const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
-
-                    if (d1 && d2) {
+                newCornerCoords.forEach((coord, idx) => {
+                    const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
+                    if (dot) {
                         dashedLines.push({
-                            id: `trip-h-full-${r}-${c}`,
-                            x1: d1.x,
-                            y1: d1.y,
-                            x2: d2.x,
-                            y2: d2.y
+                            id: `new-corner-plus-${idx}`,
+                            x1: dot.x,
+                            y1: dot.y,
+                            type: 'corner-plus'
                         });
                     }
-                }
-            });
+                });
 
-            // --- Corner Plus Icons for 3rd Grid Box ---
-            // Top-Left: (tripStartCol, tripTargetRow)
-            // Top-Right: (tripStartCol + effectiveTripWidth, tripTargetRow)
-            // Bottom-Left: (tripStartCol, tripTargetRow + tripHeightRows)
-            // Bottom-Right: (tripStartCol + effectiveTripWidth, tripTargetRow + tripHeightRows)
+                // Horizontal lines for NEW Box 2 (bottom edge)
+                const new2HorizontalRows = [new2HeightRows];
+                new2HorizontalRows.forEach(r => {
+                    for (let c = new2StartCol; c < new2StartCol + effectiveNew2Width; c++) {
+                        const currentRow = new2TargetRow + r;
+                        const d1 = dots.find(d => d.col === c && d.row === currentRow);
+                        const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
 
-            const cornerCoords = [
-                { col: tripStartCol, row: tripTargetRow },
-                { col: tripStartCol + effectiveTripWidth, row: tripTargetRow },
-                { col: tripStartCol, row: tripTargetRow + tripHeightRows },
-                { col: tripStartCol + effectiveTripWidth, row: tripTargetRow + tripHeightRows }
-            ];
+                        if (d1 && d2) {
+                            dashedLines.push({
+                                id: `new2-h-full-${r}-${c}`,
+                                x1: d1.x,
+                                y1: d1.y,
+                                x2: d2.x,
+                                y2: d2.y
+                            });
+                        }
+                    }
+                });
 
-            cornerCoords.forEach((coord, idx) => {
-                const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
-                if (dot) {
-                    dashedLines.push({
-                        id: `corner-plus-${idx}`,
-                        x1: dot.x,
-                        y1: dot.y,
-                        type: 'corner-plus'
-                    });
-                }
-            });
+                // Corner Plus Icons for NEW Box 2
+                const new2CornerCoords = [
+                    { col: new2StartCol, row: new2TargetRow },
+                    { col: new2StartCol + effectiveNew2Width, row: new2TargetRow },
+                    { col: new2StartCol, row: new2TargetRow + new2HeightRows },
+                    { col: new2StartCol + effectiveNew2Width, row: new2TargetRow + new2HeightRows }
+                ];
+
+                new2CornerCoords.forEach((coord, idx) => {
+                    const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
+                    if (dot) {
+                        dashedLines.push({
+                            id: `new2-corner-plus-${idx}`,
+                            x1: dot.x,
+                            y1: dot.y,
+                            type: 'corner-plus'
+                        });
+                    }
+                });
+
+                // Horizontal lines for TRIPLICATE - only box 3 width (not full screen)
+                const tripHorizontalRows = [0, tripHeightRows];
+                tripHorizontalRows.forEach(r => {
+                    for (let c = tripStartCol; c < tripStartCol + effectiveTripWidth; c++) {
+                        const currentRow = tripTargetRow + r;
+                        const d1 = dots.find(d => d.col === c && d.row === currentRow);
+                        const d2 = dots.find(d => d.col === c + 1 && d.row === currentRow);
+
+                        if (d1 && d2) {
+                            dashedLines.push({
+                                id: `trip-h-full-${r}-${c}`,
+                                x1: d1.x,
+                                y1: d1.y,
+                                x2: d2.x,
+                                y2: d2.y
+                            });
+                        }
+                    }
+                });
+
+                // Corner Plus Icons for 3rd Grid Box
+                const cornerCoords = [
+                    { col: tripStartCol, row: tripTargetRow },
+                    { col: tripStartCol + effectiveTripWidth, row: tripTargetRow },
+                    { col: tripStartCol, row: tripTargetRow + tripHeightRows },
+                    { col: tripStartCol + effectiveTripWidth, row: tripTargetRow + tripHeightRows }
+                ];
+
+                cornerCoords.forEach((coord, idx) => {
+                    const dot = dots.find(d => d.col === coord.col && d.row === coord.row);
+                    if (dot) {
+                        dashedLines.push({
+                            id: `corner-plus-${idx}`,
+                            x1: dot.x,
+                            y1: dot.y,
+                            type: 'corner-plus'
+                        });
+                    }
+                });
+            }
 
             // --- Continuous Vertical Lines (Left and Right edges) ---
             // Extend from top of SECOND box (dupTargetRow) to very bottom of screen
@@ -1260,7 +1124,7 @@ const ThreadGrid = ({ hideContent = false }) => {
             const maxRow = dots.reduce((max, d) => Math.max(max, d.row), 0);
 
             const globalStartRow = dupTargetRow; // Start from duplicate box top
-            const globalEndRow = tripTargetRow + tripHeightRows; // Stop exactly at Box 3 bottom edge
+            const globalEndRow = mode === 'get-in-touch' ? (dupTargetRow + dupHeightRows) : (tripTargetRow + tripHeightRows); // Adjust stop row based on mode
             const totalVerticalHeight = globalEndRow - globalStartRow;
 
             const verticalEdgeCols = [0, effectiveLeftBoxWidth];
@@ -1291,8 +1155,13 @@ const ThreadGrid = ({ hideContent = false }) => {
             // Bottom edge of 3rd grid is `tripTargetRow + tripHeightRows`.
             // User said "to the row before 3rd grid bottom edge." -> tripTargetRow + tripHeightRows - 1.
 
+            // Find columns that are comfortably within the visible screen area (for line extensions and markers)
+            const visibleDots = dots.filter(d => d.x > 40 && d.x < window.innerWidth - 40);
+            const screenVisibleMinCol = visibleDots.reduce((min, d) => Math.min(min, d.col), Infinity);
+            const screenVisibleMaxCol = visibleDots.reduce((max, d) => Math.max(max, d.col), 0);
+
             const markerStartRow = targetRow + 1;
-            const markerEndRow = tripTargetRow + tripHeightRows;
+            const markerEndRow = mode === 'get-in-touch' ? (dupTargetRow + dupHeightRows) : (tripTargetRow + tripHeightRows);
 
             // Aligned with the screen left and right edges
             // Use the same visible bounds calculated earlier
@@ -1756,7 +1625,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                         margin: 0
                                     }}>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
-                                            <RotatingText /> Design and Development shop
+                                            Design and Development shop
                                         </span>
                                         for startups and scaleups
                                     </h2>
@@ -1774,7 +1643,14 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 pointerEvents: 'auto',
                                 alignItems: 'flex-start'
                             }}>
-                                <ThreadButton extraPadding={1} onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}>
+                                <ThreadButton
+                                    extraPadding={1}
+                                    onClick={() => {
+                                        if (mode !== 'get-in-touch') {
+                                            navigate('/get-in-touch');
+                                        }
+                                    }}
+                                >
                                     Get in touch
                                 </ThreadButton>
                                 <div style={{
@@ -1826,110 +1702,112 @@ const ThreadGrid = ({ hideContent = false }) => {
                         </div>
 
                         {/* Bottom Area Div */}
-                        <div style={{
-                            flex: 1,
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            padding: '0 20px 20px 20px'
-                        }}>
+                        {mode !== 'get-in-touch' && (
                             <div style={{
                                 flex: 1,
                                 width: '100%',
-                                backgroundColor: '#f8f8f8ff',
-                                borderRadius: '0',
-                                pointerEvents: 'auto',
-                                border: '0.8px solid rgba(203, 203, 203, 0.08)'
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: '0 20px 20px 20px'
                             }}>
-                                {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
-                                    gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
+                                <div className="fade-anim-mosaic" style={{
+                                    flex: 1,
                                     width: '100%',
-                                    height: '100%',
-                                    gap: '0'
+                                    backgroundColor: '#f8f8f8ff',
+                                    borderRadius: '0',
+                                    pointerEvents: 'auto',
+                                    border: '0.8px solid rgba(203, 203, 203, 0.08)'
                                 }}>
-                                    {mosaicBlocks.map((block, i) => (
-                                        <div
-                                            key={i}
-                                            onMouseEnter={() => {
-                                                setHoveredMosaicIdx(i);
-                                                setIsAutoMosaicEnabled(false);
-                                            }}
-                                            onMouseLeave={() => {
-                                                setHoveredMosaicIdx(null);
-                                                setIsAutoMosaicEnabled(true);
-                                            }}
-                                            style={{
-                                                gridArea: block.area,
-                                                width: '100%',
-                                                height: '100%',
-                                                border: '0.4px solid rgba(0, 0, 0, 0.04)',
-                                                backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
-                                                backgroundSize: '12px 12px',
-                                                backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
-                                                padding: '8px',
-                                                display: 'flex',
-                                                alignItems: 'flex-end',
-                                                justifyContent: 'flex-end',
-                                                boxSizing: 'border-box',
-                                                cursor: 'pointer',
-                                                transition: 'background-color 0.3s ease'
-                                            }}
-                                        >
-                                            <div style={{
-                                                position: 'relative',
-                                                width: '100%',
-                                                height: '14px', // Fixed height for alignment
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'flex-end',
-                                                pointerEvents: 'none'
-                                            }}>
-                                                {/* Hex Label - Fades Out */}
-                                                <span style={{
-                                                    position: 'absolute',
-                                                    right: 0,
-                                                    fontFamily: '"Share Tech Mono", monospace',
-                                                    fontSize: '11px',
-                                                    color: 'rgba(55, 52, 52, 0.3)',
-                                                    opacity: hoveredMosaicIdx === i ? 0 : 1,
-                                                    transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
-                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    whiteSpace: 'nowrap'
+                                    {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
+                                        gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
+                                        width: '100%',
+                                        height: '100%',
+                                        gap: '0'
+                                    }}>
+                                        {mosaicBlocks.map((block, i) => (
+                                            <div
+                                                key={i}
+                                                onMouseEnter={() => {
+                                                    setHoveredMosaicIdx(i);
+                                                    setIsAutoMosaicEnabled(false);
+                                                }}
+                                                onMouseLeave={() => {
+                                                    setHoveredMosaicIdx(null);
+                                                    setIsAutoMosaicEnabled(true);
+                                                }}
+                                                style={{
+                                                    gridArea: block.area,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    border: '0.4px solid rgba(0, 0, 0, 0.04)',
+                                                    backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
+                                                    backgroundSize: '12px 12px',
+                                                    backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
+                                                    padding: '8px',
+                                                    display: 'flex',
+                                                    alignItems: 'flex-end',
+                                                    justifyContent: 'flex-end',
+                                                    boxSizing: 'border-box',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease'
+                                                }}
+                                            >
+                                                <div style={{
+                                                    position: 'relative',
+                                                    width: '100%',
+                                                    height: '14px', // Fixed height for alignment
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'flex-end',
+                                                    pointerEvents: 'none'
                                                 }}>
-                                                    {block.label}
-                                                </span>
+                                                    {/* Hex Label - Fades Out */}
+                                                    <span style={{
+                                                        position: 'absolute',
+                                                        right: 0,
+                                                        fontFamily: '"Share Tech Mono", monospace',
+                                                        fontSize: '11px',
+                                                        color: 'rgba(55, 52, 52, 0.3)',
+                                                        opacity: hoveredMosaicIdx === i ? 0 : 1,
+                                                        transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
+                                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        whiteSpace: 'nowrap'
+                                                    }}>
+                                                        {block.label}
+                                                    </span>
 
-                                                {/* Service Title - Fades In */}
-                                                <span style={{
-                                                    position: 'absolute',
-                                                    right: 0,
-                                                    fontFamily: '"Rethink Sans", sans-serif',
-                                                    fontSize: '12px',
-                                                    fontWeight: 450,
-                                                    color: 'rgba(55, 52, 52, 0.85)',
-                                                    letterSpacing: '-0.2px',
-                                                    opacity: hoveredMosaicIdx === i ? 1 : 0,
-                                                    transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
-                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    whiteSpace: 'nowrap'
-                                                }}>
-                                                    {block.title}
-                                                </span>
+                                                    {/* Service Title - Fades In */}
+                                                    <span style={{
+                                                        position: 'absolute',
+                                                        right: 0,
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '12px',
+                                                        fontWeight: 450,
+                                                        color: 'rgba(55, 52, 52, 0.85)',
+                                                        letterSpacing: '-0.2px',
+                                                        opacity: hoveredMosaicIdx === i ? 1 : 0,
+                                                        transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
+                                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        whiteSpace: 'nowrap'
+                                                    }}>
+                                                        {block.title}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>
 
-            {/* New Middle Box Area */}
-            {newBoxPosition.left && (
+            {/* New Grid Box Area - Only in Full Mode */}
+            {newBoxPosition.left && mode !== 'get-in-touch' && (
                 <div style={{
                     position: 'absolute',
                     ...newBoxPosition,
@@ -1937,7 +1815,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     pointerEvents: 'auto'
                 }}>
                     {!hideContent && (
-                        <div className="fade-anim-newbox" style={{ width: '100%', height: '100%', display: 'flex', opacity: 0 }}>
+                        <div className="fade-anim-newbox" style={{ width: '100%', height: '100%', display: 'flex' }}>
                             {/* Left Side */}
                             <div style={{
                                 flex: 1,
@@ -1996,8 +1874,8 @@ const ThreadGrid = ({ hideContent = false }) => {
                 </div>
             )}
 
-            {/* New Middle Box 2 Area (Bottom part) */}
-            {new2BoxPosition.left && (
+            {/* New Middle Box 2 Area - Only in Full Mode */}
+            {new2BoxPosition.left && mode !== 'get-in-touch' && (
                 <div style={{
                     position: 'absolute',
                     ...new2BoxPosition,
@@ -2005,15 +1883,15 @@ const ThreadGrid = ({ hideContent = false }) => {
                     pointerEvents: 'auto'
                 }}>
                     {!hideContent && (
-                        <div className="fade-anim-newbox2" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0 }}>
+                        <div className="fade-anim-newbox2" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {/* Empty container ready for content */}
                         </div>
                     )}
                 </div>
             )}
 
-            {/* 3rd Grid Box Carousel */}
-            {tripBoxPosition.left && (
+            {/* 3rd Grid Box Carousel - Only in Full Mode */}
+            {tripBoxPosition.left && mode !== 'get-in-touch' && (
                 <div style={{
                     position: 'absolute',
                     ...tripBoxPosition,
@@ -2022,7 +1900,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     backgroundColor: '#FFFFFF'
                 }}>
                     {!hideContent && (
-                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative', opacity: 0 }}>
+                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative' }}>
                             {/* Carousel fills full box */}
                             <ImageCarousel
                                 images={[slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8, slide9, slide10]}
@@ -2226,20 +2104,23 @@ const ThreadGrid = ({ hideContent = false }) => {
                 </div>
             )}
 
-            {/* Scroll Spacer — sized to Box 3's bottom edge + comfortable padding */}
+            {/* Scroll Spacer */}
             <div style={{
-                height: tripBoxPosition.top
-                    ? `${parseFloat(tripBoxPosition.top) + parseFloat(tripBoxPosition.height) + 120}px`
-                    : '150vh',
+                height: mode === 'get-in-touch'
+                    ? '0px'
+                    : (tripBoxPosition.top
+                        ? `${parseFloat(tripBoxPosition.top) + parseFloat(tripBoxPosition.height) + 120}px`
+                        : '150vh'),
                 width: '100%',
                 pointerEvents: 'none'
             }} />
-        </div >
+        </div>
     );
 };
 
 // Thread Button Component
 const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
+    const navigate = useNavigate();
     const [hovered, setHovered] = useState(false);
     const [threads, setThreads] = useState([]);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -2483,7 +2364,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
     );
 };
 
-const Book = ({ hideContent = false }) => {
+const Book = ({ hideContent = false, mode = 'full' }) => {
     const containerRef = useRef(null);
     const leftWrapperRef = useRef(null); // Controls Position & Float
     const rightWrapperRef = useRef(null);
@@ -2597,9 +2478,7 @@ const Book = ({ hideContent = false }) => {
     return (
         <div className="book-wrapper" style={{ width: '100%', position: 'relative' }}>
             {/* Thread Grid with Physics */}
-            <ThreadGrid hideContent={hideContent} />
-
-
+            <ThreadGrid hideContent={hideContent} mode={mode} />
         </div>
     );
 };
