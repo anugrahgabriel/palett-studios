@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -218,8 +218,7 @@ const RollingDigit = ({ value }) => {
             overflow: 'hidden',
             height: '1em',
             lineHeight: '1em',
-            position: 'relative',
-            width: '0.65em'
+            position: 'relative'
         }}>
             <span style={{
                 display: 'block',
@@ -256,18 +255,18 @@ const LiveIST = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const sep = <span style={{ opacity: 0.5, marginBottom: '0.5px' }}>:</span>;
+    const sep = <span style={{ opacity: 0.7, marginBottom: '0px' }}>:</span>;
 
     return (
         <span style={{
             display: 'inline-flex',
             alignItems: 'center',
-            fontFamily: '"Rethink Sans", sans-serif',
-            fontSize: '12px',
+            fontFamily: '"Share Tech Mono", monospace',
+            fontSize: '10px',
             fontWeight: 400,
             color: '#8b8a8a',
-            opacity: 0.8,
-            letterSpacing: '0.3px',
+            opacity: 1,
+            letterSpacing: '-0.1px',
             lineHeight: 1
         }}>
             <RollingDigit value={time.hh[0]} />
@@ -278,7 +277,7 @@ const LiveIST = () => {
             {sep}
             <RollingDigit value={time.ss[0]} />
             <RollingDigit value={time.ss[1]} />
-            <span style={{ marginLeft: '4px', letterSpacing: '0.5px', opacity: 0.6 }}>IST</span>
+            <span style={{ marginLeft: '4px', letterSpacing: '0px', opacity: 0.8 }}>IST</span>
         </span>
     );
 };
@@ -364,6 +363,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const [displayQuoteIndex, setDisplayQuoteIndex] = useState(0);
     const quoteContentRef = useRef(null);
     const [hoveredMosaicIdx, setHoveredMosaicIdx] = useState(null);
+    const location = useLocation();
+    const [hoveredLink, setHoveredLink] = useState(null);
     const [isAutoMosaicEnabled, setIsAutoMosaicEnabled] = useState(true);
 
     const quotes = [
@@ -1471,8 +1472,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
             {/* Navigation Box Container */}
             <div style={navBoxStyle}>
-                {/* Inner Child 1: Text (Logo Part 1) */}
-                <div style={{ display: 'flex', alignItems: 'center', minWidth: '160px' }}>
+                {/* Inner Child 1: Text (Logo Part 1) + Time */}
+                <div style={{ display: 'flex', alignItems: 'baseline', minWidth: '160px', gap: '8px' }}>
                     <span onClick={() => navigate('/')} style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '19px',
@@ -1483,46 +1484,56 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     }}>
                         Palett
                     </span>
+                    <LiveIST />
                 </div>
 
-                {/* Inner Child 2: Time and Message (Center Aligned) */}
+                {/* Inner Child 2: Navigation Links (Center Aligned) */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '16px',
+                    gap: '24px',
                     flex: 1,
                     justifyContent: 'center'
                 }}>
-                    <LiveIST />
-                    {/* Dot separator */}
-                    <div style={{ width: '3.5px', height: '3.5px', backgroundColor: '#D2D2D2', borderRadius: '50%', flexShrink: 0 }} />
                     {/* Contact Link */}
                     <span
                         onClick={() => navigate('/get-in-touch')}
+                        onMouseEnter={() => setHoveredLink('contact')}
+                        onMouseLeave={() => setHoveredLink(null)}
                         style={{
                             fontFamily: '"Rethink Sans", sans-serif',
                             fontSize: '12px',
                             fontWeight: 500,
-                            color: '#504d4dff',
+                            color: '#2d2d2d',
                             cursor: 'pointer',
-                            opacity: 0.75,
-                            transition: 'opacity 0.2s ease'
+                            opacity: location.pathname === '/get-in-touch'
+                                ? 1
+                                : (hoveredLink === 'contact' ? 0.5 : 1),
+                            transition: 'opacity 0.2s ease',
+                            padding: '4px 0'
                         }}
-                        onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                        onMouseLeave={e => e.currentTarget.style.opacity = 0.75}
                     >
                         Contact
                     </span>
-                    {/* Dot separator */}
-                    <div style={{ width: '3.5px', height: '3.5px', backgroundColor: '#D2D2D2', borderRadius: '50%', flexShrink: 0 }} />
+
                     {/* Join Us Link */}
-                    <span style={{
-                        fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: '#504d4dff',
-                        cursor: 'pointer'
-                    }}>
+                    <span
+                        onClick={() => {/* Add Join Us path if needed */ }}
+                        onMouseEnter={() => setHoveredLink('join')}
+                        onMouseLeave={() => setHoveredLink(null)}
+                        style={{
+                            fontFamily: '"Rethink Sans", sans-serif',
+                            fontSize: '12px',
+                            fontWeight: 500,
+                            color: '#2d2d2d',
+                            cursor: 'pointer',
+                            opacity: location.pathname === '/get-in-touch'
+                                ? (hoveredLink === 'join' ? 1 : 0.3)
+                                : (hoveredLink === 'join' ? 0.5 : 1),
+                            transition: 'opacity 0.2s ease',
+                            padding: '4px 0'
+                        }}
+                    >
                         Join Us
                     </span>
                 </div>
@@ -1540,9 +1551,10 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         fontSize: '10px',
                         letterSpacing: '-0.1px',
                         fontWeight: 400,
-                        color: '#8b8a8aff'
+                        color: '#8b8a8aff',
+                        opacity: 1
                     }}>
-                        @2025
+                        @ 2025
                     </span>
                     <span style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',

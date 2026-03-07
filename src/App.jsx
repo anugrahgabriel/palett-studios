@@ -12,21 +12,12 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, filter: 'blur(10px)' }}
+        initial={{ opacity: 0, filter: 'blur(4px)' }}
         animate={{ opacity: 1, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, filter: 'blur(10px)' }}
+        exit={{ opacity: 0, filter: 'blur(4px)' }}
         transition={{
           duration: 0.2,
-          delay: 0.05,
-          ease: [0.22, 1, 0.36, 1]
-        }}
-        // Separate exit transition for faster fade out with blur
-        variants={{
-          exit: {
-            opacity: 0,
-            filter: 'blur(10px)',
-            transition: { duration: 0.1, ease: 'easeIn', delay: 0 }
-          }
+          ease: "easeInOut"
         }}
         style={{ width: '100%', height: '100%' }}
       >
