@@ -249,14 +249,14 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                                     <span key={ti} style={{ display: 'flex', alignItems: 'center' }}>
                                         <span style={{
                                             fontFamily: '"Rethink Sans", sans-serif',
-                                            fontSize: '12px',
+                                            fontSize: '13px',
                                             fontWeight: ti === 0 ? 500 : 400,
                                             color: ti === 0 ? '#4a4a4a' : '#8b8a8a',
                                             letterSpacing: '0.1px',
                                             whiteSpace: 'nowrap'
                                         }}>{ti === 0 ? tag.charAt(0).toUpperCase() + tag.slice(1) : tag}</span>
                                         {ti < label.tags.length - 1 && (
-                                            <span style={{ color: '#c8c8c8', fontSize: '11px', margin: '0 5px' }}>·</span>
+                                            <span style={{ color: '#c8c8c8', fontSize: '12px', margin: '0 5px' }}>·</span>
                                         )}
                                     </span>
                                 ))}
@@ -338,7 +338,7 @@ const LiveIST = () => {
             display: 'inline-flex',
             alignItems: 'center',
             fontFamily: '"Rethink Sans", sans-serif',
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 400,
             color: '#8b8a8a',
             opacity: 0.8,
@@ -388,7 +388,7 @@ const ExpandableListBlock = ({ title, children }) => {
                     alignItems: 'center',
                 }}
             >
-                <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '12px', color: '#373434', fontWeight: 500 }}>
+                <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#373434', fontWeight: 500 }}>
                     {title}
                 </span>
                 <div style={{
@@ -411,7 +411,7 @@ const ExpandableListBlock = ({ title, children }) => {
                     <div style={{
                         padding: '0 12px 12px',
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '12px',
+                        fontSize: '13px',
                         lineHeight: '16px',
                         color: '#9E9E9E',
                         opacity: isExpanded ? 1 : 0,
@@ -440,6 +440,7 @@ const ThreadGrid = ({ hideContent = false }) => {
     const [displayQuoteIndex, setDisplayQuoteIndex] = useState(0);
     const quoteContentRef = useRef(null);
     const [hoveredMosaicIdx, setHoveredMosaicIdx] = useState(null);
+    const [isAutoMosaicEnabled, setIsAutoMosaicEnabled] = useState(true);
 
     const quotes = [
         {
@@ -466,6 +467,15 @@ const ThreadGrid = ({ hideContent = false }) => {
             text: "Their systematic approach to brand and product cohesion helped us launch our platform months ahead of schedule. The output was not only beautiful but also technically robust and highly scalable. I cannot recommend their dedicated model enough.",
             img: client1
         }
+    ];
+
+    const mosaicBlocks = [
+        { area: '1 / 1 / 2 / 3', label: '#FFDEB9', title: 'Product design' },
+        { area: '1 / 3 / 3 / 4', label: '#FE6244', title: 'Product development' },
+        { area: '1 / 4 / 3 / 5', label: '#DC0E0E', title: 'Website & no-code' },
+        { area: '3 / 3 / 5 / 5', label: '#274DF5', title: 'Motion & 3D' },
+        { area: '2 / 1 / 5 / 2', label: '#62109F', title: 'Brand identity' },
+        { area: '2 / 2 / 5 / 3', label: '#E2C6AB', title: 'Marketing collateral' }
     ];
 
     // Animate content on Mount
@@ -564,6 +574,17 @@ const ThreadGrid = ({ hideContent = false }) => {
         }, 15000); // Switch every 15 seconds
         return () => clearInterval(interval);
     }, [activeQuoteIndex, quotes.length]);
+
+    // Automatic Mosaic Hover Cycling
+    useEffect(() => {
+        if (!isAutoMosaicEnabled) return;
+
+        const interval = setInterval(() => {
+            setHoveredMosaicIdx((prev) => (prev === null ? 0 : (prev + 1) % 6));
+        }, 3000); // Cycle every 3 seconds for a relaxed feel
+
+        return () => clearInterval(interval);
+    }, [isAutoMosaicEnabled]);
 
     // ─── Shared Layout Constants ────────────────────────────────────────────────
     const BOX_WIDTH_COLS = 23;          // All boxes share the same column width
@@ -1499,7 +1520,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                             textAnchor={marker.isLeft ? "end" : "start"}
                             style={{
                                 fontFamily: '"Rethink Sans", sans-serif',
-                                fontSize: '8px',
+                                fontSize: '9px',
                                 fill: '#8b8a8aff', // Fixed color
                                 fontWeight: 400
                             }}
@@ -1586,7 +1607,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                 <div style={{ display: 'flex', alignItems: 'center', minWidth: '160px' }}>
                     <span onClick={() => navigate('/')} style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
-                        fontSize: '18px',
+                        fontSize: '19px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
                         color: '#373434',
@@ -1630,7 +1651,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     {/* Join Us Link */}
                     <span style={{
                         fontFamily: '"Rethink Sans", sans-serif',
-                        fontSize: '11px',
+                        fontSize: '12px',
                         fontWeight: 400,
                         color: '#504d4dff',
                         cursor: 'pointer'
@@ -1649,7 +1670,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                 }}>
                     <span style={{
                         fontFamily: '"Share Tech Mono", monospace',
-                        fontSize: '9px',
+                        fontSize: '10px',
                         letterSpacing: '-0.1px',
                         fontWeight: 400,
                         color: '#8b8a8aff'
@@ -1658,7 +1679,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     </span>
                     <span style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
-                        fontSize: '18px',
+                        fontSize: '19px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
                         color: '#373434'
@@ -1727,7 +1748,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 }}>
                                     <h2 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '24px',
+                                        fontSize: '25px',
                                         letterSpacing: '-0.2px',
                                         lineHeight: '30px',
                                         fontWeight: 460,
@@ -1764,7 +1785,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 }}>
                                     <h2 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '12px',
+                                        fontSize: '13px',
                                         letterSpacing: '-0.02px',
                                         lineHeight: '18px',
                                         fontWeight: 340,
@@ -1782,10 +1803,13 @@ const ThreadGrid = ({ hideContent = false }) => {
                         <div style={{
                             position: 'absolute',
                             left: '50.1%',
-                            top: '0',
+                            top: '-2px',
                             paddingTop: '7px',
+                            paddingLeft: '15px',
+                            paddingBottom: '16px',
                             textAlign: 'left',
-                            pointerEvents: 'none'
+                            pointerEvents: 'none',
+                            borderLeft: '1px solid #E5E5E5'
                         }}>
                             <p style={{
                                 fontFamily: '"Rethink Sans", sans-serif',
@@ -1820,24 +1844,23 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
                                 <div style={{
                                     display: 'grid',
-                                    gridTemplateColumns: '1.5fr 0.8fr 1.1fr 0.9fr',
-                                    gridTemplateRows: '1.2fr 1.0fr 1.1fr 0.7fr',
+                                    gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
+                                    gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
                                     width: '100%',
                                     height: '100%',
                                     gap: '0'
                                 }}>
-                                    {[
-                                        { area: '1 / 1 / 2 / 3', label: '#FFDEB9', title: 'Product design' },
-                                        { area: '1 / 3 / 3 / 4', label: '#FE6244', title: 'Product development' },
-                                        { area: '1 / 4 / 3 / 5', label: '#DC0E0E', title: 'Website & no-code' },
-                                        { area: '2 / 1 / 5 / 2', label: '#62109F', title: 'Brand identity' },
-                                        { area: '3 / 2 / 5 / 5', label: '#274DF5', title: 'Motion & 3D' },
-                                        { area: '2 / 2 / 3 / 3', label: '#E2C6AB', title: 'Marketing collateral' }
-                                    ].map((block, i) => (
+                                    {mosaicBlocks.map((block, i) => (
                                         <div
                                             key={i}
-                                            onMouseEnter={() => setHoveredMosaicIdx(i)}
-                                            onMouseLeave={() => setHoveredMosaicIdx(null)}
+                                            onMouseEnter={() => {
+                                                setHoveredMosaicIdx(i);
+                                                setIsAutoMosaicEnabled(false);
+                                            }}
+                                            onMouseLeave={() => {
+                                                setHoveredMosaicIdx(null);
+                                                setIsAutoMosaicEnabled(true);
+                                            }}
                                             style={{
                                                 gridArea: block.area,
                                                 width: '100%',
@@ -1869,7 +1892,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                                     position: 'absolute',
                                                     right: 0,
                                                     fontFamily: '"Share Tech Mono", monospace',
-                                                    fontSize: '10px',
+                                                    fontSize: '11px',
                                                     color: 'rgba(55, 52, 52, 0.3)',
                                                     opacity: hoveredMosaicIdx === i ? 0 : 1,
                                                     transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
@@ -1884,7 +1907,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                                     position: 'absolute',
                                                     right: 0,
                                                     fontFamily: '"Rethink Sans", sans-serif',
-                                                    fontSize: '11px',
+                                                    fontSize: '12px',
                                                     fontWeight: 450,
                                                     color: 'rgba(55, 52, 52, 0.85)',
                                                     letterSpacing: '-0.2px',
@@ -1932,7 +1955,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 }}>
                                     <p style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '12px',
+                                        fontSize: '13px',
                                         lineHeight: '18px',
                                         fontWeight: 400,
                                         color: '#8b8a8aff',
@@ -1951,7 +1974,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 }}>
                                     <h2 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '20px',
+                                        fontSize: '21px',
                                         letterSpacing: '-0.2px',
                                         lineHeight: '27px',
                                         fontWeight: 460,
@@ -2030,7 +2053,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                 <div style={{ flex: '0 0 auto' }}>
                                     <h2 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '22px',
+                                        fontSize: '23px',
                                         letterSpacing: '-0.2px',
                                         lineHeight: '29px',
                                         fontWeight: 460,
@@ -2069,7 +2092,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                                     }}>
                                         <a href="mailto:anugrah@palettstudios.com" style={{
                                             fontFamily: '"Rethink Sans", sans-serif',
-                                            fontSize: '14px',
+                                            fontSize: '15px',
                                             color: '#8987ca',
                                             fontWeight: 400,
                                             textDecoration: 'none',
