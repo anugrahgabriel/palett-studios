@@ -1487,82 +1487,71 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     <LiveIST />
                 </div>
 
-                {/* Inner Child 2: Navigation Links (Center Aligned) */}
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '24px',
-                    flex: 1,
-                    justifyContent: 'center'
-                }}>
-                    {/* Contact Link */}
-                    <span
-                        onClick={() => navigate('/get-in-touch')}
-                        onMouseEnter={() => setHoveredLink('contact')}
-                        onMouseLeave={() => setHoveredLink(null)}
-                        style={{
-                            fontFamily: '"Rethink Sans", sans-serif',
-                            fontSize: '12px',
-                            fontWeight: 500,
-                            color: '#2d2d2d',
-                            cursor: 'pointer',
-                            opacity: location.pathname === '/get-in-touch'
-                                ? 1
-                                : (hoveredLink === 'contact' ? 0.5 : 1),
-                            transition: 'opacity 0.2s ease',
-                            padding: '4px 0'
-                        }}
-                    >
-                        Contact
-                    </span>
+                {/* Inner Child 2: Spacer */}
+                <div style={{ flex: 1 }}></div>
 
-                    {/* Join Us Link */}
-                    <span
-                        onClick={() => {/* Add Join Us path if needed */ }}
-                        onMouseEnter={() => setHoveredLink('join')}
-                        onMouseLeave={() => setHoveredLink(null)}
-                        style={{
-                            fontFamily: '"Rethink Sans", sans-serif',
-                            fontSize: '12px',
-                            fontWeight: 500,
-                            color: '#2d2d2d',
-                            cursor: 'pointer',
-                            opacity: location.pathname === '/get-in-touch'
-                                ? (hoveredLink === 'join' ? 1 : 0.3)
-                                : (hoveredLink === 'join' ? 0.5 : 1),
-                            transition: 'opacity 0.2s ease',
-                            padding: '4px 0'
-                        }}
-                    >
-                        Join Us
-                    </span>
-                </div>
-
-                {/* Inner Child 3: Right cluster — Studio */}
+                {/* Inner Child 3: Right cluster — Menu + Studio */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'baseline',
                     justifyContent: 'flex-end',
                     minWidth: '160px',
-                    gap: '6px'
+                    gap: '24px'
                 }}>
-                    <span style={{
-                        fontFamily: '"Share Tech Mono", monospace',
-                        fontSize: '10px',
-                        letterSpacing: '-0.1px',
-                        fontWeight: 400,
-                        color: '#8b8a8aff',
-                        opacity: 1
-                    }}>
-                        @ 2025
-                    </span>
+                    <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginRight: '6px' }}>
+                        {/* Contact Link */}
+                        <span
+                            onClick={() => navigate('/get-in-touch')}
+                            onMouseEnter={() => setHoveredLink('contact')}
+                            onMouseLeave={() => setHoveredLink(null)}
+                            style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                color: '#2d2d2d',
+                                cursor: 'pointer',
+                                opacity: location.pathname === '/get-in-touch'
+                                    ? 1
+                                    : (hoveredLink === 'contact' ? 0.5 : 1),
+                                transition: 'opacity 0.2s ease',
+                                padding: '4px 0'
+                            }}
+                        >
+                            Contact
+                        </span>
+
+                        {/* Join Us Link */}
+                        <span
+                            onClick={() => {/* Add Join Us path if needed */ }}
+                            onMouseEnter={() => setHoveredLink('join')}
+                            onMouseLeave={() => setHoveredLink(null)}
+                            style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                color: '#2d2d2d',
+                                cursor: 'pointer',
+                                opacity: location.pathname === '/get-in-touch'
+                                    ? (hoveredLink === 'join' ? 1 : 0.3)
+                                    : (hoveredLink === 'join' ? 0.5 : 1),
+                                transition: 'opacity 0.2s ease',
+                                padding: '4px 0'
+                            }}
+                        >
+                            Join Us
+                        </span>
+                    </div>
+
                     <span style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '19px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
-                        color: '#373434'
-                    }}>
+                        color: '#373434',
+                        cursor: 'pointer'
+                    }}
+                        onClick={() => navigate('/')}
+                    >
                         Studio
                     </span>
                 </div>
