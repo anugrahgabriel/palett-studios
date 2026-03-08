@@ -1463,10 +1463,13 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         color: '#373434',
                         margin: 0,
                         textAlign: 'center',
-                        opacity: 0.9
+                        opacity: 0.9,
+                        transition: 'opacity 0.3s ease'
                     }}>
                         your palett, our colours
                     </h2>
+
+
                 </div>
             )}
 
@@ -1624,10 +1627,11 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         margin: 0
                                     }}>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
-                                            Design and Development shop
+                                            {mode === 'get-in-touch' ? 'Wondering where to begin?' : 'Design and Development shop'}
                                         </span>
-                                        for startups and scaleups
+                                        {mode !== 'get-in-touch' && 'for startups and scaleups'}
                                     </h2>
+                                    {/* Paragraphs moved to absolute-positioned description area */}
                                 </div>
                             </div>
 
@@ -1637,44 +1641,45 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 gap: '8px',
                                 width: '100%',
                                 padding: '0 20px',
-                                marginTop: '48px',
+                                marginTop: mode === 'get-in-touch' ? '110px' : '48px',
                                 marginBottom: '20px',
                                 pointerEvents: 'auto',
                                 alignItems: 'flex-start'
                             }}>
-                                <ThreadButton
-                                    extraPadding={1}
-                                    onClick={() => {
-                                        if (mode !== 'get-in-touch') {
-                                            navigate('/get-in-touch');
-                                        }
-                                    }}
-                                >
-                                    Get in touch
-                                </ThreadButton>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    justifyContent: 'center',
-                                    padding: '9px 4px 0 4px'
-                                }}>
-                                    <h2 style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '13px',
-                                        letterSpacing: '-0.02px',
-                                        lineHeight: '18px',
-                                        fontWeight: 340,
-                                        color: '#3fac55ff',
-                                        margin: 0,
-                                        whiteSpace: 'nowrap'
+                                {mode !== 'get-in-touch' && (
+                                    <ThreadButton
+                                        extraPadding={1}
+                                        onClick={() => navigate('/get-in-touch')}
+                                    >
+                                        Get in touch
+                                    </ThreadButton>
+                                )}
+
+                                {mode !== 'get-in-touch' && (
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        justifyContent: 'center',
+                                        padding: '9px 4px 0 4px'
                                     }}>
-                                        2 spots left in February
-                                    </h2>
-                                </div>
+                                        <h2 style={{
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '13px',
+                                            letterSpacing: '-0.02px',
+                                            lineHeight: '18px',
+                                            fontWeight: 340,
+                                            color: '#3fac55ff',
+                                            margin: 0,
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            2 spots left in February
+                                        </h2>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Description - Absolute Positioned to avoid header push */}
+                        {/* Description - Positioned on the right, matches the original desc position */}
                         <div style={{
                             position: 'absolute',
                             left: '50.1%',
@@ -1683,25 +1688,57 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             paddingLeft: '15px',
                             paddingBottom: '16px',
                             textAlign: 'left',
-                            pointerEvents: 'none',
+                            pointerEvents: 'auto', // Adjusted to auto for link/interactions
                             borderLeft: '1px solid #E5E5E5'
                         }}>
-                            <p style={{
-                                fontFamily: '"Rethink Sans", sans-serif',
-                                fontSize: '14px',
-                                lineHeight: '18px',
-                                fontWeight: 400,
-                                color: '#8b8a8aff',
-                                margin: 0,
-                                pointerEvents: 'auto'
-                            }}>
-                                We design and build interfaces for AI x B2B compaines.<br />
-                                A shop radically obsessed with not so regular craft.
-                            </p>
+                            {mode === 'get-in-touch' ? (
+                                <>
+                                    <p style={{
+                                        fontFamily: '"Rethink Sans", sans-serif',
+                                        fontSize: '15px',
+                                        lineHeight: '20px',
+                                        fontWeight: 460,
+                                        color: '#373434ff',
+                                        opacity: 0.9,
+                                        margin: 0,
+                                        maxWidth: '520px'
+                                    }}>
+                                        To help us get to know you, tell us about your product, your timeline, <br />
+                                        and where in the world you are. Bonus points for letting us know <br />
+                                        how you found us!
+                                    </p>
+                                    <p style={{
+                                        fontFamily: '"Rethink Sans", sans-serif',
+                                        fontSize: '15px',
+                                        lineHeight: '20px',
+                                        fontWeight: 460,
+                                        color: '#373434ff',
+                                        opacity: 0.9,
+                                        margin: '18px 0 0 0',
+                                        maxWidth: '520px'
+                                    }}>
+                                        We’re all ears for every message we get, <br />
+                                        thanks for making yours stand out. 🌟
+                                    </p>
+                                </>
+                            ) : (
+                                <p style={{
+                                    fontFamily: '"Rethink Sans", sans-serif',
+                                    fontSize: '15px',
+                                    lineHeight: '20px',
+                                    fontWeight: 460,
+                                    color: '#373434ff',
+                                    opacity: 0.9,
+                                    margin: 0,
+                                    maxWidth: '80%'
+                                }}>
+                                    Partnering with forward-thinking founders and teams to craft meaningful digital experiences through strategy, brand identity, and high-performance product execution.
+                                </p>
+                            )}
                         </div>
 
-                        {/* Bottom Area Div */}
-                        {mode !== 'get-in-touch' && (
+                        {/* Bottom Area Div - Active for both Mosaic and Contact Form */}
+                        {(mode !== 'get-in-touch' || true) && (
                             <div style={{
                                 flex: 1,
                                 width: '100%',
@@ -1709,96 +1746,268 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 flexDirection: 'column',
                                 padding: '0 20px 20px 20px'
                             }}>
-                                <div className="fade-anim-mosaic" style={{
-                                    flex: 1,
-                                    width: '100%',
-                                    backgroundColor: '#f8f8f8ff',
-                                    borderRadius: '0',
-                                    pointerEvents: 'auto',
-                                    border: '0.8px solid rgba(203, 203, 203, 0.08)'
-                                }}>
-                                    {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
+                                {mode === 'get-in-touch' ? (
                                     <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
-                                        gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
+                                        flex: 1,
                                         width: '100%',
-                                        height: '100%',
-                                        gap: '0'
+                                        backgroundColor: 'transparent',
+                                        borderRadius: '0',
+                                        pointerEvents: 'auto',
+                                        border: '0.8px solid rgba(0, 0, 0, 0.12)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        padding: '40px',
+                                        position: 'relative'
                                     }}>
-                                        {mosaicBlocks.map((block, i) => (
-                                            <div
-                                                key={i}
-                                                onMouseEnter={() => {
-                                                    setHoveredMosaicIdx(i);
-                                                    setIsAutoMosaicEnabled(false);
-                                                }}
-                                                onMouseLeave={() => {
-                                                    setHoveredMosaicIdx(null);
-                                                    setIsAutoMosaicEnabled(true);
-                                                }}
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '34px 42px',
+                                            width: '100%'
+                                        }}>
+                                            {/* Field 1: Name */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Name*</label>
+                                                <input
+                                                    type="text"
+                                                    style={{
+                                                        marginTop: '-2px',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                        padding: '10px 0',
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#373434ff',
+                                                        outline: 'none'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Field 2: Email */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Email*</label>
+                                                <input
+                                                    type="email"
+                                                    style={{
+                                                        marginTop: '-2px',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                        padding: '10px 0',
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#373434ff',
+                                                        outline: 'none'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Field 3: Referrer */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>How did you hear of us?*</label>
+                                                <input
+                                                    type="text"
+                                                    style={{
+                                                        marginTop: '-2px',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                        padding: '10px 0',
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#373434ff',
+                                                        outline: 'none'
+                                                    }}
+                                                />
+                                            </div>
+
+                                            {/* Field 4: Stage */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>What stage is your company?</label>
+                                                <select
+                                                    style={{
+                                                        marginTop: '-2px',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                        padding: '10px 0',
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#373434ff',
+                                                        outline: 'none',
+                                                        cursor: 'pointer',
+                                                        appearance: 'none',
+                                                        WebkitAppearance: 'none'
+                                                    }}
+                                                    defaultValue=""
+                                                >
+                                                    <option value="" disabled>Select One</option>
+                                                    <option value="pre-seed">Pre-seed</option>
+                                                    <option value="seed">Seed</option>
+                                                    <option value="series-a">Series A</option>
+                                                    <option value="series-b">Series B+</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Field 5: Message */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Message*</label>
+                                                <textarea
+                                                    rows={1}
+                                                    onChange={(e) => {
+                                                        e.target.style.height = 'auto';
+                                                        e.target.style.height = `${e.target.scrollHeight}px`;
+                                                    }}
+                                                    style={{
+                                                        marginTop: '-2px',
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                        padding: '10px 0',
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#373434ff',
+                                                        outline: 'none',
+                                                        resize: 'none',
+                                                        width: '100%',
+                                                        maxHeight: '120px',
+                                                        overflowY: 'auto'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+
+                                        <div style={{
+                                            position: 'absolute',
+                                            bottom: '40px',
+                                            right: '40px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px'
+                                        }}>
+                                            <a
+                                                href="https://cal.com/anugrah-palettstudios/30min"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 style={{
-                                                    gridArea: block.area,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    border: '0.4px solid rgba(0, 0, 0, 0.04)',
-                                                    backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
-                                                    backgroundSize: '12px 12px',
-                                                    backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
-                                                    padding: '8px',
-                                                    display: 'flex',
-                                                    alignItems: 'flex-end',
-                                                    justifyContent: 'flex-end',
-                                                    boxSizing: 'border-box',
-                                                    cursor: 'pointer',
-                                                    transition: 'background-color 0.3s ease'
+                                                    fontFamily: '"Rethink Sans", sans-serif',
+                                                    fontSize: '15px',
+                                                    color: '#8987ca',
+                                                    fontWeight: 400,
+                                                    textDecoration: 'none',
+                                                    cursor: 'pointer'
                                                 }}
                                             >
-                                                <div style={{
-                                                    position: 'relative',
-                                                    width: '100%',
-                                                    height: '14px', // Fixed height for alignment
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'flex-end',
-                                                    pointerEvents: 'none'
+                                                <span style={{
+                                                    textDecoration: 'underline',
+                                                    textUnderlineOffset: '3px',
+                                                    textDecorationColor: 'rgba(137, 135, 202, 0.4)'
                                                 }}>
-                                                    {/* Hex Label - Fades Out */}
-                                                    <span style={{
-                                                        position: 'absolute',
-                                                        right: 0,
-                                                        fontFamily: '"Share Tech Mono", monospace',
-                                                        fontSize: '11px',
-                                                        color: 'rgba(55, 52, 52, 0.3)',
-                                                        opacity: hoveredMosaicIdx === i ? 0 : 1,
-                                                        transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
-                                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                        whiteSpace: 'nowrap'
-                                                    }}>
-                                                        {block.label}
-                                                    </span>
-
-                                                    {/* Service Title - Fades In */}
-                                                    <span style={{
-                                                        position: 'absolute',
-                                                        right: 0,
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '12px',
-                                                        fontWeight: 450,
-                                                        color: 'rgba(55, 52, 52, 0.85)',
-                                                        letterSpacing: '-0.2px',
-                                                        opacity: hoveredMosaicIdx === i ? 1 : 0,
-                                                        transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
-                                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                        whiteSpace: 'nowrap'
-                                                    }}>
-                                                        {block.title}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ))}
+                                                    Schedule here a meeting directly if you want.
+                                                </span>
+                                            </a>
+                                            <ThreadButton
+                                                extraPadding={1}
+                                                onClick={() => {/* Contact submission logic */ }}
+                                            >
+                                                Submit
+                                            </ThreadButton>
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="fade-anim-mosaic" style={{
+                                        flex: 1,
+                                        width: '100%',
+                                        backgroundColor: '#f8f8f8ff',
+                                        borderRadius: '0',
+                                        pointerEvents: 'auto',
+                                        border: '0.8px solid rgba(203, 203, 203, 0.08)'
+                                    }}>
+                                        {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
+                                            gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
+                                            width: '100%',
+                                            height: '100%',
+                                            gap: '0'
+                                        }}>
+                                            {mosaicBlocks.map((block, i) => (
+                                                <div
+                                                    key={i}
+                                                    onMouseEnter={() => {
+                                                        setHoveredMosaicIdx(i);
+                                                        setIsAutoMosaicEnabled(false);
+                                                    }}
+                                                    onMouseLeave={() => {
+                                                        setHoveredMosaicIdx(null);
+                                                        setIsAutoMosaicEnabled(true);
+                                                    }}
+                                                    style={{
+                                                        gridArea: block.area,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        border: '0.4px solid rgba(0, 0, 0, 0.04)',
+                                                        backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
+                                                        backgroundSize: '12px 12px',
+                                                        backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
+                                                        padding: '8px',
+                                                        display: 'flex',
+                                                        alignItems: 'flex-end',
+                                                        justifyContent: 'flex-end',
+                                                        boxSizing: 'border-box',
+                                                        cursor: 'pointer',
+                                                        transition: 'background-color 0.3s ease'
+                                                    }}
+                                                >
+                                                    <div style={{
+                                                        position: 'relative',
+                                                        width: '100%',
+                                                        height: '14px', // Fixed height for alignment
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'flex-end',
+                                                        pointerEvents: 'none'
+                                                    }}>
+                                                        {/* Hex Label - Fades Out */}
+                                                        <span style={{
+                                                            position: 'absolute',
+                                                            right: 0,
+                                                            fontFamily: '"Share Tech Mono", monospace',
+                                                            fontSize: '11px',
+                                                            color: 'rgba(55, 52, 52, 0.3)',
+                                                            opacity: hoveredMosaicIdx === i ? 0 : 1,
+                                                            transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
+                                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            whiteSpace: 'nowrap'
+                                                        }}>
+                                                            {block.label}
+                                                        </span>
+
+                                                        {/* Service Title - Fades In */}
+                                                        <span style={{
+                                                            position: 'absolute',
+                                                            right: 0,
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '12px',
+                                                            fontWeight: 450,
+                                                            color: 'rgba(55, 52, 52, 0.85)',
+                                                            letterSpacing: '-0.2px',
+                                                            opacity: hoveredMosaicIdx === i ? 1 : 0,
+                                                            transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
+                                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            whiteSpace: 'nowrap'
+                                                        }}>
+                                                            {block.title}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -1806,302 +2015,301 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             </div>
 
             {/* New Grid Box Area - Only in Full Mode */}
-            {newBoxPosition.left && mode !== 'get-in-touch' && (
-                <div style={{
-                    position: 'absolute',
-                    ...newBoxPosition,
-                    zIndex: 4,
-                    pointerEvents: 'auto'
-                }}>
-                    {!hideContent && (
-                        <div className="fade-anim-newbox" style={{ width: '100%', height: '100%', display: 'flex' }}>
-                            {/* Left Side */}
-                            <div style={{
-                                flex: 1,
-                                borderRight: '1px dashed rgba(0, 0, 0, 0.12)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                paddingTop: '16px'
-                            }}>
-                                <div style={{
-                                    padding: '0 20px',
-                                    marginTop: 'auto',
-                                    marginBottom: '6px',
-                                    textAlign: 'left',
-                                    marginLeft: '2px'
-                                }}>
-                                    <p style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '13px',
-                                        lineHeight: '18px',
-                                        fontWeight: 400,
-                                        color: '#8b8a8aff',
-                                        margin: 0
-                                    }}>
-                                        who are we
-                                    </p>
-                                </div>
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                    padding: '0 20px',
-                                    marginBottom: '20px',
-                                    pointerEvents: 'auto'
-                                }}>
-                                    <h2 style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '21px',
-                                        letterSpacing: '-0.2px',
-                                        lineHeight: '27px',
-                                        fontWeight: 460,
-                                        color: '#373434ff',
-                                        margin: 0,
-                                        textAlign: 'left',
-                                    }}>
-                                        A design native lab, powered by <br />
-                                        senior-led cracked builders. free from  <br />
-                                        obsolete rituals, pushing beyound mediocrity.
-                                    </h2>
-                                </div>
-                            </div>
-
-                            {/* Right Side */}
-                            <div style={{ flex: 1 }}></div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* New Middle Box 2 Area - Only in Full Mode */}
-            {new2BoxPosition.left && mode !== 'get-in-touch' && (
-                <div style={{
-                    position: 'absolute',
-                    ...new2BoxPosition,
-                    zIndex: 4,
-                    pointerEvents: 'auto'
-                }}>
-                    {!hideContent && (
-                        <div className="fade-anim-newbox2" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {/* Empty container ready for content */}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* 3rd Grid Box Carousel - Only in Full Mode */}
-            {tripBoxPosition.left && mode !== 'get-in-touch' && (
-                <div style={{
-                    position: 'absolute',
-                    ...tripBoxPosition,
-                    zIndex: 4,
-                    pointerEvents: 'auto',
-                    backgroundColor: '#FFFFFF'
-                }}>
-                    {!hideContent && (
-                        <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative' }}>
-                            {/* Carousel fills full box */}
-                            <ImageCarousel
-                                images={[slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8, slide9, slide10]}
-                                width={tripBoxPosition.width}
-                                height={tripBoxPosition.height}
-                            />
-
-
-                            {/* Right-side overlay panel */}
-                            <div style={{
-                                position: 'absolute',
-                                top: 0,
-                                right: 0,
-                                width: '32%',
-                                height: '100%',
-                                background: '#fcfcfdff',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                padding: '32px 36px 36px 36px',
-                                boxSizing: 'border-box',
-                                gap: '16px',
-                                pointerEvents: 'auto',
-                                borderLeft: '1px dashed rgba(0, 0, 0, 0.12)',
-                                zIndex: 5
-                            }}>
-                                {/* ── Content placeholder slots ── */}
-                                {/* Slot A — top content */}
-                                <div style={{ flex: '0 0 auto' }}>
-                                    <h2 style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '21px',
-                                        letterSpacing: '-0.2px',
-                                        lineHeight: '27px',
-                                        fontWeight: 460,
-                                        color: '#373434ff',
-                                        margin: 0,
-                                        textAlign: 'left',
-                                    }}>
-                                        keep the product moving<br /><span style={{ opacity: 0.6 }}>skip the hiring pause</span>
-                                    </h2>
-                                </div>
-
-                                {/* Action Section: Button + Contact Link */}
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    position: 'relative',
-                                    width: '100%',
-                                    marginTop: '32px'
-                                }}>
-                                    {/* Get in touch button */}
-                                    <div style={{ display: 'flex' }}>
-                                        <ThreadButton onClick={() => window.open('https://cal.com/anugrah-palettstudios/30min', '_blank')}>
-                                            Get in touch
-                                        </ThreadButton>
-                                    </div>
-
-                                    {/* Link Text + Pic Group */}
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        transform: 'translateX(0.5px)',
-                                        position: 'absolute',
-                                        right: 0
-                                    }}>
-                                        <a href="mailto:anugrah@palettstudios.com" style={{
-                                            fontFamily: '"Rethink Sans", sans-serif',
-                                            fontSize: '15px',
-                                            color: '#8987ca',
-                                            fontWeight: 400,
-                                            textDecoration: 'none',
-                                            whiteSpace: 'nowrap',
-                                            marginLeft: '4px',
-                                            transform: 'translateX(0.8px)'
-                                        }}>
-                                            <span style={{
-                                                textDecoration: 'underline',
-                                                textDecorationColor: 'rgba(137, 135, 202, 0.4)',
-                                                textUnderlineOffset: '3px'
-                                            }}>
-                                                doubts ? say hi
-                                            </span>
-                                        </a>
-                                        {/* Hover Pic Circle */}
-                                        <div
-                                            onMouseEnter={() => setPicHover(true)}
-                                            onMouseLeave={() => setPicHover(false)}
-                                            style={{
-                                                width: '28px',
-                                                height: '28px',
-                                                borderRadius: '50%',
-                                                overflow: 'hidden',
-                                                border: '1px solid #E5E5E5',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                                                transform: picHover ? 'translateY(-4px) rotate(8deg)' : 'translateY(0) rotate(0deg)',
-                                                boxShadow: picHover ? '0 4px 8px rgba(0,0,0,0.1)' : 'none'
-                                            }}
-                                        >
-                                            <img src={picImg} alt="Contact" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Separation Indicator Bars (Replacing Static Line) */}
-                                <div style={{
-                                    position: 'relative',
-                                    height: '1px',
-                                    marginTop: '12px',
-                                    flexShrink: 0,
-                                    width: '100%',
-                                    display: 'flex',
-                                    gap: '4px'
-                                }}>
-                                    {/* Base Grey Bars */}
-                                    {[0, 1, 2, 3].map((idx) => (
-                                        <div
-                                            key={idx}
-                                            onClick={() => setActiveQuoteIndex(idx)}
-                                            style={{
-                                                flex: 1,
-                                                height: '100%',
-                                                backgroundColor: '#E5E5E5',
-                                                borderRadius: '0px',
-                                                cursor: 'pointer'
-                                            }}
-                                        />
-                                    ))}
-                                    {/* Active Sliding Indicator */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: `calc(${activeQuoteIndex * 25}% + ${activeQuoteIndex * 1}px)`,
-                                        width: 'calc(25% - 3px)',
-                                        height: '100%',
-                                        backgroundColor: '#373434',
-                                        transition: 'all 1.2s cubic-bezier(0.65, 0, 0.35, 1)',
-                                        pointerEvents: 'none',
-                                        zIndex: 2
-                                    }} />
-                                </div>
-
-                                {/* Bottom Area filling the space to the bottom */}
+            {
+                newBoxPosition.left && mode !== 'get-in-touch' && (
+                    <div style={{
+                        position: 'absolute',
+                        ...newBoxPosition,
+                        zIndex: 4,
+                        pointerEvents: 'auto'
+                    }}>
+                        {!hideContent && (
+                            <div className="fade-anim-newbox" style={{ width: '100%', height: '100%', display: 'flex' }}>
+                                {/* Left Side */}
                                 <div style={{
                                     flex: 1,
-                                    marginTop: '12px',
-                                    padding: '12px 0',
-                                    width: '100%',
-                                    position: 'relative',
+                                    borderRight: '1px dashed rgba(0, 0, 0, 0.12)',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    justifyContent: 'flex-end',
-                                    boxSizing: 'border-box',
-                                    backgroundColor: 'transparent' // Background removed
+                                    paddingTop: '16px'
                                 }}>
-                                    {/* Bottom Container: 2 rows */}
-                                    <div ref={quoteContentRef} style={{ display: 'flex', flexDirection: 'column' }}>
-                                        {/* Double Quotes - Aligned Right and 8px up from circle */}
-                                        <div style={{ alignSelf: 'flex-end', marginBottom: '8px', opacity: 0.6 }}>
-                                            <svg width="23" height="19" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: 'rotate(180deg)' }}>
-                                                <path d="M6.78 21C2.92667 21 1 19.24 1 15.72C1 11.8933 4.15333 6.92 10.46 1L12.46 2.36C8.14 6.86667 5.84667 10.4933 5.58 13.24H11.06V21H6.78ZM19.78 21C15.9267 21 14 19.24 14 15.72C14 11.8933 17.1533 6.92 23.46 1L25.46 2.36C21.14 6.86667 18.8467 10.4933 18.58 13.24H24.06V21H19.78Z" fill="#A0A0A0" />
-                                            </svg>
-                                        </div>
+                                    <div style={{
+                                        padding: '0 20px',
+                                        marginTop: 'auto',
+                                        marginBottom: '6px',
+                                        textAlign: 'left',
+                                        marginLeft: '2px'
+                                    }}>
+                                        <p style={{
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '13px',
+                                            lineHeight: '18px',
+                                            fontWeight: 400,
+                                            color: '#8b8a8aff',
+                                            margin: 0
+                                        }}>
+                                            who are we
+                                        </p>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        width: '100%',
+                                        padding: '0 20px',
+                                        marginBottom: '20px',
+                                        pointerEvents: 'auto'
+                                    }}>
+                                        <h2 style={{
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '20px',
+                                            letterSpacing: '-0.2px',
+                                            lineHeight: '26px',
+                                            fontWeight: 460,
+                                            color: '#373434ff',
+                                            margin: 0,
+                                            textAlign: 'left',
+                                        }}>
+                                            A design native lab, powered by <br />
+                                            senior-led cracked builders. free from  <br />
+                                            obsolete rituals, pushing beyound mediocrity.
+                                        </h2>
+                                    </div>
+                                </div>
 
-                                        {/* Content Group with original 16px vertical gap between testimonial rows */}
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                            {/* Top Row: Circle left, 2 row text right */}
-                                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
-                                                {/* Profile Pic */}
-                                                <img src={quotes[displayQuoteIndex].img} alt="Client" style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
-                                                {/* 2 Row Text */}
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', transform: 'translateY(0.6px)' }}>
-                                                    <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '12px', fontWeight: 600, color: '#373434', lineHeight: '11.8px' }}>
-                                                        {quotes[displayQuoteIndex].name}
-                                                    </span>
-                                                    <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '11px', color: '#9E9E9E', lineHeight: '10.8px' }}>
-                                                        {quotes[displayQuoteIndex].role}
-                                                    </span>
-                                                </div>
+                                {/* Right Side */}
+                                <div style={{ flex: 1 }}></div>
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+
+            {/* New Middle Box 2 Area - Only in Full Mode */}
+            {
+                new2BoxPosition.left && mode !== 'get-in-touch' && (
+                    <div style={{
+                        position: 'absolute',
+                        ...new2BoxPosition,
+                        zIndex: 4,
+                        pointerEvents: 'auto'
+                    }}>
+                        {!hideContent && (
+                            <div className="fade-anim-newbox2" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {/* Empty container ready for content */}
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+
+            {/* 3rd Grid Box Carousel - Only in Full Mode */}
+            {
+                tripBoxPosition.left && mode !== 'get-in-touch' && (
+                    <div style={{
+                        position: 'absolute',
+                        ...tripBoxPosition,
+                        zIndex: 4,
+                        pointerEvents: 'auto',
+                        backgroundColor: '#FFFFFF'
+                    }}>
+                        {!hideContent && (
+                            <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                {/* Carousel fills full box */}
+                                <ImageCarousel
+                                    images={[slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8, slide9, slide10]}
+                                    width={tripBoxPosition.width}
+                                    height={tripBoxPosition.height}
+                                />
+
+
+                                {/* Right-side overlay panel */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 0,
+                                    width: '32%',
+                                    height: '100%',
+                                    background: '#fcfcfdff',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    padding: '32px 36px 36px 36px',
+                                    boxSizing: 'border-box',
+                                    gap: '16px',
+                                    pointerEvents: 'auto',
+                                    borderLeft: '1px dashed rgba(0, 0, 0, 0.12)',
+                                    zIndex: 5
+                                }}>
+                                    {/* ── Content placeholder slots ── */}
+                                    {/* Slot A — top content */}
+                                    <div style={{ flex: '0 0 auto' }}>
+                                        <h2 style={{
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '20px',
+                                            letterSpacing: '-0.2px',
+                                            lineHeight: '26px',
+                                            fontWeight: 460,
+                                            color: '#373434ff',
+                                            margin: 0,
+                                            textAlign: 'left',
+                                        }}>
+                                            keep the product moving<br /><span style={{ opacity: 0.6 }}>skip the hiring pause</span>
+                                        </h2>
+                                    </div>
+
+                                    {/* Action Section: Contact Link */}
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        position: 'relative',
+                                        width: '100%',
+                                        marginTop: '32px'
+                                    }}>
+                                        {/* Link Text + Pic Group */}
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            transform: 'translateX(0.5px)',
+                                            position: 'absolute',
+                                            right: 0
+                                        }}>
+                                            <a href="mailto:anugrah@palettstudios.com" style={{
+                                                fontFamily: '"Rethink Sans", sans-serif',
+                                                fontSize: '15px',
+                                                color: '#8987ca',
+                                                fontWeight: 400,
+                                                textDecoration: 'none',
+                                                whiteSpace: 'nowrap',
+                                                marginLeft: '4px',
+                                                transform: 'translateX(0.8px)'
+                                            }}>
+                                                <span style={{
+                                                    textDecoration: 'underline',
+                                                    textDecorationColor: 'rgba(137, 135, 202, 0.4)',
+                                                    textUnderlineOffset: '3px'
+                                                }}>
+                                                    doubts ? say hi
+                                                </span>
+                                            </a>
+                                            {/* Hover Pic Circle */}
+                                            <div
+                                                onMouseEnter={() => setPicHover(true)}
+                                                onMouseLeave={() => setPicHover(false)}
+                                                style={{
+                                                    width: '28px',
+                                                    height: '28px',
+                                                    borderRadius: '50%',
+                                                    overflow: 'hidden',
+                                                    border: '1px solid #E5E5E5',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                                    transform: picHover ? 'translateY(-4px) rotate(8deg)' : 'translateY(0) rotate(0deg)',
+                                                    boxShadow: picHover ? '0 4px 8px rgba(0,0,0,0.1)' : 'none'
+                                                }}
+                                            >
+                                                <img src={picImg} alt="Contact" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Separation Indicator Bars (Replacing Static Line) */}
+                                    <div style={{
+                                        position: 'relative',
+                                        height: '1px',
+                                        marginTop: '12px',
+                                        flexShrink: 0,
+                                        width: '100%',
+                                        display: 'flex',
+                                        gap: '4px'
+                                    }}>
+                                        {/* Base Grey Bars */}
+                                        {[0, 1, 2, 3].map((idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => setActiveQuoteIndex(idx)}
+                                                style={{
+                                                    flex: 1,
+                                                    height: '100%',
+                                                    backgroundColor: '#E5E5E5',
+                                                    borderRadius: '0px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            />
+                                        ))}
+                                        {/* Active Sliding Indicator */}
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: `calc(${activeQuoteIndex * 25}% + ${activeQuoteIndex * 1}px)`,
+                                            width: 'calc(25% - 3px)',
+                                            height: '100%',
+                                            backgroundColor: '#373434',
+                                            transition: 'all 1.2s cubic-bezier(0.65, 0, 0.35, 1)',
+                                            pointerEvents: 'none',
+                                            zIndex: 2
+                                        }} />
+                                    </div>
+
+                                    {/* Bottom Area filling the space to the bottom */}
+                                    <div style={{
+                                        flex: 1,
+                                        marginTop: '12px',
+                                        padding: '12px 0',
+                                        width: '100%',
+                                        position: 'relative',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'flex-end',
+                                        boxSizing: 'border-box',
+                                        backgroundColor: 'transparent' // Background removed
+                                    }}>
+                                        {/* Bottom Container: 2 rows */}
+                                        <div ref={quoteContentRef} style={{ display: 'flex', flexDirection: 'column' }}>
+                                            {/* Double Quotes - Aligned Right and 8px up from circle */}
+                                            <div style={{ alignSelf: 'flex-end', marginBottom: '8px', opacity: 0.6 }}>
+                                                <svg width="23" height="19" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: 'rotate(180deg)' }}>
+                                                    <path d="M6.78 21C2.92667 21 1 19.24 1 15.72C1 11.8933 4.15333 6.92 10.46 1L12.46 2.36C8.14 6.86667 5.84667 10.4933 5.58 13.24H11.06V21H6.78ZM19.78 21C15.9267 21 14 19.24 14 15.72C14 11.8933 17.1533 6.92 23.46 1L25.46 2.36C21.14 6.86667 18.8467 10.4933 18.58 13.24H24.06V21H19.78Z" fill="#A0A0A0" />
+                                                </svg>
                                             </div>
 
-                                            {/* Bottom Row: Paragraph */}
-                                            <div style={{
-                                                fontFamily: '"Rethink Sans", sans-serif',
-                                                fontSize: '12.5px',
-                                                lineHeight: '18px',
-                                                color: '#6d6d6d',
-                                                opacity: 0.68,
-                                                letterSpacing: '-0.1px'
-                                            }}>
-                                                "{quotes[displayQuoteIndex].text}"
+                                            {/* Content Group with original 16px vertical gap between testimonial rows */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                                {/* Top Row: Circle left, 2 row text right */}
+                                                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
+                                                    {/* Profile Pic */}
+                                                    <img src={quotes[displayQuoteIndex].img} alt="Client" style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
+                                                    {/* 2 Row Text */}
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', transform: 'translateY(0.6px)' }}>
+                                                        <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '12px', fontWeight: 600, color: '#373434', lineHeight: '11.8px' }}>
+                                                            {quotes[displayQuoteIndex].name}
+                                                        </span>
+                                                        <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '11px', color: '#9E9E9E', lineHeight: '10.8px' }}>
+                                                            {quotes[displayQuoteIndex].role}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Bottom Row: Paragraph */}
+                                                <div style={{
+                                                    fontFamily: '"Rethink Sans", sans-serif',
+                                                    fontSize: '12.5px',
+                                                    lineHeight: '18px',
+                                                    color: '#6d6d6d',
+                                                    opacity: 0.68,
+                                                    letterSpacing: '-0.1px'
+                                                }}>
+                                                    "{quotes[displayQuoteIndex].text}"
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-            )}
+                        )}
+                    </div>
+                )
+            }
 
             {/* Scroll Spacer */}
             <div style={{
@@ -2113,7 +2321,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                 width: '100%',
                 pointerEvents: 'none'
             }} />
-        </div>
+        </div >
     );
 };
 
@@ -2238,7 +2446,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                 border: '0.6px solid rgba(38, 38, 91, 0.35)',
                 borderRadius: '9px',
                 fontFamily: '"Rethink Sans", sans-serif',
-                fontSize: '12px',
+                fontSize: '14px',
                 cursor: 'pointer',
                 overflow: 'hidden',
                 background: 'transparent',
