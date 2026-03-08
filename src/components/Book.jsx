@@ -1750,7 +1750,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     <div style={{
                                         flex: 1,
                                         width: '100%',
-                                        backgroundColor: 'transparent',
+                                        backgroundColor: '#f8f8f8ff',
                                         borderRadius: '0',
                                         pointerEvents: 'auto',
                                         border: '0.8px solid rgba(0, 0, 0, 0.12)',
