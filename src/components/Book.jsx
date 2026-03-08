@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -153,7 +154,7 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                         >
                             <img
                                 src={img}
-                                alt=""
+                                alt={`Product Design Project ${i % 10 + 1} - Palett Studio`}
                                 onLoad={handleImageLoad}
                                 style={{
                                     height: 'calc(78% - 2px)',
@@ -312,9 +313,9 @@ const ExpandableListBlock = ({ title, children }) => {
                     alignItems: 'center',
                 }}
             >
-                <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#373434', fontWeight: 500 }}>
+                <h3 style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#373434', fontWeight: 500, margin: 0 }}>
                     {title}
-                </span>
+                </h3>
                 <div style={{
                     transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
                     transition: 'transform 0.2s ease',
@@ -1429,7 +1430,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
             {/* Bottom Non-Dots Area Div */}
             {dots.length > 0 && (
-                <div style={{
+                <footer style={{
                     position: 'absolute',
                     top: `${Math.max(...dots.map(d => d.y))}px`,
                     left: 0,
@@ -1470,23 +1471,24 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     </h2>
 
 
-                </div>
+                </footer>
             )}
 
             {/* Navigation Box Container */}
             <div style={navBoxStyle}>
                 {/* Inner Child 1: Text (Logo Part 1) + Time */}
                 <div style={{ display: 'flex', alignItems: 'baseline', minWidth: '160px', gap: '8px' }}>
-                    <span onClick={() => navigate('/')} style={{
+                    <Link to="/" style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '19px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
                         color: '#373434',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        textDecoration: 'none'
                     }}>
                         Palett
-                    </span>
+                    </Link>
                     <LiveIST />
                 </div>
 
@@ -1503,8 +1505,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                 }}>
                     <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginRight: '6px' }}>
                         {/* Contact Link */}
-                        <span
-                            onClick={() => navigate('/get-in-touch')}
+                        <Link
+                            to="/get-in-touch"
                             onMouseEnter={() => setHoveredLink('contact')}
                             onMouseLeave={() => setHoveredLink(null)}
                             style={{
@@ -1513,6 +1515,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 fontWeight: 500,
                                 color: '#2d2d2d',
                                 cursor: 'pointer',
+                                textDecoration: 'none',
                                 opacity: location.pathname === '/get-in-touch'
                                     ? 1
                                     : (hoveredLink === 'contact' ? 0.5 : 1),
@@ -1521,7 +1524,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             }}
                         >
                             Contact
-                        </span>
+                        </Link>
 
                         {/* Join Us Link */}
                         <span
@@ -1545,18 +1548,19 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         </span>
                     </div>
 
-                    <span style={{
+                    <Link style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '19px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
                         color: '#373434',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        textDecoration: 'none'
                     }}
-                        onClick={() => navigate('/')}
+                        to="/"
                     >
                         Studio
-                    </span>
+                    </Link>
                 </div>
 
                 {/* Bottom Stroke with Dots and Connecting Line */}
@@ -1599,6 +1603,10 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
+                <Helmet>
+                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design & Development for Startups'}</title>
+                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help startups and scaleups build high-performance products.' : 'Palett Studio is a design and development shop for startups and scaleups.'} />
+                </Helmet>
                 {!hideContent && (
                     <div className="fade-anim-box2" style={{
                         width: '100%',
@@ -1617,7 +1625,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     textAlign: 'left',
                                     paddingTop: '0'
                                 }}>
-                                    <h2 style={{
+                                    <h1 style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
                                         fontSize: '25px',
                                         letterSpacing: '-0.2px',
@@ -1630,7 +1638,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             {mode === 'get-in-touch' ? 'Wondering where to begin?' : 'Design and Development shop'}
                                         </span>
                                         {mode !== 'get-in-touch' && 'for startups and scaleups'}
-                                    </h2>
+                                    </h1>
                                     {/* Paragraphs moved to absolute-positioned description area */}
                                 </div>
                             </div>
@@ -1987,7 +1995,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                         </span>
 
                                                         {/* Service Title - Fades In */}
-                                                        <span style={{
+                                                        <h3 style={{
                                                             position: 'absolute',
                                                             right: 0,
                                                             fontFamily: '"Rethink Sans", sans-serif',
@@ -1995,13 +2003,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                             fontWeight: 450,
                                                             color: 'rgba(55, 52, 52, 0.85)',
                                                             letterSpacing: '-0.2px',
+                                                            margin: 0,
                                                             opacity: hoveredMosaicIdx === i ? 1 : 0,
                                                             transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
                                                             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             whiteSpace: 'nowrap'
                                                         }}>
                                                             {block.title}
-                                                        </span>
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             ))}
@@ -2208,7 +2217,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                     boxShadow: picHover ? '0 4px 8px rgba(0,0,0,0.1)' : 'none'
                                                 }}
                                             >
-                                                <img src={picImg} alt="Contact" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src={picImg} alt="Anugrah - Palett Studio Founder" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </div>
                                         </div>
                                     </div>
@@ -2278,7 +2287,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                 {/* Top Row: Circle left, 2 row text right */}
                                                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
                                                     {/* Profile Pic */}
-                                                    <img src={quotes[displayQuoteIndex].img} alt="Client" style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
+                                                    <img src={quotes[displayQuoteIndex].img} alt={`${quotes[displayQuoteIndex].name} - ${quotes[displayQuoteIndex].role}`} style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
                                                     {/* 2 Row Text */}
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', transform: 'translateY(0.6px)' }}>
                                                         <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '12px', fontWeight: 600, color: '#373434', lineHeight: '11.8px' }}>
