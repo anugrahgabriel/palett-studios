@@ -1636,13 +1636,13 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'}</title>
+                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'}</title>
                     <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
 
                     {/* Dynamic Social Tags */}
-                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'} />
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'} />
                     <meta property="og:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
-                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'} />
+                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'} />
                     <meta property="twitter:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
                 </Helmet>
                 {!hideContent && (
