@@ -1783,13 +1783,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 width: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                padding: '0 20px 20px 20px'
+                                padding: mode === 'get-in-touch' ? '0 20px 0 20px' : '0 20px 20px 20px',
+                                backgroundColor: mode === 'get-in-touch' ? '#f8f8f8' : 'transparent'
                             }}>
                                 {mode === 'get-in-touch' ? (
                                     <div style={{
                                         flex: 1,
                                         width: '100%',
-                                        backgroundColor: '#f8f8f8ff',
+                                        backgroundColor: '#f8f8f8',
                                         borderRadius: '0',
                                         pointerEvents: 'auto',
                                         border: '0.8px solid rgba(0, 0, 0, 0.12)',
@@ -1799,7 +1800,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         position: 'relative'
                                     }}>
                                         {showCal ? (
-                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px', backgroundColor: '#f8f8f8ff' }}>
+                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px', backgroundColor: '#f8f8f8' }}>
                                                 <iframe
                                                     src="https://cal.com/anugrah-palettstudios/30min?embed=true"
                                                     width="100%"
