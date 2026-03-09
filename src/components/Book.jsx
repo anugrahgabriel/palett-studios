@@ -10,17 +10,17 @@ import './Book.css';
 // Page images removed because files were deleted
 const leftPageImg = "";
 const rightPageImg = "";
-import slide1 from '../../pics/1-slide.png';
+import slide1 from '../../pics/1-slide-small.png';
 import slide2 from '../../pics/2-slide.png';
 import slide3 from '../../pics/3-slide.png';
 import slide4 from '../../pics/4-slide.png';
-import slide5 from '../../pics/5-slide.png';
-import slide6 from '../../pics/6-slide.png';
+import slide5 from '../../pics/5-slide-small.png';
+import slide6 from '../../pics/6-slide-small.png';
 import slide7 from '../../pics/7-slide.png';
-import slide8 from '../../pics/8-slide.png';
-import slide9 from '../../pics/9-slide.png';
-import slide10 from '../../pics/10-slide.png';
-import picImg from '../../pics/pic.JPG';
+import slide8 from '../../pics/8-slide-small.png';
+import slide9 from '../../pics/9-slide-small.png';
+import slide10 from '../../pics/10-slide-small.png';
+import picImg from '../../pics/pic-small.JPG';
 import client1 from '../../pics/client 1.png';
 
 const ArrowIcon = () => (
@@ -158,6 +158,7 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                             <img
                                 src={img}
                                 alt={`Product Design Project ${i % 10 + 1} - Palett Studio`}
+                                loading="lazy"
                                 onLoad={handleImageLoad}
                                 style={{
                                     height: 'calc(78% - 2px)',
@@ -2256,7 +2257,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                     boxShadow: picHover ? '0 4px 8px rgba(0,0,0,0.1)' : 'none'
                                                 }}
                                             >
-                                                <img src={picImg} alt="Anugrah - Palett Studio Founder" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src={picImg} alt="Anugrah - Palett Studio Founder" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </div>
                                         </div>
                                     </div>
@@ -2326,7 +2327,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                 {/* Top Row: Circle left, 2 row text right */}
                                                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
                                                     {/* Profile Pic */}
-                                                    <img src={quotes[displayQuoteIndex].img} alt={`${quotes[displayQuoteIndex].name} - ${quotes[displayQuoteIndex].role}`} style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
+                                                    <img src={quotes[displayQuoteIndex].img} alt={`${quotes[displayQuoteIndex].name} - ${quotes[displayQuoteIndex].role}`} loading="lazy" style={{ width: '29px', height: '29px', borderRadius: '50%', objectFit: 'cover' }} />
                                                     {/* 2 Row Text */}
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', transform: 'translateY(0.6px)' }}>
                                                         <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '12px', fontWeight: 600, color: '#373434', lineHeight: '11.8px' }}>
