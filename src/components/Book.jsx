@@ -96,15 +96,18 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
     };
 
     return (
-        <div style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: width,
-            height: height,
-            overflow: 'hidden',
-            pointerEvents: 'auto',
-        }}>
+        <div
+            role="region"
+            aria-label="Project showcase carousel"
+            style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: width,
+                height: height,
+                overflow: 'hidden',
+                pointerEvents: 'auto',
+            }}>
             <div ref={scrollRef} style={{
                 display: 'flex',
                 height: '100%',
@@ -305,6 +308,8 @@ const ExpandableListBlock = ({ title, children }) => {
         }}>
             <div
                 onClick={() => setIsExpanded(!isExpanded)}
+                role="button"
+                aria-expanded={isExpanded}
                 style={{
                     padding: '12px',
                     cursor: 'pointer',
@@ -416,19 +421,22 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
     // Animate content on Scroll & Mount
     useGSAP(() => {
-        if (dots.length > 0) {
+        if (dots.length > 0 && containerRef.current) {
             // Above the fold - Hero content fades in on mount
-            gsap.fromTo(".fade-anim-box2",
-                { autoAlpha: 0, filter: 'blur(1px)', y: -6 },
-                {
-                    autoAlpha: 1,
-                    filter: 'blur(0px)',
-                    y: 0,
-                    duration: 1.3,
-                    delay: 0.15,
-                    ease: "power2.out"
-                }
-            );
+            const box2 = document.querySelector(".fade-anim-box2");
+            if (box2) {
+                gsap.fromTo(box2,
+                    { autoAlpha: 0, filter: 'blur(1px)', y: -6 },
+                    {
+                        autoAlpha: 1,
+                        filter: 'blur(0px)',
+                        y: 0,
+                        duration: 1.3,
+                        delay: 0.15,
+                        ease: "power2.out"
+                    }
+                );
+            }
 
             // Beyond the fold - Use ScrollTrigger
             const scrollElements = [
@@ -439,36 +447,38 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             ];
 
             scrollElements.forEach(el => {
-                gsap.fromTo(el.class,
-                    { autoAlpha: 0, filter: 'blur(5px)', y: 25 },
-                    {
-                        autoAlpha: 1,
-                        filter: 'blur(0px)',
-                        y: 0,
-                        duration: 2.2, // Ultra-slow majestic transition
-                        delay: el.delay,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: el.class,
-                            scroller: containerRef.current,
-                            start: "top 98%",
-                            toggleActions: "play none none none",
-                            invalidateOnRefresh: true
+                const element = document.querySelector(el.class);
+                if (element) {
+                    gsap.fromTo(element,
+                        { autoAlpha: 0, filter: 'blur(5px)', y: 25 },
+                        {
+                            autoAlpha: 1,
+                            filter: 'blur(0px)',
+                            y: 0,
+                            duration: 2.2,
+                            delay: el.delay,
+                            ease: "power2.out",
+                            scrollTrigger: {
+                                trigger: element,
+                                scroller: containerRef.current,
+                                start: "top 98%",
+                                toggleActions: "play none none none",
+                                invalidateOnRefresh: true
+                            }
                         }
-                    }
-                );
+                    );
+                }
             });
 
-            // Small delay to ensure the grid has settled before calculating trigger points
             setTimeout(() => {
                 ScrollTrigger.refresh();
             }, 500);
         }
-    }, { dependencies: [dots.length, mode], scope: containerRef });
+    }, { dependencies: [dots.length, mode], scope: containerRef.current ? containerRef : undefined });
 
     // Handle symmetrical exit and entry transitions
     useEffect(() => {
-        if (activeQuoteIndex !== displayQuoteIndex) {
+        if (activeQuoteIndex !== displayQuoteIndex && quoteContentRef.current) {
             // Very slow fade OUT to the left
             gsap.to(quoteContentRef.current, {
                 opacity: 0,
@@ -1478,7 +1488,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             <div style={navBoxStyle}>
                 {/* Inner Child 1: Text (Logo Part 1) + Time */}
                 <div style={{ display: 'flex', alignItems: 'baseline', minWidth: '160px', gap: '8px' }}>
-                    <Link to="/" style={{
+                    <Link to="/" aria-label="Home" style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
                         fontSize: '19px',
                         letterSpacing: '-1px',
@@ -1507,6 +1517,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         {/* Contact Link */}
                         <Link
                             to="/get-in-touch"
+                            aria-label="Contact Us"
                             onMouseEnter={() => setHoveredLink('contact')}
                             onMouseLeave={() => setHoveredLink(null)}
                             style={{
@@ -1518,13 +1529,32 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 textDecoration: 'none',
                                 opacity: location.pathname === '/get-in-touch'
                                     ? 1
-                                    : (hoveredLink === 'contact' ? 0.5 : 1),
+                                    : (hoveredLink === 'contact' ? 0.6 : 1),
                                 transition: 'opacity 0.2s ease',
                                 padding: '4px 0'
                             }}
                         >
                             Contact
                         </Link>
+
+                        {/* About Link */}
+                        <span
+                            onClick={() => {/* Add About path if needed */ }}
+                            onMouseEnter={() => setHoveredLink('about')}
+                            onMouseLeave={() => setHoveredLink(null)}
+                            style={{
+                                fontFamily: '"Rethink Sans", sans-serif',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                color: '#2d2d2d',
+                                cursor: 'pointer',
+                                opacity: hoveredLink === 'about' ? 0.6 : 1,
+                                transition: 'opacity 0.2s ease',
+                                padding: '4px 0'
+                            }}
+                        >
+                            About
+                        </span>
 
                         {/* Join Us Link */}
                         <span
@@ -1538,8 +1568,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 color: '#2d2d2d',
                                 cursor: 'pointer',
                                 opacity: location.pathname === '/get-in-touch'
-                                    ? (hoveredLink === 'join' ? 1 : 0.3)
-                                    : (hoveredLink === 'join' ? 0.5 : 1),
+                                    ? (hoveredLink === 'join' ? 1 : 0.6)
+                                    : (hoveredLink === 'join' ? 0.6 : 1),
                                 transition: 'opacity 0.2s ease',
                                 padding: '4px 0'
                             }}
@@ -1558,6 +1588,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         textDecoration: 'none'
                     }}
                         to="/"
+                        aria-label="Studio Home"
                     >
                         Studio
                     </Link>
@@ -1604,8 +1635,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design & Development for Startups'}</title>
-                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help startups and scaleups build high-performance products.' : 'Palett Studio is a design and development shop for startups and scaleups.'} />
+                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'}</title>
+                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+
+                    {/* Dynamic Social Tags */}
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'} />
+                    <meta property="og:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Creative Design and Development Studio'} />
+                    <meta property="twitter:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
                 </Helmet>
                 {!hideContent && (
                     <div className="fade-anim-box2" style={{
@@ -1656,6 +1693,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             }}>
                                 {mode !== 'get-in-touch' && (
                                     <ThreadButton
+                                        aria-label="Get in touch with us"
                                         extraPadding={1}
                                         onClick={() => navigate('/get-in-touch')}
                                     >
@@ -1953,6 +1991,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                         setHoveredMosaicIdx(null);
                                                         setIsAutoMosaicEnabled(true);
                                                     }}
+                                                    aria-label={`Service: ${block.title}`}
                                                     style={{
                                                         gridArea: block.area,
                                                         width: '100%',
@@ -2078,7 +2117,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             margin: 0,
                                             textAlign: 'left',
                                         }}>
-                                            A design native lab, powered by <br />
+                                            A design native studio, powered by <br />
                                             senior-led cracked builders. free from  <br />
                                             obsolete rituals, pushing beyound mediocrity.
                                         </h2>
@@ -2581,116 +2620,6 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
 };
 
 const Book = ({ hideContent = false, mode = 'full' }) => {
-    const containerRef = useRef(null);
-    const leftWrapperRef = useRef(null); // Controls Position & Float
-    const rightWrapperRef = useRef(null);
-    const leftCardRef = useRef(null); // Controls Hover Interaction
-    const rightCardRef = useRef(null);
-    const textRef = useRef(null);
-
-    // State for input fields
-    const [formData, setFormData] = useState({
-        name: '',
-        company: '',
-        contact: ''
-    });
-
-    // State for project type selection
-    const [selectedType, setSelectedType] = useState(null);
-
-    useGSAP(() => {
-        const tl = gsap.timeline({ defaults: { ease: "sine.inOut" } });
-
-        // Initial setup
-        // Wrappers start from bottom, Aligned to FINAL positions directly
-        gsap.set(leftWrapperRef.current, {
-            x: -148,
-            y: 500, // Start closer to bottom edge
-            rotation: -35,
-            scale: 0.6,
-            autoAlpha: 0 // Start hidden
-        });
-        // Removed isolated opacity tween
-
-        gsap.set(rightWrapperRef.current, {
-            x: -260,
-            y: 500, // Start closer to bottom edge
-            rotation: -25,
-            scale: 0.6,
-            autoAlpha: 0
-        });
-        // Removed isolated opacity tween
-
-        // Text Panel - Static/Visible by default
-        gsap.set(textRef.current, {
-            x: 0,
-            opacity: 1,
-            autoAlpha: 1
-        });
-
-        // 1. Balloon Entrance
-        tl.addLabel("entrance")
-            .to(leftWrapperRef.current, {
-                y: 68,
-                x: -122,
-                rotation: 4,
-                scale: 1,
-                // Visibilty handled separately
-                duration: 0.8,
-                ease: "back.out(0.6)"
-            }, "entrance")
-            .to(leftWrapperRef.current, {
-                autoAlpha: 1,
-                duration: 0.3,
-                ease: "power1.out"
-            }, "entrance+=0.0") // Both cards appear together
-
-            .to(rightWrapperRef.current, {
-                y: -108,
-                x: -336,
-                rotation: -3.4,
-                scale: 1,
-                // Visibility separate
-                duration: 0.8,
-                ease: "back.out(0.6)"
-            }, "entrance+=0.05") // Start movement 0.05sec after Left
-            .to(rightWrapperRef.current, {
-                autoAlpha: 1,
-                duration: 0.3,
-                ease: "power1.out"
-            }, "entrance+=0.0") // Right appears immediately on start
-
-    }, { scope: containerRef });
-
-    // Hover Interaction (On Inner Cards)
-    const handleHover = (e, cardRef) => {
-        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-        const x = (e.clientX - left - width / 2) / 12; // Stronger magnet (was 20)
-        const y = (e.clientY - top - height / 2) / 12;
-
-        gsap.to(cardRef.current, {
-            x: x,
-            y: y,
-            rotation: x * 0.6, // Increased tilt
-            // scale: 1.05, // Removed scale as requested
-            duration: 0.4,
-            ease: "back.out(1.7)", // Bubbly elastic feel
-            overwrite: "auto"
-        });
-    };
-
-    const handleLeave = (cardRef) => {
-        gsap.to(cardRef.current, {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            scale: 1,
-            duration: 0.6,
-            ease: "elastic.out(1, 0.5)",
-            overwrite: "auto"
-        });
-    };
-
     return (
         <div className="book-wrapper" style={{ width: '100%', position: 'relative' }}>
             {/* Thread Grid with Physics */}
