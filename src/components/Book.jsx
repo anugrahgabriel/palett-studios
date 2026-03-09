@@ -1549,7 +1549,9 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 fontWeight: 500,
                                 color: '#2d2d2d',
                                 cursor: 'pointer',
-                                opacity: hoveredLink === 'about' ? 0.6 : 1,
+                                opacity: location.pathname === '/get-in-touch'
+                                    ? (hoveredLink === 'about' ? 1 : 0.6)
+                                    : (hoveredLink === 'about' ? 0.6 : 1),
                                 transition: 'opacity 0.2s ease',
                                 padding: '4px 0'
                             }}
