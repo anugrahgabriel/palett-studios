@@ -373,6 +373,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const location = useLocation();
     const [hoveredLink, setHoveredLink] = useState(null);
     const [isAutoMosaicEnabled, setIsAutoMosaicEnabled] = useState(true);
+    const [showCal, setShowCal] = useState(false);
 
     const quotes = [
         {
@@ -533,13 +534,13 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const BOX_WIDTH_COLS = 23;          // All boxes share the same column width
     const BOX_2_START_ROW = 1;           // Nav row (row 1)
     const BOX_2_HEIGHT = 1;           // Top thin box (1 row)
-    const BOX_3_HEIGHT = 15;           // Box 2 (content) height in rows
+    const box3Height = (mode === 'get-in-touch' && showCal) ? 31 : 15; // Increased for Cal view
     const BOX_NEW_HEIGHT = 10;           // New middle box height in rows
     const BOX_NEW2_HEIGHT = 2;           // Lower part of the new middle box
     const BOX_TRIP_HEIGHT = 12; // Box 3 (carousel) height
     // Derived start rows
     const BOX_3_START_ROW = BOX_2_START_ROW + BOX_2_HEIGHT + 2; // +2 gap below nav
-    const BOX_NEW_START_ROW = BOX_3_START_ROW + BOX_3_HEIGHT;
+    const BOX_NEW_START_ROW = BOX_3_START_ROW + box3Height;
     const BOX_NEW2_START_ROW = BOX_NEW_START_ROW + BOX_NEW_HEIGHT;
     const BOX_TRIP_START_ROW = BOX_NEW2_START_ROW + BOX_NEW2_HEIGHT;
     // ────────────────────────────────────────────────────────────────────────────
@@ -558,7 +559,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const cols = Math.ceil(viewportWidth / cellSize) + 2;
     const baseRows = Math.ceil(viewportHeight / cellSize) + 2;
     const rowsCount = mode === 'get-in-touch'
-        ? (BOX_3_START_ROW + BOX_3_HEIGHT + 3)
+        ? (BOX_3_START_ROW + box3Height + 3)
         : (baseRows + 31); // Total rows including vertical extension
 
     // Start offsets for centering
@@ -594,7 +595,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
         // Duplicate Box Params
         const dupStartCol = centerCol - Math.floor(BOX_WIDTH_COLS / 2) - 1;
         const dupStartRow = BOX_3_START_ROW;
-        const dupHeightRows_Filter = BOX_3_HEIGHT;
+        const dupHeightRows_Filter = box3Height;
 
         // New Box Params
         const newStartCol = dupStartCol;
@@ -970,7 +971,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
             const effectiveDupWidth = BOX_WIDTH_COLS + 1;
 
-            const dupHeightRows = BOX_3_HEIGHT;
+            const dupHeightRows = box3Height;
             const dupHorizontalRows = [0, dupHeightRows]; // Top and Bottom edges
 
             // Horizontal lines (Top and Bottom edges) for DUPLICATE
@@ -1661,9 +1662,12 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         margin: 0
                                     }}>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
-                                            {mode === 'get-in-touch' ? 'Wondering where to begin?' : 'Design and Development shop'}
+                                            {mode === 'get-in-touch'
+                                                ? (showCal ? 'Book a 15 min call.' : 'Wondering where to begin?')
+                                                : 'Design and Development shop'}
                                         </span>
                                         {mode !== 'get-in-touch' && 'for startups and scaleups'}
+                                        {mode === 'get-in-touch' && showCal && <div style={{ fontSize: '25px', color: '#373434ff', marginTop: '4px' }}>And we'll reach out.</div>}
                                     </h1>
                                     {/* Paragraphs moved to absolute-positioned description area */}
                                 </div>
@@ -1794,124 +1798,136 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         padding: '40px',
                                         position: 'relative'
                                     }}>
-                                        <div style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '1fr 1fr',
-                                            gap: '34px 42px',
-                                            width: '100%'
-                                        }}>
-                                            {/* Field 1: Name */}
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Name*</label>
-                                                <input
-                                                    type="text"
-                                                    style={{
-                                                        marginTop: '-2px',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
-                                                        padding: '10px 0',
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '15px',
-                                                        color: '#373434ff',
-                                                        outline: 'none'
-                                                    }}
-                                                />
+                                        {showCal ? (
+                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px' }}>
+                                                <iframe
+                                                    src="https://cal.com/anugrah-palettstudios/30min?embed=true"
+                                                    width="100%"
+                                                    height="100%"
+                                                    frameBorder="0"
+                                                    title="Cal.com Scheduler"
+                                                ></iframe>
                                             </div>
+                                        ) : (
+                                            <div style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr 1fr',
+                                                gap: '34px 42px',
+                                                width: '100%'
+                                            }}>
+                                                {/* Field 1: Name */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                    <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Name*</label>
+                                                    <input
+                                                        type="text"
+                                                        style={{
+                                                            marginTop: '-2px',
+                                                            background: 'transparent',
+                                                            border: 'none',
+                                                            borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                            padding: '10px 0',
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '15px',
+                                                            color: '#373434ff',
+                                                            outline: 'none'
+                                                        }}
+                                                    />
+                                                </div>
 
-                                            {/* Field 2: Email */}
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Email*</label>
-                                                <input
-                                                    type="email"
-                                                    style={{
-                                                        marginTop: '-2px',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
-                                                        padding: '10px 0',
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '15px',
-                                                        color: '#373434ff',
-                                                        outline: 'none'
-                                                    }}
-                                                />
-                                            </div>
+                                                {/* Field 2: Email */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                    <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Email*</label>
+                                                    <input
+                                                        type="email"
+                                                        style={{
+                                                            marginTop: '-2px',
+                                                            background: 'transparent',
+                                                            border: 'none',
+                                                            borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                            padding: '10px 0',
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '15px',
+                                                            color: '#373434ff',
+                                                            outline: 'none'
+                                                        }}
+                                                    />
+                                                </div>
 
-                                            {/* Field 3: Referrer */}
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>How did you hear of us?*</label>
-                                                <input
-                                                    type="text"
-                                                    style={{
-                                                        marginTop: '-2px',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
-                                                        padding: '10px 0',
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '15px',
-                                                        color: '#373434ff',
-                                                        outline: 'none'
-                                                    }}
-                                                />
-                                            </div>
+                                                {/* Field 3: Referrer */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                    <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>How did you hear of us?*</label>
+                                                    <input
+                                                        type="text"
+                                                        style={{
+                                                            marginTop: '-2px',
+                                                            background: 'transparent',
+                                                            border: 'none',
+                                                            borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                            padding: '10px 0',
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '15px',
+                                                            color: '#373434ff',
+                                                            outline: 'none'
+                                                        }}
+                                                    />
+                                                </div>
 
-                                            {/* Field 4: Stage */}
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>What stage is your company?</label>
-                                                <select
-                                                    style={{
-                                                        marginTop: '-2px',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
-                                                        padding: '10px 0',
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '15px',
-                                                        color: '#373434ff',
-                                                        outline: 'none',
-                                                        cursor: 'pointer',
-                                                        appearance: 'none',
-                                                        WebkitAppearance: 'none'
-                                                    }}
-                                                    defaultValue=""
-                                                >
-                                                    <option value="" disabled>Select One</option>
-                                                    <option value="pre-seed">Pre-seed</option>
-                                                    <option value="seed">Seed</option>
-                                                    <option value="series-a">Series A</option>
-                                                    <option value="series-b">Series B+</option>
-                                                </select>
-                                            </div>
+                                                {/* Field 4: Stage */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                                                    <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>What stage is your company?</label>
+                                                    <select
+                                                        style={{
+                                                            marginTop: '-2px',
+                                                            background: 'transparent',
+                                                            border: 'none',
+                                                            borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                            padding: '10px 0',
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '15px',
+                                                            color: '#373434ff',
+                                                            outline: 'none',
+                                                            cursor: 'pointer',
+                                                            appearance: 'none',
+                                                            WebkitAppearance: 'none'
+                                                        }}
+                                                        defaultValue=""
+                                                    >
+                                                        <option value="" disabled>Select One</option>
+                                                        <option value="pre-seed">Pre-seed</option>
+                                                        <option value="seed">Seed</option>
+                                                        <option value="series-a">Series A</option>
+                                                        <option value="series-b">Series B+</option>
+                                                    </select>
+                                                </div>
 
-                                            {/* Field 5: Message */}
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                                <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Message*</label>
-                                                <textarea
-                                                    rows={1}
-                                                    onChange={(e) => {
-                                                        e.target.style.height = 'auto';
-                                                        e.target.style.height = `${e.target.scrollHeight}px`;
-                                                    }}
-                                                    style={{
-                                                        marginTop: '-2px',
-                                                        background: 'transparent',
-                                                        border: 'none',
-                                                        borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
-                                                        padding: '10px 0',
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '15px',
-                                                        color: '#373434ff',
-                                                        outline: 'none',
-                                                        resize: 'none',
-                                                        width: '100%',
-                                                        maxHeight: '120px',
-                                                        overflowY: 'auto'
-                                                    }}
-                                                />
+                                                {/* Field 5: Message */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', gridColumn: 'span 2' }}>
+                                                    <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', fontWeight: 400, color: '#8b8a8aff' }}>Message*</label>
+                                                    <textarea
+                                                        rows={1}
+                                                        onChange={(e) => {
+                                                            e.target.style.height = 'auto';
+                                                            e.target.style.height = `${e.target.scrollHeight}px`;
+                                                        }}
+                                                        style={{
+                                                            marginTop: '-2px',
+                                                            background: 'transparent',
+                                                            border: 'none',
+                                                            borderBottom: '0.8px solid rgba(0, 0, 0, 0.1)',
+                                                            padding: '10px 0',
+                                                            fontFamily: '"Rethink Sans", sans-serif',
+                                                            fontSize: '15px',
+                                                            color: '#373434ff',
+                                                            outline: 'none',
+                                                            resize: 'none',
+                                                            width: '100%',
+                                                            maxHeight: '120px',
+                                                            overflowY: 'auto'
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
 
 
                                         <div style={{
@@ -1922,10 +1938,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             alignItems: 'center',
                                             gap: '10px'
                                         }}>
-                                            <a
-                                                href="https://cal.com/anugrah-palettstudios/30min"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                            <div
+                                                onClick={() => setShowCal(!showCal)}
                                                 style={{
                                                     fontFamily: '"Rethink Sans", sans-serif',
                                                     fontSize: '15px',
@@ -1940,15 +1954,17 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                     textUnderlineOffset: '3px',
                                                     textDecorationColor: 'rgba(137, 135, 202, 0.4)'
                                                 }}>
-                                                    Schedule here a meeting directly if you want.
+                                                    {showCal ? 'Back to form' : 'Schedule a meeting directly if you want.'}
                                                 </span>
-                                            </a>
-                                            <ThreadButton
-                                                extraPadding={1}
-                                                onClick={() => {/* Contact submission logic */ }}
-                                            >
-                                                Submit
-                                            </ThreadButton>
+                                            </div>
+                                            {!showCal && (
+                                                <ThreadButton
+                                                    extraPadding={1}
+                                                    onClick={() => {/* Contact submission logic */ }}
+                                                >
+                                                    Submit
+                                                </ThreadButton>
+                                            )}
                                         </div>
                                     </div>
                                 ) : (
