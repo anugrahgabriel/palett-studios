@@ -157,7 +157,7 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                         >
                             <img
                                 src={img}
-                                alt={`Product Design Project ${i % 10 + 1} - Palett Studio`}
+                                alt={`Product Design Project ${i % 10 + 1} - Palett`}
                                 loading="lazy"
                                 onLoad={handleImageLoad}
                                 style={{
@@ -390,7 +390,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
         {
             name: "Marco Rossi",
             role: "Founder",
-            text: "Working with Palett Studios felt like having an elite in-house design team from day one. They are incredibly responsive and proactive, often identifying architectural bottlenecks before they became problems. A true strategic partner for any scaling startup.",
+            text: "Working with Palett felt like having an elite in-house design team from day one. They are incredibly responsive and proactive, often identifying architectural bottlenecks before they became problems. A true strategic partner for any scaling startup.",
             img: client1
         },
         {
@@ -1506,7 +1506,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                 {/* Inner Child 2: Spacer */}
                 <div style={{ flex: 1 }}></div>
 
-                {/* Inner Child 3: Right cluster — Menu + Studio */}
+                {/* Inner Child 3: Right cluster — Menu + Home */}
                 <div style={{
                     display: 'flex',
                     alignItems: 'baseline',
@@ -1579,20 +1579,6 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         </span>
                     </div>
 
-                    <Link style={{
-                        fontFamily: '"Cocosharp Trial", sans-serif',
-                        fontSize: '19px',
-                        letterSpacing: '-1px',
-                        fontWeight: 510,
-                        color: '#373434',
-                        cursor: 'pointer',
-                        textDecoration: 'none'
-                    }}
-                        to="/"
-                        aria-label="Studio Home"
-                    >
-                        Studio
-                    </Link>
                 </div>
 
                 {/* Bottom Stroke with Dots and Connecting Line */}
@@ -1636,14 +1622,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'}</title>
-                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'}</title>
+                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
 
                     {/* Dynamic Social Tags */}
-                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'} />
-                    <meta property="og:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
-                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett Studio' : 'Palett Studio — Design and Development Studio'} />
-                    <meta property="twitter:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett Studio. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'} />
+                    <meta property="og:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'} />
+                    <meta property="twitter:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
                 </Helmet>
                 {!hideContent && (
                     <div className="fade-anim-box2" style={{
@@ -2257,7 +2243,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                     boxShadow: picHover ? '0 4px 8px rgba(0,0,0,0.1)' : 'none'
                                                 }}
                                             >
-                                                <img src={picImg} alt="Anugrah - Palett Studio Founder" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src={picImg} alt="Anugrah - Palett Founder" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </div>
                                         </div>
                                     </div>
