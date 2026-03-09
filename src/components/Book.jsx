@@ -1799,7 +1799,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         position: 'relative'
                                     }}>
                                         {showCal ? (
-                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px' }}>
+                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px', backgroundColor: '#f8f8f8ff' }}>
                                                 <iframe
                                                     src="https://cal.com/anugrah-palettstudios/30min?embed=true"
                                                     width="100%"
