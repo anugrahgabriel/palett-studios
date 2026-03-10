@@ -1,9 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import confetti from 'canvas-confetti';
 
 gsap.registerPlugin(ScrollTrigger);
 import './Book.css';
@@ -374,6 +376,41 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const [hoveredLink, setHoveredLink] = useState(null);
     const [isAutoMosaicEnabled, setIsAutoMosaicEnabled] = useState(true);
     const [showCal, setShowCal] = useState(false);
+    const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
+
+    useEffect(() => {
+        (async function () {
+            const cal = await getCalApi();
+            cal("on", {
+                action: "*",
+                callback: (e) => {
+                    if (e.detail.action === "bookingSuccessfulV2") {
+                        setIsBookingSuccessful(true);
+                        const count = 200;
+                        const defaults = {
+                            origin: { y: 0.3 },
+                            zIndex: 100,
+                            colors: ['#8987ca', '#e2c6ab', '#274df5']
+                        };
+
+                        function fire(particleRatio, opts) {
+                            confetti({
+                                ...defaults,
+                                ...opts,
+                                particleCount: Math.floor(count * particleRatio)
+                            });
+                        }
+
+                        fire(0.25, { spread: 26, startVelocity: 55 });
+                        fire(0.2, { spread: 60 });
+                        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+                        fire(0.1, { spread: 120, startVelocity: 45 });
+                    }
+                }
+            });
+        })();
+    }, []);
 
     const quotes = [
         {
@@ -534,7 +571,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
     const BOX_WIDTH_COLS = 23;          // All boxes share the same column width
     const BOX_2_START_ROW = 1;           // Nav row (row 1)
     const BOX_2_HEIGHT = 1;           // Top thin box (1 row)
-    const box3Height = (mode === 'get-in-touch' && showCal) ? 31 : 15; // Increased for Cal view
+    const box3Height = (mode === 'get-in-touch' && showCal) ? 27 : 15; // Extends by +12 rows when Cal is active
     const BOX_NEW_HEIGHT = 10;           // New middle box height in rows
     const BOX_NEW2_HEIGHT = 2;           // Lower part of the new middle box
     const BOX_TRIP_HEIGHT = 12; // Box 3 (carousel) height
@@ -755,7 +792,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
         }
 
         setConnections(generatedConnections);
-    }, [mode]);
+    }, [mode, rowsCount]);
 
     // Mouse tracking
     useEffect(() => {
@@ -1663,11 +1700,10 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     }}>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
                                             {mode === 'get-in-touch'
-                                                ? (showCal ? 'Book a 15 min call.' : 'Wondering where to begin?')
+                                                ? 'Wondering where to begin?'
                                                 : 'Design and Development shop'}
                                         </span>
                                         {mode !== 'get-in-touch' && 'for startups and scaleups'}
-                                        {mode === 'get-in-touch' && showCal && <div style={{ fontSize: '25px', color: '#373434ff', marginTop: '4px' }}>And we'll reach out.</div>}
                                     </h1>
                                     {/* Paragraphs moved to absolute-positioned description area */}
                                 </div>
@@ -1783,8 +1819,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 width: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                padding: mode === 'get-in-touch' ? '0 20px 0 20px' : '0 20px 20px 20px',
-                                backgroundColor: mode === 'get-in-touch' ? '#f8f8f8' : 'transparent'
+                                padding: '0 20px 20px 20px'
                             }}>
                                 {mode === 'get-in-touch' ? (
                                     <div style={{
@@ -1796,18 +1831,36 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         border: '0.8px solid rgba(0, 0, 0, 0.12)',
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        padding: '40px',
+                                        padding: showCal ? '40px 40px 0 40px' : '40px',
                                         position: 'relative'
                                     }}>
                                         {showCal ? (
-                                            <div style={{ flex: 1, width: '100%', minHeight: '600px', marginTop: '-20px', backgroundColor: '#f8f8f8' }}>
-                                                <iframe
-                                                    src="https://cal.com/anugrah-palettstudios/30min?embed=true"
-                                                    width="100%"
-                                                    height="100%"
-                                                    frameBorder="0"
-                                                    title="Cal.com Scheduler"
-                                                ></iframe>
+                                            <div style={{ flex: 1, width: '100%', minHeight: '570px', marginTop: '0', position: 'relative' }}>
+                                                {/* "if not sure" text inside grey box, top left */}
+                                                {!isBookingSuccessful && (
+                                                    <div style={{
+                                                        position: 'absolute',
+                                                        top: '12px',
+                                                        left: '42px',
+                                                        zIndex: 20,
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '13px',
+                                                        color: '#9b9494ff',
+                                                        fontWeight: 400,
+                                                        pointerEvents: 'auto'
+                                                    }}>
+                                                        if not sure, just <span onClick={() => setShowCal(false)} style={{ color: '#8987ca', textDecoration: 'underline', cursor: 'pointer' }}>drop your message</span> and we'll reach out to you
+                                                    </div>
+                                                )}
+                                                <Cal
+                                                    calLink="anugrah-palettstudios/30min"
+                                                    style={{ width: "100%", height: "100%", overflow: "hidden", padding: 0 }}
+                                                    config={{
+                                                        layout: 'month_view',
+                                                        theme: 'light',
+                                                        hideEventTypeDetails: true
+                                                    }}
+                                                />
                                             </div>
                                         ) : (
                                             <div style={{
@@ -1939,25 +1992,27 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             alignItems: 'center',
                                             gap: '10px'
                                         }}>
-                                            <div
-                                                onClick={() => setShowCal(!showCal)}
-                                                style={{
-                                                    fontFamily: '"Rethink Sans", sans-serif',
-                                                    fontSize: '15px',
-                                                    color: '#8987ca',
-                                                    fontWeight: 400,
-                                                    textDecoration: 'none',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                <span style={{
-                                                    textDecoration: 'underline',
-                                                    textUnderlineOffset: '3px',
-                                                    textDecorationColor: 'rgba(137, 135, 202, 0.4)'
-                                                }}>
-                                                    {showCal ? 'Back to form' : 'Schedule a meeting directly if you want.'}
-                                                </span>
-                                            </div>
+                                            {!showCal && (
+                                                <div
+                                                    onClick={() => setShowCal(true)}
+                                                    style={{
+                                                        fontFamily: '"Rethink Sans", sans-serif',
+                                                        fontSize: '15px',
+                                                        color: '#8987ca',
+                                                        fontWeight: 400,
+                                                        textDecoration: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <span style={{
+                                                        textDecoration: 'underline',
+                                                        textUnderlineOffset: '3px',
+                                                        textDecorationColor: 'rgba(137, 135, 202, 0.4)'
+                                                    }}>
+                                                        Schedule a meeting directly if you want.
+                                                    </span>
+                                                </div>
+                                            )}
                                             {!showCal && (
                                                 <ThreadButton
                                                     extraPadding={1}
@@ -2588,12 +2643,11 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                 >
                     {/* Right-pointing arrow made of dots with more dots */}
                     {[
-                        // Arrow shape coordinates (x, y) - fuller right-pointing arrow
-                        [0, 2], [1, 2], [2, 2], [3, 2],  // Horizontal line (4 dots)
-                        [3, 1], [4, 0],                   // Upper diagonal (2 dots)
-                        [3, 3], [4, 4],                   // Lower diagonal (2 dots)
-                        [1, 1], [1, 3],                   // Additional vertical dots
-                        [2, 1]                            // Additional dot for fullness
+                        [0, 2], [1, 2], [2, 2], [3, 2],
+                        [3, 1], [4, 0],
+                        [3, 3], [4, 4],
+                        [1, 1], [1, 3],
+                        [2, 1]
                     ].map((pos, i) => (
                         <div
                             key={i}
@@ -2606,8 +2660,8 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                                 borderRadius: '50%',
                                 backgroundColor: '#9290C3',
                                 opacity: 0.8,
-                                animation: `blink ${2 + Math.random() * 2.5}s ease-in-out infinite`,
-                                animationDelay: `${Math.random() * 2}s`
+                                animation: 'blink 2s ease-in-out infinite',
+                                animationDelay: `${i * 0.1}s`
                             }}
                         />
                     ))}
