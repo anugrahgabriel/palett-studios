@@ -1706,7 +1706,31 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                 : 'Design and Development shop'}
                                         </span>
                                         {mode !== 'get-in-touch' && 'for startups and scaleups'}
+                                        {mode === 'get-in-touch' && showCal && (
+                                            <div style={{ fontSize: '25px', color: '#373434ff', marginTop: '4px' }}>
+                                                Book a 30 min call.
+                                            </div>
+                                        )}
                                     </h1>
+                                    {mode === 'get-in-touch' && showCal && !isBookingSuccessful && (
+                                        <div style={{
+                                            marginTop: '24px', // Reduced gap for "full below" feel without excessive push
+                                            fontFamily: '"Rethink Sans", sans-serif',
+                                            fontSize: '15px',
+                                            color: '#9b9494ff',
+                                            fontWeight: 400,
+                                            pointerEvents: 'auto',
+                                            textAlign: 'left'
+                                        }}>
+                                            if not sure, just <span onClick={() => setShowCal(false)} style={{
+                                                color: '#8987ca',
+                                                cursor: 'pointer',
+                                                textDecoration: 'underline',
+                                                textUnderlineOffset: '3px',
+                                                textDecorationColor: 'rgba(137, 135, 202, 0.4)'
+                                            }}>drop your message</span>
+                                        </div>
+                                    )}
                                     {/* Paragraphs moved to absolute-positioned description area */}
                                 </div>
                             </div>
@@ -1717,7 +1741,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 gap: '8px',
                                 width: '100%',
                                 padding: '0 20px',
-                                marginTop: mode === 'get-in-touch' ? '110px' : '48px',
+                                marginTop: mode === 'get-in-touch' ? (showCal ? '28px' : '110px') : '48px',
                                 marginBottom: '20px',
                                 pointerEvents: 'auto',
                                 alignItems: 'flex-start'
@@ -1838,30 +1862,6 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     }}>
                                         {showCal ? (
                                             <div style={{ flex: 1, width: '100%', minHeight: '570px', marginTop: '0', position: 'relative' }}>
-                                                {/* "if not sure" text inside grey box, top left */}
-                                                {!isBookingSuccessful && (
-                                                    <div style={{
-                                                        position: 'absolute',
-                                                        top: '12px',
-                                                        left: '50.2%',
-                                                        transform: 'translateX(-50%)',
-                                                        zIndex: 20,
-                                                        fontFamily: '"Rethink Sans", sans-serif',
-                                                        fontSize: '13px',
-                                                        color: '#9b9494ff',
-                                                        fontWeight: 400,
-                                                        pointerEvents: 'auto',
-                                                        whiteSpace: 'nowrap'
-                                                    }}>
-                                                        if not sure, just <span onClick={() => setShowCal(false)} style={{
-                                                            color: '#8987ca',
-                                                            cursor: 'pointer',
-                                                            textDecoration: 'underline',
-                                                            textUnderlineOffset: '3px',
-                                                            textDecorationColor: 'rgba(137, 135, 202, 0.4)'
-                                                        }}>drop your message</span> and we'll reach out to you
-                                                    </div>
-                                                )}
                                                 <Cal
                                                     calLink="anugrah-palettstudios/30min"
                                                     style={{ width: "100%", height: "100%", overflow: "hidden", padding: 0 }}
