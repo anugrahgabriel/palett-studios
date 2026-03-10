@@ -15,13 +15,13 @@ const rightPageImg = "";
 import slide1 from '../../pics/1-slide-small.png';
 import slide2 from '../../pics/2-slide.png';
 import slide3 from '../../pics/3-slide.png';
-import slide4 from '../../pics/4-slide.png';
 import slide5 from '../../pics/5-slide-small.png';
 import slide6 from '../../pics/6-slide-small.png';
 import slide7 from '../../pics/7-slide.png';
 import slide8 from '../../pics/8-slide-small.png';
 import slide9 from '../../pics/9-slide-small.png';
 import slide10 from '../../pics/10-slide-small.png';
+import slide11 from '../../pics/11-slide.png';
 import picImg from '../../pics/pic-small.JPG';
 import client1 from '../../pics/client 1.png';
 
@@ -116,27 +116,20 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                 gap: '20px',
                 width: 'max-content',
                 alignItems: 'flex-start',
-                paddingTop: '18px',
-                paddingBottom: '14px',
+                paddingTop: '58px',
+                paddingBottom: '50px',
                 boxSizing: 'border-box',
                 willChange: 'transform',
                 pointerEvents: 'auto'
             }}>
                 {[...images, ...images].map((img, i) => {
                     const labels = [
-                        // Slides 1–3: N3XT
-                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
-                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
-                        { tags: ['N3XT', 'Brand', 'Product', 'Website', 'Fintech', '$72M raised'] },
-                        // Slides 4–7: Quotient
+                        // Slides 1–3: Quotient
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
-                        { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
-                        // Slides 8–9: Blockview
-                        { tags: ['blockview (now heroes)', 'Product design', 'Portfolio & trading'] },
-                        { tags: ['blockview (now heroes)', 'Product design', 'Portfolio & trading'] },
-                        // Slide 10: Runable
+                        // Slides 4–5: Runable
+                        { tags: ['Runable', 'Product', 'General AI'] },
                         { tags: ['Runable', 'Product', 'General AI'] },
                     ];
                     const label = labels[i % labels.length];
@@ -163,7 +156,7 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                                 loading="lazy"
                                 onLoad={handleImageLoad}
                                 style={{
-                                    height: 'calc(78% - 2px)',
+                                    height: 'calc(100% - 14px)',
                                     objectFit: 'contain',
                                     borderRadius: '12px',
                                     outline: '0.4px solid rgba(150, 150, 150, 0.25)',
@@ -2240,7 +2233,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative' }}>
                                 {/* Carousel fills full box */}
                                 <ImageCarousel
-                                    images={[slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8, slide9, slide10]}
+                                    images={[slide5, slide6, slide7, slide10, slide11]}
                                     width={tripBoxPosition.width}
                                     height={tripBoxPosition.height}
                                 />
