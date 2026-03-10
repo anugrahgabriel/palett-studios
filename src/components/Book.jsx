@@ -1176,7 +1176,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             const maxRow = dots.reduce((max, d) => Math.max(max, d.row), 0);
 
             const globalStartRow = dupTargetRow; // Start from duplicate box top
-            const globalEndRow = mode === 'get-in-touch' ? (dupTargetRow + dupHeightRows) : (tripTargetRow + tripHeightRows); // Adjust stop row based on mode
+            const globalEndRow = rowsCount - 1; // Extended to full dot area height
             const totalVerticalHeight = globalEndRow - globalStartRow;
 
             const verticalEdgeCols = [0, effectiveLeftBoxWidth];
@@ -1213,7 +1213,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             const screenVisibleMaxCol = visibleDots.reduce((max, d) => Math.max(max, d.col), 0);
 
             const markerStartRow = targetRow + 1;
-            const markerEndRow = mode === 'get-in-touch' ? (dupTargetRow + dupHeightRows) : (tripTargetRow + tripHeightRows);
+            const markerEndRow = rowsCount - 1;
 
             // Aligned with the screen left and right edges
             // Use the same visible bounds calculated earlier
@@ -1851,10 +1851,12 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     <div style={{
                                         flex: 1,
                                         width: '100%',
-                                        backgroundColor: '#f8f8f8',
+                                        backgroundColor: '#FBFBFB', // Exact flattened color of the overlay+bg mix
+                                        backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
+                                        backgroundSize: '12px 12px',
                                         borderRadius: '0',
                                         pointerEvents: 'auto',
-                                        border: '0.8px solid rgba(203, 203, 203, 0.08)',
+                                        border: '0.4px solid rgba(0, 0, 0, 0.04)',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         padding: showCal ? '40px 40px 0 40px' : '40px',
