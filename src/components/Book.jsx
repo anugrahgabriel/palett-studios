@@ -15,13 +15,13 @@ const rightPageImg = "";
 import slide1 from '../../pics/1-slide-small.png';
 import slide2 from '../../pics/2-slide.png';
 import slide3 from '../../pics/3-slide.png';
-import slide5 from '../../pics/5-slide-small.png';
-import slide6 from '../../pics/6-slide-small.png';
-import slide7 from '../../pics/7-slide.png';
+import slide5 from '../../pics/5-slide-small.webp';
+import slide6 from '../../pics/6-slide-small.webp';
+import slide7 from '../../pics/7-slide.webp';
 import slide8 from '../../pics/8-slide-small.png';
 import slide9 from '../../pics/9-slide-small.png';
-import slide10 from '../../pics/10-slide-small.png';
-import slide11 from '../../pics/11-slide.png';
+import slide10 from '../../pics/10-slide-small.webp';
+import slide11 from '../../pics/11-slide.webp';
 import picImg from '../../pics/pic-small.JPG';
 import client1 from '../../pics/client 1.png';
 
@@ -116,8 +116,8 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
                 gap: '20px',
                 width: 'max-content',
                 alignItems: 'flex-start',
-                paddingTop: '58px',
-                paddingBottom: '50px',
+                paddingTop: '78px',
+                paddingBottom: '70px',
                 boxSizing: 'border-box',
                 willChange: 'transform',
                 pointerEvents: 'auto'
@@ -1657,14 +1657,33 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'}</title>
-                    <meta name="description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <title>{mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'}</title>
+                    <meta name="description" content={mode === 'get-in-touch'
+                        ? 'Start a project with Palett. Book a 30-minute call or send us a message — we work with startups and scaleups building exceptional digital products.'
+                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
 
-                    {/* Dynamic Social Tags */}
-                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'} />
-                    <meta property="og:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
-                    <meta property="twitter:title" content={mode === 'get-in-touch' ? 'Contact Us | Palett' : 'Palett — Design and Development'} />
-                    <meta property="twitter:description" content={mode === 'get-in-touch' ? 'Get in touch with Palett. We help visionaries turn curiosity into digital reality.' : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    {/* Canonical */}
+                    <link rel="canonical" href={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
+
+                    {/* Open Graph */}
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'} />
+                    <meta property="og:description" content={mode === 'get-in-touch'
+                        ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
+                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta property="og:image" content={mode === 'get-in-touch' ? 'https://palettstudios.com/logo.png' : 'https://palettstudios.com/og-preview.png'} />
+                    <meta property="og:image:width" content="1200" />
+                    <meta property="og:image:height" content="630" />
+
+                    {/* Twitter */}
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
+                    <meta name="twitter:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'} />
+                    <meta name="twitter:description" content={mode === 'get-in-touch'
+                        ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
+                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta name="twitter:image" content={mode === 'get-in-touch' ? 'https://palettstudios.com/logo.png' : 'https://palettstudios.com/og-preview.png'} />
                 </Helmet>
                 {!hideContent && (
                     <div className="fade-anim-box2" style={{
