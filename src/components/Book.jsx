@@ -1308,7 +1308,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             style={{
                 width: '100%',
                 height: '100vh',
-                background: '#FFF9F9',
+                background: '#f2f3f3ff',
                 position: 'relative',
                 overflow: 'auto',
                 overflowX: 'hidden', // Prevent horizontal scroll if not needed
