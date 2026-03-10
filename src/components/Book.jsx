@@ -384,12 +384,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             cal("on", {
                 action: "*",
                 callback: (e) => {
+                    console.log("Cal.com Event:", e.detail.action);
                     if (e.detail.action === "bookingSuccessfulV2") {
+                        console.log("Booking Successful!");
                         setIsBookingSuccessful(true);
                         const count = 200;
                         const defaults = {
                             origin: { y: 0.3 },
-                            zIndex: 100,
+                            zIndex: 1000,
                             colors: ['#8987ca', '#e2c6ab', '#274df5']
                         };
 
@@ -1841,15 +1843,23 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                                     <div style={{
                                                         position: 'absolute',
                                                         top: '12px',
-                                                        left: '42px',
+                                                        left: '50.2%',
+                                                        transform: 'translateX(-50%)',
                                                         zIndex: 20,
                                                         fontFamily: '"Rethink Sans", sans-serif',
                                                         fontSize: '13px',
                                                         color: '#9b9494ff',
                                                         fontWeight: 400,
-                                                        pointerEvents: 'auto'
+                                                        pointerEvents: 'auto',
+                                                        whiteSpace: 'nowrap'
                                                     }}>
-                                                        if not sure, just <span onClick={() => setShowCal(false)} style={{ color: '#8987ca', textDecoration: 'underline', cursor: 'pointer' }}>drop your message</span> and we'll reach out to you
+                                                        if not sure, just <span onClick={() => setShowCal(false)} style={{
+                                                            color: '#8987ca',
+                                                            cursor: 'pointer',
+                                                            textDecoration: 'underline',
+                                                            textUnderlineOffset: '3px',
+                                                            textDecorationColor: 'rgba(137, 135, 202, 0.4)'
+                                                        }}>drop your message</span> and we'll reach out to you
                                                     </div>
                                                 )}
                                                 <Cal
@@ -1994,7 +2004,10 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         }}>
                                             {!showCal && (
                                                 <div
-                                                    onClick={() => setShowCal(true)}
+                                                    onClick={() => {
+                                                        setShowCal(true);
+                                                        setIsBookingSuccessful(false);
+                                                    }}
                                                     style={{
                                                         fontFamily: '"Rethink Sans", sans-serif',
                                                         fontSize: '15px',
