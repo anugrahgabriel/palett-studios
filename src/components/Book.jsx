@@ -1854,7 +1854,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         backgroundColor: '#f8f8f8',
                                         borderRadius: '0',
                                         pointerEvents: 'auto',
-                                        border: '0.8px solid rgba(0, 0, 0, 0.12)',
+                                        border: '0.8px solid rgba(203, 203, 203, 0.08)',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         padding: showCal ? '40px 40px 0 40px' : '40px',
