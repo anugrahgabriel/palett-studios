@@ -1657,7 +1657,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'}</title>
+                    <title>{mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'}</title>
                     <meta name="description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or send us a message — we work with startups and scaleups building exceptional digital products.'
                         : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
@@ -1668,7 +1668,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     {/* Open Graph */}
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
-                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'} />
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'} />
                     <meta property="og:description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
                         : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
@@ -1679,7 +1679,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                     {/* Twitter */}
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
-                    <meta name="twitter:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett Studios' : 'Palett — Design & Development Studio'} />
+                    <meta name="twitter:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'} />
                     <meta name="twitter:description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
                         : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
