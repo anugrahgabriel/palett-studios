@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://palettstudios.com/sitemap.xml
+Sitemap: https://palettcollective.com/sitemap.xml

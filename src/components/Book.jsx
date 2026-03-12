@@ -1502,7 +1502,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
 
                     <h2 style={{
                         fontFamily: '"Cocosharp Trial", sans-serif',
-                        fontSize: '140px',
+                        fontSize: '112px',
                         letterSpacing: '-1px',
                         fontWeight: 510,
                         color: '#373434',
@@ -1657,33 +1657,33 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             {/* Second Text Container - With Content */}
             <div style={{ ...textStyle, ...secondTextPosition, justifyContent: 'flex-start', paddingTop: '16px' }}>
                 <Helmet>
-                    <title>{mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'}</title>
+                    <title>{mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Collective'}</title>
                     <meta name="description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or send us a message — we work with startups and scaleups building exceptional digital products.'
-                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                        : 'Founded in 2025, Palett is a creative design and development collective radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
 
                     {/* Canonical */}
-                    <link rel="canonical" href={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
+                    <link rel="canonical" href={mode === 'get-in-touch' ? 'https://palettcollective.com/get-in-touch' : 'https://palettcollective.com/'} />
 
                     {/* Open Graph */}
                     <meta property="og:type" content="website" />
-                    <meta property="og:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
-                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'} />
+                    <meta property="og:url" content={mode === 'get-in-touch' ? 'https://palettcollective.com/get-in-touch' : 'https://palettcollective.com/'} />
+                    <meta property="og:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Collective'} />
                     <meta property="og:description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
-                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
-                    <meta property="og:image" content={mode === 'get-in-touch' ? 'https://palettstudios.com/logo.png' : 'https://palettstudios.com/og-preview.png'} />
+                        : 'Founded in 2025, Palett is a creative design and development collective radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta property="og:image" content={mode === 'get-in-touch' ? 'https://palettcollective.com/logo.png' : 'https://palettcollective.com/og-preview.png'} />
                     <meta property="og:image:width" content="1200" />
                     <meta property="og:image:height" content="630" />
 
                     {/* Twitter */}
                     <meta name="twitter:card" content="summary_large_image" />
-                    <meta name="twitter:url" content={mode === 'get-in-touch' ? 'https://palettstudios.com/get-in-touch' : 'https://palettstudios.com/'} />
-                    <meta name="twitter:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Studio'} />
+                    <meta name="twitter:url" content={mode === 'get-in-touch' ? 'https://palettcollective.com/get-in-touch' : 'https://palettcollective.com/'} />
+                    <meta name="twitter:title" content={mode === 'get-in-touch' ? 'Get in Touch | Palett' : 'Palett — Design & Development Collective'} />
                     <meta name="twitter:description" content={mode === 'get-in-touch'
                         ? 'Start a project with Palett. Book a 30-minute call or drop a message — we work with startups and scaleups building exceptional digital products.'
-                        : 'Founded in 2025, Palett is a creative design and development studio radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
-                    <meta name="twitter:image" content={mode === 'get-in-touch' ? 'https://palettstudios.com/logo.png' : 'https://palettstudios.com/og-preview.png'} />
+                        : 'Founded in 2025, Palett is a creative design and development collective radically obsessed with high-fidelity execution. No rules, no ego, just fast-paced revolution.'} />
+                    <meta name="twitter:image" content={mode === 'get-in-touch' ? 'https://palettcollective.com/logo.png' : 'https://palettcollective.com/og-preview.png'} />
                 </Helmet>
                 {!hideContent && (
                     <div className="fade-anim-box2" style={{
@@ -1877,7 +1877,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         {showCal ? (
                                             <div style={{ flex: 1, width: '100%', minHeight: '570px', marginTop: '0', position: 'relative' }}>
                                                 <Cal
-                                                    calLink="anugrah-palettstudios/30min"
+                                                    calLink="anugrah-palettcollective/30min"
                                                     style={{ width: "100%", height: "100%", overflow: "hidden", padding: 0 }}
                                                     config={{
                                                         layout: 'month_view',
@@ -2205,8 +2205,8 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             margin: 0,
                                             textAlign: 'left',
                                         }}>
-                                            A design native studio, powered by <br />
-                                            senior-led cracked builders. free from  <br />
+                                            A design native collective, with<br />
+                                            curious and passionate builders. free from  <br />
                                             obsolete rituals, pushing beyound mediocrity.
                                         </h2>
                                     </div>
@@ -2310,7 +2310,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                             position: 'absolute',
                                             right: 0
                                         }}>
-                                            <a href="mailto:anugrah@palettstudios.com" style={{
+                                            <a href="mailto:anugrah@palettcollective.com" style={{
                                                 fontFamily: '"Rethink Sans", sans-serif',
                                                 fontSize: '15px',
                                                 color: '#8987ca',
