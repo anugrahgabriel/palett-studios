@@ -22,6 +22,7 @@ import slide8 from '../../pics/8-slide-small.png';
 import slide9 from '../../pics/9-slide-small.png';
 import slide10 from '../../pics/10-slide-small.webp';
 import slide11 from '../../pics/11-slide.webp';
+import slide12 from '../../pics/12-slide.png';
 import picImg from '../../pics/pic-small.JPG';
 import client1 from '../../pics/client 1.png';
 
@@ -124,11 +125,13 @@ const ImageCarousel = React.memo(({ images, width, height }) => {
             }}>
                 {[...images, ...images].map((img, i) => {
                     const labels = [
-                        // Slides 1–3: Quotient
+                        // Slide 1: GrayForge
+                        { tags: ['GrayForge', 'Marketing agency', 'Landing Page'] },
+                        // Slides 2–4: Quotient
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
                         { tags: ['quotient', 'Product', 'Website', 'AI agents platform', '$5.5M raised'] },
-                        // Slides 4–5: Runable
+                        // Slides 5–6: Runable
                         { tags: ['Runable', 'Product', 'General AI'] },
                         { tags: ['Runable', 'Product', 'General AI'] },
                     ];
@@ -1301,13 +1304,12 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
             style={{
                 width: '100%',
                 height: '100vh',
-                background: '#f2f3f3ff',
+                background: '#FFFFFF',
                 position: 'relative',
                 overflow: 'auto',
                 overflowX: 'hidden', // Prevent horizontal scroll if not needed
                 scrollBehavior: 'smooth'
-            }}
-        >
+            }}>
             {/* SVG for threads */}
             <svg
                 style={{
@@ -1694,7 +1696,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                         opacity: 0,
                         position: 'relative'
                     }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
                             <div style={{
                                 width: '100%',
                                 padding: '0 20px'
@@ -1704,12 +1706,12 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     paddingTop: '0'
                                 }}>
                                     <h1 style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '25px',
-                                        letterSpacing: '-0.2px',
-                                        lineHeight: '30px',
-                                        fontWeight: 460,
-                                        color: '#373434ff',
+                                        fontFamily: '"Libre Baskerville", serif',
+                                        fontSize: '24px',
+                                        letterSpacing: '-1.2px',
+                                        lineHeight: '34px',
+                                        fontWeight: 400,
+                                        color: '#2a2828ff',
                                         margin: 0
                                     }}>
                                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.05em', transition: 'all 0.5s cubic-bezier(0.16, 1.25, 0.4, 1)' }}>
@@ -1751,23 +1753,14 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                 display: 'flex',
                                 flexDirection: 'row',
                                 gap: '8px',
-                                width: '100%',
-                                padding: '0 20px',
+                                width: 'calc(46% - 24px)',
+                                padding: '0 18px 0 20px',
                                 marginTop: mode === 'get-in-touch' ? (showCal ? '28px' : '110px') : '48px',
-                                marginBottom: '20px',
+                                marginBottom: '16px',
                                 pointerEvents: 'auto',
-                                alignItems: 'flex-start'
+                                alignItems: 'flex-start',
+                                justifyContent: 'space-between'
                             }}>
-                                {mode !== 'get-in-touch' && (
-                                    <ThreadButton
-                                        aria-label="Get in touch with us"
-                                        extraPadding={1}
-                                        onClick={() => navigate('/get-in-touch')}
-                                    >
-                                        Get in touch
-                                    </ThreadButton>
-                                )}
-
                                 {mode !== 'get-in-touch' && (
                                     <div style={{
                                         display: 'flex',
@@ -1777,7 +1770,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     }}>
                                         <h2 style={{
                                             fontFamily: '"Rethink Sans", sans-serif',
-                                            fontSize: '13px',
+                                            fontSize: '12px',
                                             letterSpacing: '-0.02px',
                                             lineHeight: '18px',
                                             fontWeight: 340,
@@ -1789,65 +1782,33 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                         </h2>
                                     </div>
                                 )}
-                            </div>
-                        </div>
 
-                        {/* Description - Positioned on the right, matches the original desc position */}
-                        <div style={{
-                            position: 'absolute',
-                            left: '50.1%',
-                            top: '-2px',
-                            paddingTop: '7px',
-                            paddingLeft: '15px',
-                            paddingBottom: '16px',
-                            textAlign: 'left',
-                            pointerEvents: 'auto', // Adjusted to auto for link/interactions
-                            borderLeft: '1px solid #E5E5E5'
-                        }}>
-                            {mode === 'get-in-touch' ? (
-                                <>
-                                    <p style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '15px',
-                                        lineHeight: '20px',
-                                        fontWeight: 460,
-                                        color: '#373434ff',
-                                        opacity: 0.9,
-                                        margin: 0,
-                                        maxWidth: '520px'
-                                    }}>
-                                        To help us get to know you, tell us about your product, your timeline, <br />
-                                        and where in the world you are. Bonus points for letting us know <br />
-                                        how you found us!
-                                    </p>
-                                    <p style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '15px',
-                                        lineHeight: '20px',
-                                        fontWeight: 460,
-                                        color: '#373434ff',
-                                        opacity: 0.9,
-                                        margin: '18px 0 0 0',
-                                        maxWidth: '520px'
-                                    }}>
-                                        We’re all ears for every message we get, <br />
-                                        thanks for making yours stand out. 🌟
-                                    </p>
-                                </>
-                            ) : (
-                                <p style={{
-                                    fontFamily: '"Rethink Sans", sans-serif',
-                                    fontSize: '15px',
-                                    lineHeight: '20px',
-                                    fontWeight: 460,
-                                    color: '#373434ff',
-                                    opacity: 0.9,
-                                    margin: 0,
-                                    maxWidth: '80%'
-                                }}>
-                                    Partnering with forward-thinking founders and teams to craft meaningful digital experiences through strategy, brand identity, and high-performance product execution.
-                                </p>
-                            )}
+                                {mode !== 'get-in-touch' && (
+                                    <ThreadButton
+                                        aria-label="Get in touch with us"
+                                        extraPadding={1}
+                                        onClick={() => navigate('/get-in-touch')}
+                                    >
+                                        Get in touch
+                                    </ThreadButton>
+                                )}
+                            </div>
+
+                            <div style={{
+                                position: 'absolute',
+                                left: 'calc(46% - 24px)',
+                                right: '20px',
+                                top: '4px',
+                                bottom: '-1px',
+                                backgroundColor: '#f8f8f8ff',
+                                border: 'none',
+                                textAlign: 'left',
+                                paddingRight: '20px',
+                                paddingBottom: '20px',
+                                pointerEvents: 'auto',
+                                zIndex: 1
+                            }}>
+                            </div>
                         </div>
 
                         {/* Bottom Area Div - Active for both Mosaic and Contact Form */}
@@ -2054,94 +2015,44 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                                     <div className="fade-anim-mosaic" style={{
                                         flex: 1,
                                         width: '100%',
+                                        position: 'relative',
                                         backgroundColor: '#f8f8f8ff',
-                                        borderRadius: '0',
-                                        pointerEvents: 'auto',
-                                        border: '0.8px solid rgba(203, 203, 203, 0.08)'
+                                        border: 'none',
+                                        overflow: 'hidden'
                                     }}>
-                                        {/* Decorative Grid Blocks - Asymmetrical Mondrian-style Mosaic */}
+                                        {/* New Bottom Right decorative box mirror */}
                                         <div style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: '1.2fr 1.1fr 1.1fr 0.9fr',
-                                            gridTemplateRows: '1.5fr 0.7fr 1.1fr 0.7fr',
-                                            width: '100%',
-                                            height: '100%',
-                                            gap: '0'
+                                            position: 'absolute',
+                                            right: 0,
+                                            bottom: 0,
+                                            width: '310px',
+                                            height: 'calc(35% - 52px)',
+                                            backgroundColor: '#FFFFFF',
+                                            border: 'none',
+                                            zIndex: 2,
+                                            pointerEvents: 'none',
+                                            display: 'flex',
+                                            alignItems: 'flex-start',
+                                            padding: '18px 0 24px 22px' // Removed right padding for the text to align with right edge
                                         }}>
-                                            {mosaicBlocks.map((block, i) => (
-                                                <div
-                                                    key={i}
-                                                    onMouseEnter={() => {
-                                                        setHoveredMosaicIdx(i);
-                                                        setIsAutoMosaicEnabled(false);
-                                                    }}
-                                                    onMouseLeave={() => {
-                                                        setHoveredMosaicIdx(null);
-                                                        setIsAutoMosaicEnabled(true);
-                                                    }}
-                                                    aria-label={`Service: ${block.title}`}
-                                                    style={{
-                                                        gridArea: block.area,
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        border: '0.4px solid rgba(0, 0, 0, 0.04)',
-                                                        backgroundImage: 'radial-gradient(rgba(0,0,0,0.06) 0.5px, transparent 0.5px)',
-                                                        backgroundSize: '12px 12px',
-                                                        backgroundColor: hoveredMosaicIdx === i ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.45)',
-                                                        padding: '8px',
-                                                        display: 'flex',
-                                                        alignItems: 'flex-end',
-                                                        justifyContent: 'flex-end',
-                                                        boxSizing: 'border-box',
-                                                        cursor: 'pointer',
-                                                        transition: 'background-color 0.3s ease'
-                                                    }}
-                                                >
-                                                    <div style={{
-                                                        position: 'relative',
-                                                        width: '100%',
-                                                        height: '14px', // Fixed height for alignment
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'flex-end',
-                                                        pointerEvents: 'none'
-                                                    }}>
-                                                        {/* Hex Label - Fades Out */}
-                                                        <span style={{
-                                                            position: 'absolute',
-                                                            right: 0,
-                                                            fontFamily: '"Share Tech Mono", monospace',
-                                                            fontSize: '11px',
-                                                            color: 'rgba(55, 52, 52, 0.3)',
-                                                            opacity: hoveredMosaicIdx === i ? 0 : 1,
-                                                            transform: hoveredMosaicIdx === i ? 'translateY(-10px)' : 'translateY(0)',
-                                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                            whiteSpace: 'nowrap'
-                                                        }}>
-                                                            {block.label}
-                                                        </span>
-
-                                                        {/* Service Title - Fades In */}
-                                                        <h3 style={{
-                                                            position: 'absolute',
-                                                            right: 0,
-                                                            fontFamily: '"Rethink Sans", sans-serif',
-                                                            fontSize: '12px',
-                                                            fontWeight: 450,
-                                                            color: 'rgba(55, 52, 52, 0.85)',
-                                                            letterSpacing: '-0.2px',
-                                                            margin: 0,
-                                                            opacity: hoveredMosaicIdx === i ? 1 : 0,
-                                                            transform: hoveredMosaicIdx === i ? 'translateY(0)' : 'translateY(10px)',
-                                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                            whiteSpace: 'nowrap'
-                                                        }}>
-                                                            {block.title}
-                                                        </h3>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                            <p style={{
+                                                margin: 0,
+                                                fontFamily: "'JetBrains Mono', monospace",
+                                                fontStyle: 'normal',
+                                                fontWeight: 320,
+                                                fontSize: '14px',
+                                                lineHeight: '20px',
+                                                color: '#6e6e6eff',
+                                                textAlign: 'justify'
+                                            }}>
+                                                Partnering with forward-thinking founders and teams to craft meaningful digital experiences through strategy, brand identity, and high-performance product execution.
+                                            </p>
                                         </div>
+                                        {/* Mosaic grid content removed (including dots) as requested */}
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%'
+                                        }}></div>
                                     </div>
                                 )}
                             </div>
@@ -2252,7 +2163,7 @@ const ThreadGrid = ({ hideContent = false, mode = 'full' }) => {
                             <div className="fade-anim-box3" style={{ width: '100%', height: '100%', position: 'relative' }}>
                                 {/* Carousel fills full box */}
                                 <ImageCarousel
-                                    images={[slide5, slide6, slide7, slide10, slide11]}
+                                    images={[slide12, slide5, slide6, slide7, slide10, slide11]}
                                     width={tripBoxPosition.width}
                                     height={tripBoxPosition.height}
                                 />
@@ -2578,17 +2489,17 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
             onMouseMove={handleMouseMove}
             style={{
                 position: 'relative',
-                padding: `${7.5 + extraPadding}px ${16.5 + extraPadding}px`,
-                border: '0.6px solid rgba(38, 38, 91, 0.35)',
-                borderRadius: '9px',
+                padding: `${7.5 + extraPadding}px ${34 + extraPadding}px`,
+                border: '0.6px solid rgba(38, 38, 91, 0.1)',
+                borderRadius: '4px',
                 fontFamily: '"Rethink Sans", sans-serif',
                 fontSize: '14px',
                 cursor: 'pointer',
                 overflow: 'hidden',
                 background: 'transparent',
-                boxShadow: hovered ? '0 2px 2px rgba(38, 38, 91, 0.1)' : 'none',
+                boxShadow: hovered ? '0 2px 2px rgba(174, 174, 176, 0.1)' : 'none',
                 transition: 'box-shadow 0.3s ease, padding-right 0.3s ease',
-                paddingRight: hovered ? `${46 + extraPadding}px` : `${18 + extraPadding}px`
+                paddingRight: hovered ? `${50 + extraPadding}px` : `${34 + extraPadding}px`
             }}
         >
             {/* Background Layer - z-index 1 */}
@@ -2599,9 +2510,9 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    background: '#070F2B',
-                    borderRadius: '8px',
-                    boxShadow: 'inset 0 3px 6px rgba(6, 25, 122, 0.53), inset 0 -3px 6px rgba(135, 135, 224, 0.4)',
+                    background: 'rgba(233, 233, 233, 1)',
+                    borderRadius: '3px',
+                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)',
                     opacity: hovered ? 0.9 : 1,
                     transition: 'opacity 0.3s ease, box-shadow 0.3s ease',
                     zIndex: 1,
@@ -2647,7 +2558,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                 style={{
                     position: 'relative',
                     zIndex: 3,
-                    color: '#FFF',
+                    color: '#333333',
                     pointerEvents: 'none'
                 }}
             >
