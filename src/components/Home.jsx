@@ -12,13 +12,13 @@ import './Home.css';
 // Page images removed because files were deleted
 const leftPageImg = "";
 const rightPageImg = "";
-import slide5 from '../../pics/5-slide.png';
-import slide6 from '../../pics/6-slide.png';
-import slide10 from '../../pics/10-slide.png';
-import slide11 from '../../pics/11-slide.jpg';
-import slide12Video from '../../pics/12-slide.mp4';
+import slide5 from '../../pics/5-slide.webp';
+import slide6 from '../../pics/6-slide.webp';
+import slide10 from '../../pics/10-slide.webp';
+import slide11 from '../../pics/11-slide.webp';
+import slide12 from '../../pics/12-slide.webp';
 import client1 from '../../pics/client 1.png';
-import mainContentBg from '../../pics/main-content-bg.jpg';
+import mainContentBg from '../../pics/main-content-bg.webp';
 
 const MenuIcon = ({ color = "#373434", onClick }) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} onClick={onClick}>
@@ -101,7 +101,7 @@ const ProjectShowcase = () => {
             title: 'GrayForge',
             desc: 'Website design, development and branding for a well based marketing agency',
             tags: ['Agency'],
-            slides: [slide12Video]
+            slides: [slide12]
         },
         {
             title: 'Quotient',
@@ -248,7 +248,9 @@ const ProjectShowcase = () => {
                                     borderRadius: '2px',
                                     outline: '0.4px solid rgba(0, 0, 0, 0.05)'
                                 }}>
-                                    {project.slides[0].toString().toLowerCase().includes('.mov') || project.slides[0].toString().toLowerCase().includes('.mp4') ? (
+                                    {project.slides[0].toString().toLowerCase().includes('.mov') || 
+                                     project.slides[0].toString().toLowerCase().includes('.mp4') || 
+                                     project.slides[0].toString().toLowerCase().includes('.webm') ? (
                                         <video
                                             src={project.slides[0]}
                                             autoPlay
