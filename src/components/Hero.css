@@ -11,7 +11,7 @@
     z-index: 10;
 }
 
-/* Ensure the book aligns perfectly in the middle */
+/* Ensure the home component aligns perfectly in the middle */
 .hero-container {
     display: flex;
     justify-content: center;

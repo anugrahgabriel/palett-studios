@@ -1,10 +1,10 @@
 import React from 'react';
-import Book from './Book';
+import Home from './Home';
 
 const GetInTouch = () => {
     return (
         <section className="hero-section">
-            <Book mode="get-in-touch" />
+            <Home mode="get-in-touch" />
         </section>
     );
 };

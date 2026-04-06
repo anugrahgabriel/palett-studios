@@ -51,8 +51,8 @@
     padding: 0;
 }
 
-/* Frame 81 - Book Controls Container */
-.book-controls {
+/* Frame 81 - Home Controls Container */
+.home-controls {
     /* Auto layout */
     display: flex;
     flex-direction: column;
@@ -65,7 +65,7 @@
     width: 272px;
     /* height: 105px; Removed to prevent text clipping */
     margin-left: 40px;
-    /* Keeping this for visual separation from book if flexible */
+    /* Keeping this for visual separation from home if flexible */
 }
 
 /* Frame 82 - Header Container */

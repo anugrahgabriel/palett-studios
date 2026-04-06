@@ -1,9 +1,9 @@
-import Book from './Book';
+import Home from './Home';
 
 const Hero = () => {
     return (
         <section className="hero-section">
-            <Book />
+            <Home />
         </section>
     );
 };
