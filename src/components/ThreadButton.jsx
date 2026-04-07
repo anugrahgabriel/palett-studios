@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
+const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0 }) => {
     const navigate = useNavigate();
     const [hovered, setHovered] = useState(false);
     const [threads, setThreads] = useState([]);
@@ -90,7 +90,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
             onMouseMove={handleMouseMove}
             style={{
                 position: 'relative',
-                padding: `${7.5 + extraPadding}px ${34 + extraPadding}px`,
+                padding: `${7.5 + extraPadding}px ${34 + extraPadding + extraWidth / 2}px`,
                 border: '0.6px solid rgba(38, 38, 91, 0.1)',
                 borderRadius: '4px',
                 fontFamily: '"Rethink Sans", sans-serif',
@@ -100,7 +100,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0 }) => {
                 background: 'transparent',
                 boxShadow: hovered ? '0 2px 2px rgba(174, 174, 176, 0.1)' : 'none',
                 transition: 'box-shadow 0.3s ease, padding-right 0.3s ease',
-                paddingRight: hovered ? `${50 + extraPadding}px` : `${34 + extraPadding}px`
+                paddingRight: hovered ? `${50 + extraPadding + extraWidth / 2}px` : `${34 + extraPadding + extraWidth / 2}px`
             }}
         >
             <div style={{

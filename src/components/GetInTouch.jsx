@@ -284,7 +284,7 @@ const GetInTouch = () => {
                                         border: 'none',
                                         zIndex: 10
                                     }}>
-                                        <ThreadButton extraPadding={2}>Submit</ThreadButton>
+                                        <ThreadButton extraPadding={0} extraWidth={20}>Submit</ThreadButton>
                                     </div>
                                 </div>
                             )}
