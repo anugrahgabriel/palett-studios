@@ -95,6 +95,58 @@ const GetInTouch = () => {
     const [isNavInFooter, setIsNavInFooter] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+    // Form State
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        company: '',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        if (e) e.preventDefault();
+        
+        // Basic validation
+        if (!formData.name || !formData.email || !formData.message) {
+            alert('Please fill in Name, Email and Message.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                setSubmitStatus('success');
+                setFormData({ name: '', email: '', company: '', message: '' });
+                alert('Thank you! Your message has been sent.');
+            } else {
+                throw new Error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setSubmitStatus('error');
+            alert('Something went wrong. Please try again or email us directly.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
@@ -222,14 +274,39 @@ const GetInTouch = () => {
                                             }
                                         `}
                                     </style>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: isSmallLaptop ? '30px' : '60px' }}>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                             <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#8b8a8aff', letterSpacing: '0.01em' }}>Name</label>
-                                            <input type="text" placeholder="Your name" style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '0.8px solid rgba(0,0,0,0.1)', padding: '12px 0', fontFamily: '"Rethink Sans", sans-serif', fontSize: '16px', color: '#373434ff', outline: 'none' }} />
+                                            <input 
+                                                type="text" 
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                                placeholder="Your name" 
+                                                style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '0.8px solid rgba(0,0,0,0.1)', padding: '12px 0', fontFamily: '"Rethink Sans", sans-serif', fontSize: '16px', color: '#373434ff', outline: 'none' }} 
+                                            />
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#8b8a8aff', letterSpacing: '0.01em' }}>Email</label>
+                                            <input 
+                                                type="email" 
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                placeholder="hi@gmail.com" 
+                                                style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '0.8px solid rgba(0,0,0,0.1)', padding: '12px 0', fontFamily: '"Rethink Sans", sans-serif', fontSize: '16px', color: '#373434ff', outline: 'none' }} 
+                                            />
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                             <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#8b8a8aff', letterSpacing: '0.01em' }}>Company name</label>
-                                            <input type="text" placeholder="Organization" style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '0.8px solid rgba(0,0,0,0.1)', padding: '12px 0', fontFamily: '"Rethink Sans", sans-serif', fontSize: '16px', color: '#373434ff', outline: 'none' }} />
+                                            <input 
+                                                type="text" 
+                                                name="company"
+                                                value={formData.company}
+                                                onChange={handleInputChange}
+                                                placeholder="Organization" 
+                                                style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: '0.8px solid rgba(0,0,0,0.1)', padding: '12px 0', fontFamily: '"Rethink Sans", sans-serif', fontSize: '16px', color: '#373434ff', outline: 'none' }} 
+                                            />
                                         </div>
                                     </div>
 
@@ -242,6 +319,9 @@ const GetInTouch = () => {
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                             <label style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '13px', color: '#8b8a8aff', letterSpacing: '0.01em' }}>Message</label>
                                             <textarea
+                                                name="message"
+                                                value={formData.message}
+                                                onChange={handleInputChange}
                                                 placeholder="Tell us about the project and make it a good one!"
                                                 rows={1}
                                                 onInput={(e) => {
@@ -284,7 +364,14 @@ const GetInTouch = () => {
                                         border: 'none',
                                         zIndex: 10
                                     }}>
-                                        <ThreadButton extraPadding={0} extraWidth={20}>Submit</ThreadButton>
+                                        <ThreadButton 
+                                            extraPadding={0} 
+                                            extraWidth={20} 
+                                            onClick={handleSubmit}
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting ? 'Sending...' : 'Submit'}
+                                        </ThreadButton>
                                     </div>
                                 </div>
                             )}
