@@ -114,18 +114,51 @@ const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0, sta
         return () => cancelAnimationFrame(animationFrameId);
     }, [threads.length, mousePos, hovered, isSubmitting, isSuccess]);
 
+
     const dotPositions = React.useMemo(() => {
         const radius = 9;
-        const numDots = 10;
-        return Array.from({ length: numDots }).map((_, i) => {
+        const numDots = 11; // Use 11 dots for better tick distribution
+        
+        // Circle positions
+        const circleDots = Array.from({ length: numDots }).map((_, i) => {
             const angle = (i * 360 / numDots) * (Math.PI / 180);
             return {
                 x: 12 + radius * Math.cos(angle),
                 y: 12 + radius * Math.sin(angle),
-                duration: 0.1 + Math.random() * 0.3, // Fast random duration
-                delay: Math.random() * 0.5
             };
         });
+
+        // Dotted Tick positions distribution
+        const p1 = { x: 7.2, y: 12.2 };
+        const p2 = { x: 10.5, y: 15.5 };
+        const p3 = { x: 17.5, y: 8.5 };
+
+        const tickDots = [];
+        // 4 dots on first leg
+        for (let i = 0; i < 4; i++) {
+            const t = i / 3.5;
+            tickDots.push({
+                x: p1.x + (p2.x - p1.x) * t,
+                y: p1.y + (p2.y - p1.y) * t,
+            });
+        }
+        // 7 dots on second leg
+        for (let i = 1; i <= 7; i++) {
+            const t = i / 7;
+            tickDots.push({
+                x: p2.x + (p3.x - p2.x) * t,
+                y: p2.y + (p3.y - p2.y) * t,
+            });
+        }
+
+        return circleDots.map((cd, i) => ({
+            circleX: cd.x,
+            circleY: cd.y,
+            tickX: tickDots[i].x,
+            tickY: tickDots[i].y,
+            duration: 0.1 + Math.random() * 0.3,
+            delay: Math.random() * 0.4
+        }));
     }, []);
 
     return (
@@ -213,7 +246,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0, sta
                 )}
             </button>
 
-            {/* Flickering Dot Circle Indicator */}
+            {/* Morphing Dotted Status Indicator */}
             <div style={{
                 position: 'absolute',
                 top: '50%',
@@ -249,31 +282,17 @@ const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0, sta
                         {dotPositions.map((dot, i) => (
                             <circle 
                                 key={i}
-                                cx={dot.x}
-                                cy={dot.y}
-                                r="1.1"
-                                fill="#1E06D5"
+                                cx={isSuccess ? dot.tickX : dot.circleX}
+                                cy={isSuccess ? dot.tickY : dot.circleY}
+                                r={isSuccess ? "1.2" : "1.1"}
+                                fill={isSuccess ? "#00C853" : "#1E06D5"}
                                 style={{
+                                    transition: 'cx 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), cy 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.4s ease',
                                     animation: `individual-flicker ${dot.duration}s infinite alternate ${dot.delay}s`
                                 }}
                             />
                         ))}
                     </g>
-                    
-                    {/* Green Tick */}
-                    <path
-                        d="M7.5 12.5L10.5 15.5L16.5 8.5"
-                        stroke="#00C853"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        style={{
-                            strokeDasharray: 20,
-                            strokeDashoffset: isSuccess ? 0 : 20,
-                            opacity: isSuccess ? 1 : 0,
-                            transition: 'stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s, opacity 0.3s ease'
-                        }}
-                    />
                 </svg>
             </div>
         </div>
