@@ -78,17 +78,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0, sta
                 return prevThreads.map((thread, index) => {
                     let targetOffset = 0;
 
-                    if (isSubmitting) {
-                        // Submission sweep effect from left to right
-                        const elapsed = currentTime - startTime;
-                        const sweepProgress = (elapsed % 1500) / 1500; // 1.5s loop
-                        const threadProgress = thread.xPercent / 100;
-                        const dist = Math.abs(sweepProgress - threadProgress);
-                        const sweepRadius = 0.15;
-                        if (dist < sweepRadius) {
-                            targetOffset = (1 - dist / sweepRadius) * 20;
-                        }
-                    } else if (hovered && !isSuccess) {
+                    if (hovered && !isSuccess && !isSubmitting) {
                         // Mouse hover effect
                         const threadX = (thread.xPercent / 100) * buttonWidth;
                         const dx = mousePos.x - threadX;
@@ -100,7 +90,7 @@ const ThreadButton = ({ children, onClick, extraPadding = 0, extraWidth = 0, sta
                         }
                     }
 
-                    const springStrength = isSubmitting ? 0.15 : 0.1;
+                    const springStrength = 0.1;
                     const damping = 0.9;
                     const springForce = (targetOffset - thread.offset) * springStrength;
                     velocitiesRef.current[index] += springForce;
