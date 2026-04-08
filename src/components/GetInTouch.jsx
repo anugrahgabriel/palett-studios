@@ -134,7 +134,9 @@ const GetInTouch = () => {
             if (response.ok) {
                 setSubmitStatus('success');
                 setFormData({ name: '', email: '', company: '', message: '' });
-                alert('Thank you! Your message has been sent.');
+                setTimeout(() => {
+                    alert('Thank you! Your message has been sent.');
+                }, 1000);
             } else {
                 throw new Error('Failed to send message');
             }
@@ -368,9 +370,10 @@ const GetInTouch = () => {
                                             extraPadding={0} 
                                             extraWidth={20} 
                                             onClick={handleSubmit}
-                                            disabled={isSubmitting}
+                                            status={submitStatus === 'success' ? 'success' : (isSubmitting ? 'submitting' : 'idle')}
+                                            disabled={isSubmitting || submitStatus === 'success'}
                                         >
-                                            {isSubmitting ? 'Sending...' : 'Submit'}
+                                            {isSubmitting ? 'Sending...' : (submitStatus === 'success' ? 'Sent' : 'Submit')}
                                         </ThreadButton>
                                     </div>
                                 </div>
