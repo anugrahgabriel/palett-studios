@@ -1,12 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { getCalApi } from "@calcom/embed-react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import confetti from 'canvas-confetti';
 import ThreadButton from './ThreadButton';
+import SiteNav from './SiteNav';
+import SiteFooter from './SiteFooter';
 
 gsap.registerPlugin(ScrollTrigger);
 import './Home.css';
@@ -20,12 +22,6 @@ import slide11 from '../../pics/11-slide.webp';
 import grayforgeImg from '../../pics/grayforge-new.webp';
 import client1 from '../../pics/client 1.png';
 import mainContentBg from '../../pics/main-content-bg.webp';
-
-const MenuIcon = ({ color = "#373434", onClick }) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} onClick={onClick}>
-        <path d="M8 6V18M12 6V18M16 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-);
 
 const ArrowIcon = () => (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '12px', marginRight: '8px' }}>
@@ -317,92 +313,6 @@ const ProjectShowcase = () => {
     );
 };
 
-const RollingDigit = ({ value }) => {
-    const [current, setCurrent] = useState(value);
-    const [next, setNext] = useState(value);
-    const [rolling, setRolling] = useState(false);
-
-    useEffect(() => {
-        if (value !== current) {
-            setNext(value);
-            setRolling(true);
-            setTimeout(() => {
-                setCurrent(value);
-                setRolling(false);
-            }, 280);
-        }
-    }, [value, current]);
-
-    return (
-        <span style={{
-            display: 'inline-block',
-            overflow: 'hidden',
-            height: '1em',
-            lineHeight: '1em',
-            position: 'relative'
-        }}>
-            <span style={{
-                display: 'block',
-                transform: rolling ? 'translateY(-100%)' : 'translateY(0)',
-                transition: rolling ? 'transform 0.28s ease-in' : 'none',
-            }}>{current}</span>
-            <span style={{
-                display: 'block',
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                transform: rolling ? 'translateY(-100%)' : 'translateY(0)',
-                transition: rolling ? 'transform 0.28s ease-in' : 'none',
-            }}>{next}</span>
-        </span>
-    );
-};
-
-const LiveIST = ({ color = "#8b8a8a" }) => {
-    const getIST = () => {
-        const ist = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        return {
-            hh: String(ist.getHours()).padStart(2, '0'),
-            mm: String(ist.getMinutes()).padStart(2, '0'),
-            ss: String(ist.getSeconds()).padStart(2, '0'),
-        };
-    };
-
-    const [time, setTime] = useState(getIST());
-
-    useEffect(() => {
-        const interval = setInterval(() => setTime(getIST()), 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const sep = <span style={{ opacity: 0.7, marginBottom: '0px' }}>:</span>;
-
-    return (
-        <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            fontFamily: '"Share Tech Mono", monospace',
-            fontSize: '10px',
-            fontWeight: 400,
-            color: color,
-            opacity: 1,
-            letterSpacing: '-0.1px',
-            lineHeight: 1,
-            transition: 'color 0.4s ease'
-        }}>
-            <RollingDigit value={time.hh[0]} />
-            <RollingDigit value={time.hh[1]} />
-            {sep}
-            <RollingDigit value={time.mm[0]} />
-            <RollingDigit value={time.mm[1]} />
-            {sep}
-            <RollingDigit value={time.ss[0]} />
-            <RollingDigit value={time.ss[1]} />
-            <span style={{ marginLeft: '4px', letterSpacing: '0px', opacity: 0.8 }}>IST</span>
-        </span>
-    );
-};
-
 const ThreadGrid = ({ hideContent = false }) => {
     const navigate = useNavigate();
     const containerRef = useRef(null);
@@ -453,14 +363,6 @@ const ThreadGrid = ({ hideContent = false }) => {
     }, [isSmallLaptop]);
 
     const textStyle = { width: '1200px', margin: '0 auto', pointerEvents: 'none' };
-    const navBoxStyle = {
-        position: 'fixed', top: isSmallLaptop ? '0' : '50%', left: 0, width: '100%', height: isSmallLaptop ? '60px' : '80px',
-        padding: '0 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        backgroundColor: 'transparent', zIndex: 10, transform: isSmallLaptop ? 'none' : 'translateY(-50%)',
-        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', pointerEvents: 'none', borderBottom: 'none'
-    };
-
-    const [hoveredItem, setHoveredItem] = useState(null);
 
     return (
         <>
@@ -469,34 +371,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                     <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '22px', fontWeight: 400, color: '#373434', letterSpacing: '-0.2px' }}>Palett</h1>
                 </div>
             )}
-            <div style={{ ...navBoxStyle, opacity: isNavDelayed ? 0 : 1 }} className="fixed-nav-content">
-                <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-start' : 'baseline', minWidth: '160px', gap: isSmallLaptop ? '2px' : '8px', pointerEvents: 'auto' }}>
-                    <Link to="/" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 400, color: isNavInFooter ? '#FFFFFF' : '#373434', textDecoration: 'none', transition: 'color 0.4s ease' }}>Palett</Link>
-                    {!isSmallLaptop && <LiveIST color={isNavInFooter ? '#FFFFFF' : '#8b8a8a'} />}
-                </div>
-                <div style={{ flex: 1 }}></div>
-                <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto' }}>
-                    {isSmallLaptop ? <MenuIcon color={isNavInFooter ? '#FFFFFF' : '#373434'} /> : ['Work', 'About', 'Contact', 'Join us'].map((item) => (
-                        <Link 
-                            key={item} 
-                            to={item === 'Contact' ? '/get-in-touch' : `/${item.toLowerCase().replace(' ', '-')}`} 
-                            onMouseEnter={() => setHoveredItem(item)}
-                            onMouseLeave={() => setHoveredItem(null)}
-                            style={{ 
-                                fontFamily: '"Rethink Sans", sans-serif', 
-                                fontSize: '15px', 
-                                fontWeight: 500, 
-                                color: isNavInFooter ? '#FFFFFF' : '#2d2d2d', 
-                                textDecoration: 'none', 
-                                opacity: hoveredItem === item ? 0.4 : 1.0, // On Home, hover triggers lower opacity
-                                transition: 'color 0.4s ease, opacity 0.3s ease' 
-                            }}
-                        >
-                            {item}
-                        </Link>
-                    ))}
-                </div>
-            </div>
+            <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} delayed={isNavDelayed} className="fixed-nav-content" />
             <div ref={containerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden', scrollBehavior: 'smooth' }}>
                 <div style={{ ...textStyle, height: '810px', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 'calc(50vh - 405px)', marginBottom: '100px', pointerEvents: 'auto' }}>
                     <Helmet>
@@ -537,26 +412,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                         </div>
                     )}
                 </div>
-                <footer style={{ width: '100%', height: 'calc(50vh + 40px)', backgroundColor: '#1E06D5', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', padding: '36px', paddingLeft: '32px', paddingRight: '32px', boxSizing: 'border-box', position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px', marginBottom: '32px', pointerEvents: 'auto', paddingRight: '0px', width: '100%', boxSizing: 'border-box' }}>
-                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', transform: 'translateY(-2px)' }}>
-                            <a href="#" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', transition: 'opacity 0.2s' }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2V9zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" fill="white" /></svg>
-                            </a>
-                            <a href="#" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', transition: 'opacity 0.2s', marginTop: '1px' }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2c2.717 0 3.056.01 4.122.058 1.066.048 1.794.218 2.43.465a4.902 4.902 0 0 1 1.766 1.148 4.902 4.902 0 0 1 1.148 1.766c.247.636.417 1.364.465 2.43.048 1.066.058 1.405.058 4.122s-.01 3.056-.058 4.122c-.048 1.066-.217 1.794-.465 2.43a4.902 4.902 0 0 1-1.148 1.766 4.902 4.902 0 0 1-1.766 1.148c-.636.247-1.364.417-2.43.465-1.066.048-1.405.058-4.122.058s-3.056-.01-4.122-.058c-1.066-.048-1.794-.217-2.43-.465a4.902 4.902 0 0 1-1.766-1.148 4.902 4.902 0 0 1-1.148-1.766c-.247-.636-.417-1.364-.465-2.43C2.01 15.056 2 14.717 2 12s.01-3.056.058-4.122c.048-1.066.218-1.794.465-2.43a4.902 4.902 0 0 1 1.148-1.766 4.902 4.902 0 0 1 1.766-1.148c.636-.247 1.364-.417 2.43-.465C8.944 2.01 9.283 2 12 2zm0 4.882a5.118 5.118 0 1 0 0 10.236 5.118 5.118 0 0 0 0-10.236zm0 8.468a3.35 3.35 0 1 1 0-6.7 3.35 3.35 0 0 1 0 6.7zm5.338-9.07a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z" fill="white" /></svg>
-                            </a>
-                        </div>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', textAlign: 'right' }}>
-                            <span style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '15px', color: '#FFFFFF', opacity: 0.4 }}>Say hi — </span>
-                            <a href="mailto:anugrah@palettstudios.com" style={{ fontFamily: '"Rethink Sans", sans-serif', fontSize: '15px', color: '#FFFFFF', textDecoration: 'underline', opacity: 0.9, transition: 'opacity 0.2s', fontWeight: 500 }}>anugrah@palettstudios.com</a>
-                        </div>
-                    </div>
-                    <div style={{ width: '100%', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative' }}>
-                        <h2 style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '112px', fontWeight: 500, lineHeight: 1.1, letterSpacing: '-0.5px', color: '#FFFFFF', margin: 0, opacity: 0.9 }}>your palett,<br />our colours</h2>
-                        <span style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '11px', fontWeight: 400, color: '#FFFFFF', opacity: 0.3, letterSpacing: '0.05em', marginBottom: '14px', whiteSpace: 'nowrap' }}>©2024 Palett. ALL RIGHTS RESERVED.</span>
-                    </div>
-                </footer>
+                <SiteFooter />
             </div>
         </>
     );
