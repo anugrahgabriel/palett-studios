@@ -183,7 +183,7 @@ const ProjectShowcase = () => {
                         <div style={{
                             width: '100%',
                             aspectRatio: '1 / 1',
-                            backgroundColor: '#EAEAEA',
+                            backgroundColor: '#F0F0F0',
                             borderRadius: '2px'
                         }} />
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
