@@ -91,14 +91,25 @@ const Archive = () => {
                                     onClick={() => setSelected(project.title)}
                                     style={{
                                         display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '6px',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'baseline',
+                                        gap: '12px',
                                         position: 'relative',
                                         cursor: 'pointer',
                                         padding: '9px 12px 9px 0',
                                         borderRadius: '4px'
                                     }}
                                 >
+                                    <h3 style={{
+                                        fontFamily: '"Cocosharp Trial", sans-serif',
+                                        fontSize: '14px',
+                                        fontWeight: 510,
+                                        color: '#3E3E3E',
+                                        margin: 0
+                                    }}>
+                                        {project.title}
+                                    </h3>
                                     <div style={{
                                         fontFamily: '"Share Tech Mono", monospace',
                                         fontSize: '12px',
@@ -106,37 +117,16 @@ const Archive = () => {
                                         fontWeight: 400,
                                         letterSpacing: '-0.3px'
                                     }}>
-                                        [{pi + 1}]
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-                                        <h3 style={{
-                                            fontFamily: '"Cocosharp Trial", sans-serif',
-                                            fontSize: '14px',
-                                            fontWeight: 510,
-                                            color: '#3E3E3E',
-                                            margin: 0
-                                        }}>
-                                            {project.title}
-                                        </h3>
-                                        <p style={{
-                                            fontFamily: '"Inter", sans-serif',
-                                            fontSize: '13px',
-                                            color: '#666666',
-                                            marginTop: '4px',
-                                            marginBottom: 0,
-                                            lineHeight: 1.4,
-                                            letterSpacing: '-0.1px'
-                                        }}>
-                                            {project.desc}
-                                        </p>
+                                        {project.year}
                                     </div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Right: overview grid, or the selected project's inner grid.
-                            Fixed at 1176px so the tiles match the home grid's width and position. */}
-                        <div style={{ width: '1176px', flexShrink: 0 }}>
+                            Fixed at 1176px so the tiles match the home grid's width and position.
+                            Scrolls within itself; the page takes over once it's exhausted. */}
+                        <div style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
                                 <div style={{
                                     display: 'grid',
