@@ -78,8 +78,6 @@ const ProjectShowcase = () => {
         }
     ];
 
-    const [activeIdx, setActiveIdx] = useState(0);
-
     return (
         <div style={{
             width: '100%',
@@ -105,7 +103,6 @@ const ProjectShowcase = () => {
                 {projects.map((project, pi) => (
                     <div
                         key={pi}
-                        onMouseEnter={() => setActiveIdx(pi)}
                         onClick={() => window.open(project.link, '_blank')}
                         style={{
                             display: 'flex',
@@ -159,29 +156,53 @@ const ProjectShowcase = () => {
                             }}>
                                 {project.desc}
                             </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                flexWrap: 'wrap',
-                                gap: '6px',
-                                position: 'relative',
-                                zIndex: 1
+            {/* Right: card grid container, 3 columns, rows grow with projects */}
+            <div style={{
+                width: '70%',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '20px',
+                overflowY: 'auto'
+            }}>
+                {projects.map((project, pi) => (
+                    <div
+                        key={pi}
+                        onClick={() => window.open(project.link, '_blank')}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <div style={{
+                            width: '100%',
+                            aspectRatio: '1 / 1',
+                            backgroundColor: '#EAEAEA',
+                            borderRadius: '2px'
+                        }} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <h3 style={{
+                                fontFamily: '"Cocosharp Trial", sans-serif',
+                                fontSize: '14px',
+                                fontWeight: 510,
+                                color: '#1A1A1A',
+                                margin: 0,
+                                letterSpacing: '-0.1px'
                             }}>
+                                {project.title}
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
                                 {project.tags.map((tag, ti) => (
                                     <span key={ti} style={{
                                         fontFamily: '"Rethink Sans", sans-serif',
                                         fontSize: '12px',
-                                        textTransform: 'none',
-                                        color: '#373434',
-                                        backgroundColor: '#EAEAEA',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '26px',
-                                        padding: '0 9px',
-                                        borderRadius: '2px',
-                                        lineHeight: 0
+                                        color: '#888888'
                                     }}>
                                         {tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()}
                                     </span>
@@ -190,59 +211,6 @@ const ProjectShowcase = () => {
                         </div>
                     </div>
                 ))}
-            </div>
-
-            {/* Right: single showcase box with its own scroll context */}
-            <div style={{
-                width: '70%',
-                position: 'relative',
-                overflowY: 'auto'
-            }}>
-                <div
-                    onClick={() => window.open(projects[activeIdx].link, '_blank')}
-                    style={{ position: 'relative', width: '100%', height: '480px', cursor: 'pointer' }}
-                >
-                    {projects.map((project, pi) => (
-                        <div
-                            key={pi}
-                            style={{
-                                position: 'absolute',
-                                inset: 0,
-                                opacity: activeIdx === pi ? 1 : 0,
-                                transition: 'opacity 0.45s ease',
-                                pointerEvents: activeIdx === pi ? 'auto' : 'none'
-                            }}
-                        >
-                            <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'flex-start', overflow: 'hidden' }}>
-                                <div style={{
-                                    height: '100%',
-                                    width: 'auto',
-                                    overflow: 'hidden',
-                                    borderRadius: '2px',
-                                    outline: '0.4px solid rgba(0, 0, 0, 0.05)'
-                                }}>
-                                    <img
-                                        src={project.slides[0]}
-                                        alt={project.title}
-                                        style={{
-                                            height: '100%',
-                                            width: 'auto',
-                                            objectFit: 'cover',
-                                            transform: 'scaleX(1.0) translateX(-12px)',
-                                            transformOrigin: 'right center'
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    <LiveButton style={{
-                        position: 'absolute',
-                        bottom: '24px',
-                        right: '24px',
-                        zIndex: 10
-                    }} />
-                </div>
             </div>
         </div>
     );
