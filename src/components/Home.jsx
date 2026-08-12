@@ -21,6 +21,7 @@ import slide10 from '../../pics/clients/runable/10-slide.webp';
 import slide11 from '../../pics/clients/runable/11-slide.webp';
 import grayforgeImg from '../../pics/clients/grayforge/grayforge-new.webp';
 import pennywiseImg from '../../pics/clients/pennywise/BG.jpg';
+import runableImg from '../../pics/clients/runable/bg.jpg';
 import client1 from '../../pics/client 1.png';
 import mainContentBg from '../../pics/main-content-bg.webp';
 
@@ -83,6 +84,8 @@ const ProjectShowcase = () => {
             title: 'Runable',
             desc: "Product design for India's leading general AI platform",
             tags: ['Software Product'],
+            cover: runableImg,
+            coverSize: 'auto 100%',
             slides: [slide10, slide11],
             link: 'https://runable.com/'
         }
