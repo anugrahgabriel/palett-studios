@@ -74,7 +74,7 @@ const Archive = () => {
                     }}>
                         {/* Left: project list */}
                         <div style={{
-                            width: '30%',
+                            width: 'calc(30% - 48px)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'stretch',
@@ -92,10 +92,8 @@ const Archive = () => {
                                         gap: '6px',
                                         position: 'relative',
                                         cursor: 'pointer',
-                                        backgroundColor: selected === project.title ? '#F3F3F3' : '#FBFBFB',
                                         padding: '9px 12px',
-                                        borderRadius: '4px',
-                                        transition: 'background-color 0.25s ease'
+                                        borderRadius: '4px'
                                     }}
                                 >
                                     <div style={{
@@ -134,7 +132,7 @@ const Archive = () => {
                         </div>
 
                         {/* Right: overview grid, or the selected project's inner grid */}
-                        <div style={{ width: '70%' }}>
+                        <div style={{ width: 'calc(70% + 48px)' }}>
                             {selectedProject ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                     <span
