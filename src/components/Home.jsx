@@ -135,7 +135,7 @@ const ProjectShowcase = () => {
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
                                 fontWeight: 510,
-                                color: '#2E2E2E',
+                                color: '#3E3E3E',
                                 margin: 0,
                                 position: 'relative',
                                 zIndex: 5
@@ -190,7 +190,7 @@ const ProjectShowcase = () => {
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
                                 fontWeight: 510,
-                                color: '#2E2E2E',
+                                color: '#3E3E3E',
                                 margin: 0
                             }}>
                                 {project.title}
