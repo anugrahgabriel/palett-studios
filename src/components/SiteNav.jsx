@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const RollingDigit = ({ value }) => {
@@ -115,6 +115,20 @@ const NAV_ITEMS = ['Work', 'About', 'Contact', 'Join us'];
 const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = false, className }) => {
     const [hoveredItem, setHoveredItem] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
+    const panelRef = useRef(null);
+    const toggleRef = useRef(null);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+        const handleOutsideClick = (e) => {
+            if (panelRef.current && !panelRef.current.contains(e.target) &&
+                toggleRef.current && !toggleRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, [menuOpen]);
 
     const navBoxStyle = {
         position: 'fixed', top: isSmallLaptop ? '0' : '50%', left: 0, width: '100%', height: isSmallLaptop ? '60px' : '80px',
@@ -136,7 +150,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                 {!isSmallLaptop && <LiveIST color={isNavInFooter ? '#FFFFFF' : '#8b8a8a'} />}
             </div>
             <div style={{ flex: 1 }}></div>
-            <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto', position: 'relative', zIndex: 20 }}>
+            <div ref={toggleRef} style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto', position: 'relative', zIndex: 20 }}>
                 {isSmallLaptop ? <MorphMenuIcon color={menuOpen ? '#FFFFFF' : (isNavInFooter ? '#FFFFFF' : '#373434')} open={menuOpen} onClick={() => setMenuOpen(prev => !prev)} /> : NAV_ITEMS.map((item) => (
                     <Link
                         key={item}
@@ -159,7 +173,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
             </div>
         </div>
         {isSmallLaptop && menuOpen && (
-            <div style={{
+            <div ref={panelRef} style={{
                 position: 'fixed',
                 top: 0,
                 right: 0,
