@@ -137,7 +137,6 @@ const ProjectShowcase = () => {
                                 fontWeight: 510,
                                 color: '#1A1A1A',
                                 margin: 0,
-                                letterSpacing: '-0.1px',
                                 position: 'relative',
                                 zIndex: 5
                             }}>
@@ -192,8 +191,7 @@ const ProjectShowcase = () => {
                                 fontSize: '14px',
                                 fontWeight: 510,
                                 color: '#1A1A1A',
-                                margin: 0,
-                                letterSpacing: '-0.1px'
+                                margin: 0
                             }}>
                                 {project.title}
                             </h3>
