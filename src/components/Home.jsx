@@ -111,7 +111,7 @@ const ProjectShowcase = () => {
                             position: 'relative',
                             cursor: 'pointer',
                             backgroundColor: '#FBFBFB',
-                            padding: '12px',
+                            padding: '9px 12px',
                             borderRadius: '4px'
                         }}
                     >
