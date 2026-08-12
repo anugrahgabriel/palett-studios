@@ -90,6 +90,24 @@ export const MenuIcon = ({ color = "#373434", onClick }) => (
     </svg>
 );
 
+// Three vertical lines that morph into a cross when open.
+const MorphMenuIcon = ({ color = "#373434", open = false, onClick }) => {
+    const lineStyle = {
+        transformOrigin: '12px 12px',
+        transition: 'transform 0.3s ease, opacity 0.3s ease'
+    };
+    return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} onClick={onClick}>
+            <path d="M8 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
+                style={{ ...lineStyle, transform: open ? 'translateX(4px) rotate(45deg)' : 'none' }} />
+            <path d="M12 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
+                style={{ ...lineStyle, opacity: open ? 0 : 1 }} />
+            <path d="M16 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
+                style={{ ...lineStyle, transform: open ? 'translateX(-4px) rotate(-45deg)' : 'none' }} />
+        </svg>
+    );
+};
+
 const NAV_ITEMS = ['Work', 'About', 'Contact', 'Join us'];
 
 // activeItem: on inner pages the active item stays at full opacity and the rest dim;
@@ -118,7 +136,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
             </div>
             <div style={{ flex: 1 }}></div>
             <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto' }}>
-                {isSmallLaptop ? <MenuIcon color={isNavInFooter ? '#FFFFFF' : '#373434'} onClick={() => setMenuOpen(true)} /> : NAV_ITEMS.map((item) => (
+                {isSmallLaptop ? <MorphMenuIcon color={menuOpen ? '#FFFFFF' : (isNavInFooter ? '#FFFFFF' : '#373434')} open={menuOpen} onClick={() => setMenuOpen(prev => !prev)} /> : NAV_ITEMS.map((item) => (
                     <Link
                         key={item}
                         to={item === 'Contact' ? '/get-in-touch' : `/${item.toLowerCase().replace(' ', '-')}`}
@@ -138,7 +156,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                     </Link>
                 ))}
             </div>
-            {isSmallLaptop && (
+            {isSmallLaptop && menuOpen && (
                 <div style={{
                     position: 'fixed',
                     top: 0,
@@ -146,9 +164,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                     height: '100vh',
                     width: 'min(380px, 100vw)',
                     backgroundColor: '#1E06D5',
-                    zIndex: 100,
-                    transform: menuOpen ? 'translateX(0)' : 'translateX(100%)',
-                    transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                    zIndex: 9,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
@@ -156,13 +172,6 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                     boxSizing: 'border-box',
                     pointerEvents: 'auto'
                 }}>
-                    <svg
-                        width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        onClick={() => setMenuOpen(false)}
-                        style={{ position: 'absolute', top: '28px', right: '30px', cursor: 'pointer' }}
-                    >
-                        <path d="M6 6L18 18M18 6L6 18" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
-                    </svg>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '18px' }}>
                         {NAV_ITEMS.map((item) => (
                             <Link
@@ -171,7 +180,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                                 onClick={() => setMenuOpen(false)}
                                 style={{
                                     fontFamily: '"Rethink Sans", sans-serif',
-                                    fontSize: '18px',
+                                    fontSize: '15px',
                                     fontWeight: 500,
                                     color: '#FFFFFF',
                                     textDecoration: 'none',
