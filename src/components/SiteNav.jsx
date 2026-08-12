@@ -96,6 +96,7 @@ const NAV_ITEMS = ['Work', 'About', 'Contact', 'Join us'];
 // without it (Home), all items are full opacity and dim on hover.
 const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = false, className }) => {
     const [hoveredItem, setHoveredItem] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const navBoxStyle = {
         position: 'fixed', top: isSmallLaptop ? '0' : '50%', left: 0, width: '100%', height: isSmallLaptop ? '60px' : '80px',
@@ -117,7 +118,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
             </div>
             <div style={{ flex: 1 }}></div>
             <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto' }}>
-                {isSmallLaptop ? <MenuIcon color={isNavInFooter ? '#FFFFFF' : '#373434'} /> : NAV_ITEMS.map((item) => (
+                {isSmallLaptop ? <MenuIcon color={isNavInFooter ? '#FFFFFF' : '#373434'} onClick={() => setMenuOpen(true)} /> : NAV_ITEMS.map((item) => (
                     <Link
                         key={item}
                         to={item === 'Contact' ? '/get-in-touch' : `/${item.toLowerCase().replace(' ', '-')}`}
@@ -137,6 +138,53 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                     </Link>
                 ))}
             </div>
+            {isSmallLaptop && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    height: '100vh',
+                    width: 'min(380px, 100vw)',
+                    backgroundColor: '#1E06D5',
+                    zIndex: 100,
+                    transform: menuOpen ? 'translateX(0)' : 'translateX(100%)',
+                    transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    padding: '28px 32px',
+                    boxSizing: 'border-box',
+                    pointerEvents: 'auto'
+                }}>
+                    <svg
+                        width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        onClick={() => setMenuOpen(false)}
+                        style={{ position: 'absolute', top: '28px', right: '30px', cursor: 'pointer' }}
+                    >
+                        <path d="M6 6L18 18M18 6L6 18" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '18px' }}>
+                        {NAV_ITEMS.map((item) => (
+                            <Link
+                                key={item}
+                                to={item === 'Contact' ? '/get-in-touch' : `/${item.toLowerCase().replace(' ', '-')}`}
+                                onClick={() => setMenuOpen(false)}
+                                style={{
+                                    fontFamily: '"Rethink Sans", sans-serif',
+                                    fontSize: '18px',
+                                    fontWeight: 500,
+                                    color: '#FFFFFF',
+                                    textDecoration: 'none',
+                                    opacity: activeItem ? (item === activeItem ? 1.0 : 0.6) : 1.0,
+                                    transition: 'opacity 0.3s ease'
+                                }}
+                            >
+                                {item}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
