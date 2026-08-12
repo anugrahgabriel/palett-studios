@@ -108,7 +108,7 @@ const MorphMenuIcon = ({ color = "#373434", open = false, onClick }) => {
     );
 };
 
-const NAV_ITEMS = ['Work', 'About', 'Contact', 'Join us'];
+const NAV_ITEMS = ['Archive', 'About', 'Contact', 'Join us'];
 
 // activeItem: on inner pages the active item stays at full opacity and the rest dim;
 // without it (Home), all items are full opacity and dim on hover.

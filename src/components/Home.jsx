@@ -15,15 +15,9 @@ import './Home.css';
 
 const leftPageImg = "";
 const rightPageImg = "";
-import slide5 from '../../pics/clients/quotient/5-slide.webp';
-import slide6 from '../../pics/clients/quotient/6-slide.webp';
-import slide10 from '../../pics/clients/runable/10-slide.webp';
-import slide11 from '../../pics/clients/runable/11-slide.webp';
-import grayforgeImg from '../../pics/clients/grayforge/grayforge-new.webp';
-import pennywiseImg from '../../pics/clients/pennywise/BG.jpg';
-import runableImg from '../../pics/clients/runable/bg.jpg';
 import client1 from '../../pics/client 1.png';
 import mainContentBg from '../../pics/main-content-bg.webp';
+import { projects } from './projectsData';
 
 const ArrowIcon = () => (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '12px', marginRight: '8px' }}>
@@ -56,40 +50,7 @@ const LiveButton = ({ style = {} }) => (
 );
 
 const ProjectShowcase = () => {
-    const projects = [
-        {
-            title: 'Pennywise',
-            desc: 'Mobile design and branding for an Indian consumer intelligence fintech',
-            tags: ['Fintech'],
-            cover: pennywiseImg,
-            coverSize: 'auto 100%',
-            slides: [],
-            link: ''
-        },
-        {
-            title: 'GrayForge',
-            desc: 'Website design, development and branding for a well based marketing agency',
-            tags: ['Agency'],
-            slides: [grayforgeImg],
-            link: 'https://grayforge.vercel.app/'
-        },
-        {
-            title: 'Quotient',
-            desc: 'Product design and development for an AI marketing platform',
-            tags: ['Software Product'],
-            slides: [slide5, slide6],
-            link: 'https://www.getquotient.ai/'
-        },
-        {
-            title: 'Runable',
-            desc: "Product design for India's leading general AI platform",
-            tags: ['Software Product'],
-            cover: runableImg,
-            coverSize: 'auto 100%',
-            slides: [slide10, slide11],
-            link: 'https://runable.com/'
-        }
-    ];
+    const navigate = useNavigate();
 
     return (
         <div style={{
@@ -105,12 +66,12 @@ const ProjectShowcase = () => {
             {projects.map((project, pi) => (
                 <div
                     key={pi}
-                    onClick={() => project.link && window.open(project.link, '_blank')}
+                    onClick={() => navigate('/archive', { state: { selected: project.title } })}
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '12px',
-                        cursor: project.link ? 'pointer' : 'default'
+                        cursor: 'pointer'
                     }}
                 >
                     <div style={{

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Hero from './components/Hero';
 import GetInTouch from './components/GetInTouch';
+import Archive from './components/Archive';
 import './App.css';
 
 const AnimatedRoutes = () => {
@@ -23,6 +24,7 @@ const AnimatedRoutes = () => {
       >
         <Routes location={location}>
           <Route path="/" element={<Hero />} />
+          <Route path="/archive" element={<Archive />} />
           <Route path="/get-in-touch" element={<GetInTouch />} />
         </Routes>
       </motion.div>
