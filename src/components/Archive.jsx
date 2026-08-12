@@ -80,7 +80,9 @@ const Archive = () => {
                             flexDirection: 'column',
                             alignItems: 'stretch',
                             justifyContent: 'flex-start',
-                            alignSelf: 'flex-end',
+                            alignSelf: 'flex-start',
+                            maxHeight: 'calc(50vh - 200px)',
+                            overflowY: 'auto',
                             gap: '4px'
                         }}>
                             {projects.map((project, pi) => (
@@ -135,28 +137,14 @@ const Archive = () => {
                         {/* Right: overview grid, or the selected project's inner grid */}
                         <div style={{ width: 'calc(70% + 48px)' }}>
                             {selectedProject ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    <span
-                                        onClick={() => setSelected(null)}
-                                        style={{
-                                            fontFamily: '"Rethink Sans", sans-serif',
-                                            fontSize: '13px',
-                                            color: '#888888',
-                                            cursor: 'pointer',
-                                            alignSelf: 'flex-start'
-                                        }}
-                                    >
-                                        ← All projects
-                                    </span>
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(4, 1fr)',
-                                        gap: '20px'
-                                    }}>
-                                        {(innerImages.length > 0 ? innerImages : [null, null, null]).map((img, i) => (
-                                            <div key={i} style={tileStyle(img)} />
-                                        ))}
-                                    </div>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: '20px'
+                                }}>
+                                    {(innerImages.length > 0 ? innerImages : [null, null, null]).map((img, i) => (
+                                        <div key={i} style={tileStyle(img)} />
+                                    ))}
                                 </div>
                             ) : (
                                 <div style={{
