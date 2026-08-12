@@ -65,15 +65,12 @@ const Archive = () => {
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} activeItem="Archive" />
 
             <div ref={scrollerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-                <main style={{ width: '100%', padding: '160px 32px 240px', boxSizing: 'border-box' }}>
+                <main style={{ width: '100%', padding: '32px', boxSizing: 'border-box' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'flex-start',
-                        gap: '24px',
-                        padding: '12px',
-                        backgroundColor: '#FBFBFB',
-                        borderRadius: '6px'
+                        gap: '24px'
                     }}>
                         {/* Left: project list */}
                         <div style={{
@@ -154,7 +151,7 @@ const Archive = () => {
                                     </span>
                                     <div style={{
                                         display: 'grid',
-                                        gridTemplateColumns: 'repeat(3, 1fr)',
+                                        gridTemplateColumns: 'repeat(4, 1fr)',
                                         gap: '20px'
                                     }}>
                                         {(innerImages.length > 0 ? innerImages : [null, null, null]).map((img, i) => (
@@ -165,7 +162,7 @@ const Archive = () => {
                             ) : (
                                 <div style={{
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(3, 1fr)',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
                                     gap: '20px'
                                 }}>
                                     {projects.map((project, pi) => (
