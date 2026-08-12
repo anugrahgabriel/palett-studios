@@ -65,21 +65,22 @@ const Archive = () => {
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} activeItem="Archive" />
 
             <div ref={scrollerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-                <main style={{ width: '100%', minHeight: '100vh', padding: '160px 32px 240px', boxSizing: 'border-box' }}>
+                <main style={{ width: '100%', minHeight: '100vh', padding: '160px 32px 240px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'flex-start',
-                        gap: '24px'
+                        gap: '24px',
+                        flex: 1
                     }}>
                         {/* Left: project list */}
                         <div style={{
-                            width: 'calc(30% - 48px)',
+                            width: 'calc(15% - 48px)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'stretch',
                             justifyContent: 'flex-start',
-                            alignSelf: 'flex-start',
+                            alignSelf: 'flex-end',
                             gap: '4px'
                         }}>
                             {projects.map((project, pi) => (
@@ -92,7 +93,7 @@ const Archive = () => {
                                         gap: '6px',
                                         position: 'relative',
                                         cursor: 'pointer',
-                                        padding: '9px 12px',
+                                        padding: '9px 12px 9px 0',
                                         borderRadius: '4px'
                                     }}
                                 >
