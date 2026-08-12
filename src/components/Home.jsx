@@ -107,7 +107,7 @@ const ProjectShowcase = () => {
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '10px',
+                            gap: '6px',
                             position: 'relative',
                             cursor: 'pointer',
                             backgroundColor: '#FBFBFB',
@@ -134,7 +134,7 @@ const ProjectShowcase = () => {
                             <h3 style={{
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
-                                fontWeight: 510,
+                                fontWeight: 460,
                                 color: '#1A1A1A',
                                 margin: 0,
                                 letterSpacing: '-0.1px',
@@ -148,7 +148,7 @@ const ProjectShowcase = () => {
                                 fontSize: '13px',
                                 color: '#666666',
                                 marginTop: '4px',
-                                marginBottom: '14px',
+                                marginBottom: 0,
                                 lineHeight: 1.4,
                                 letterSpacing: '-0.1px',
                                 position: 'relative',
@@ -190,7 +190,7 @@ const ProjectShowcase = () => {
                             <h3 style={{
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
-                                fontWeight: 510,
+                                fontWeight: 460,
                                 color: '#1A1A1A',
                                 margin: 0,
                                 letterSpacing: '-0.1px'
