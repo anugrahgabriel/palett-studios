@@ -99,11 +99,11 @@ const MorphMenuIcon = ({ color = "#373434", open = false, onClick }) => {
     return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} onClick={onClick}>
             <path d="M8 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
-                style={{ ...lineStyle, transform: open ? 'translateX(4px) rotate(45deg)' : 'none' }} />
+                style={{ ...lineStyle, transform: open ? 'rotate(45deg) translateX(4px)' : 'none' }} />
             <path d="M12 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
                 style={{ ...lineStyle, opacity: open ? 0 : 1 }} />
             <path d="M16 6V18" stroke={color} strokeWidth="1.6" strokeLinecap="round"
-                style={{ ...lineStyle, transform: open ? 'translateX(-4px) rotate(-45deg)' : 'none' }} />
+                style={{ ...lineStyle, transform: open ? 'rotate(-45deg) translateX(-4px)' : 'none' }} />
         </svg>
     );
 };
