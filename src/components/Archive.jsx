@@ -65,7 +65,7 @@ const Archive = () => {
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} activeItem="Archive" />
 
             <div ref={scrollerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-                <main style={{ width: '100%', minHeight: '100vh', padding: '160px 32px 240px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
+                <main style={{ width: '100%', minHeight: '100vh', padding: '32px 32px 240px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row',
@@ -75,13 +75,13 @@ const Archive = () => {
                     }}>
                         {/* Left: project list */}
                         <div style={{
-                            width: 'calc(15% - 48px)',
+                            width: 'calc((100% - 1176px) / 2 - 24px)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'stretch',
                             justifyContent: 'flex-start',
                             alignSelf: 'flex-start',
-                            maxHeight: 'calc(50vh - 200px)',
+                            maxHeight: 'calc(50vh - 72px)',
                             overflowY: 'auto',
                             gap: '4px'
                         }}>
@@ -134,8 +134,9 @@ const Archive = () => {
                             ))}
                         </div>
 
-                        {/* Right: overview grid, or the selected project's inner grid */}
-                        <div style={{ width: 'calc(70% + 48px)' }}>
+                        {/* Right: overview grid, or the selected project's inner grid.
+                            Fixed at 1176px so the tiles match the home grid's width and position. */}
+                        <div style={{ width: '1176px', flexShrink: 0 }}>
                             {selectedProject ? (
                                 <div style={{
                                     display: 'grid',
