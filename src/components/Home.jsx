@@ -15,11 +15,11 @@ import './Home.css';
 
 const leftPageImg = "";
 const rightPageImg = "";
-import slide5 from '../../pics/5-slide.webp';
-import slide6 from '../../pics/6-slide.webp';
-import slide10 from '../../pics/10-slide.webp';
-import slide11 from '../../pics/11-slide.webp';
-import grayforgeImg from '../../pics/grayforge-new.webp';
+import slide5 from '../../pics/clients/quotient/5-slide.webp';
+import slide6 from '../../pics/clients/quotient/6-slide.webp';
+import slide10 from '../../pics/clients/runable/10-slide.webp';
+import slide11 from '../../pics/clients/runable/11-slide.webp';
+import grayforgeImg from '../../pics/clients/grayforge/grayforge-new.webp';
 import client1 from '../../pics/client 1.png';
 import mainContentBg from '../../pics/main-content-bg.webp';
 
