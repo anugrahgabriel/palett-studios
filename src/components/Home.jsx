@@ -61,7 +61,7 @@ const ProjectShowcase = () => {
             desc: 'Mobile design and branding for an Indian consumer intelligence fintech',
             tags: ['Fintech'],
             cover: pennywiseImg,
-            coverSize: '618px auto',
+            coverSize: 'calc(100% - 24px) auto',
             slides: [],
             link: ''
         },
