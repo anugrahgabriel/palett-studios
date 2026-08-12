@@ -17,7 +17,7 @@ const SiteFooter = () => (
             </div>
         </div>
         <div style={{ width: '100%', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative' }}>
-            <h2 style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '112px', fontWeight: 500, lineHeight: 1.1, letterSpacing: '-0.5px', color: '#FFFFFF', margin: 0, opacity: 0.9 }}>your palett,<br />our colours</h2>
+            <h2 style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '102px', fontWeight: 500, lineHeight: 1.1, letterSpacing: '-0.5px', color: '#FFFFFF', margin: 0, opacity: 0.9 }}>your palett, our colours</h2>
             <span style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '11px', fontWeight: 400, color: '#FFFFFF', opacity: 0.3, letterSpacing: '0.05em', marginBottom: '14px', whiteSpace: 'nowrap' }}>©2024 Palett. ALL RIGHTS RESERVED.</span>
         </div>
     </footer>

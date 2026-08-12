@@ -53,65 +53,6 @@ const LiveButton = ({ style = {} }) => (
     </div>
 );
 
-const ProjectImageStrip = ({ slides, height = '480px' }) => {
-    const scrollRef = useRef(null);
-    const [imagesLoaded, setImagesLoaded] = useState(0);
-
-    useGSAP(() => {
-        if (!scrollRef.current || imagesLoaded < slides.length) return;
-
-        const el = scrollRef.current;
-        const totalWidth = el.scrollWidth / 2;
-
-        gsap.killTweensOf(el);
-        gsap.set(el, { x: 0 });
-
-        gsap.to(el, {
-            x: `-=${totalWidth}`,
-            duration: slides.length * 40,
-            ease: "none",
-            repeat: -1,
-            modifiers: {
-                x: gsap.utils.unitize(x => parseFloat(x) % totalWidth)
-            }
-        });
-    }, [imagesLoaded, slides.length]);
-
-    return (
-        <div style={{
-            width: '100%',
-            height: height,
-            overflow: 'hidden',
-            position: 'relative',
-            borderRadius: '2px',
-            pointerEvents: 'auto'
-        }}>
-            <div ref={scrollRef} style={{
-                display: 'flex',
-                gap: '20px',
-                height: '100%',
-                width: 'max-content',
-                pointerEvents: 'auto'
-            }}>
-                {[...slides, ...slides].map((img, i) => (
-                    <img
-                        key={i}
-                        src={img}
-                        onLoad={() => setImagesLoaded(prev => prev + 1)}
-                        style={{
-                            height: '100%',
-                            width: 'auto',
-                            objectFit: 'contain',
-                            borderRadius: '2px',
-                            outline: '0.4px solid rgba(0, 0, 0, 0.05)'
-                        }}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
-
 const ProjectShowcase = () => {
     const projects = [
         {
@@ -138,45 +79,44 @@ const ProjectShowcase = () => {
     ];
 
     const [hoveredIdx, setHoveredIdx] = useState(null);
+    const [activeIdx, setActiveIdx] = useState(0);
 
     return (
         <div style={{
             width: '100%',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
             gap: '24px',
             padding: '12px',
             backgroundColor: '#FBFBFB',
             borderRadius: '6px',
             pointerEvents: 'auto'
         }}>
-            {projects.map((project, pi) => (
-                <div
-                    key={pi}
-                    onMouseEnter={() => setHoveredIdx(pi)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    onClick={() => window.open(project.link, '_blank')}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'flex-start',
-                        gap: '40px',
-                        width: '100%',
-                        position: 'relative',
-                        cursor: 'pointer',
-                        backgroundColor: '#FBFBFB',
-                        padding: '12px',
-                        borderRadius: '4px'
-                    }}
-                >
-                    <div style={{
-                        width: '30%',
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '18px',
-                        paddingTop: '0px'
-                    }}>
+            {/* Left: project list container */}
+            <div style={{
+                width: '30%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+            }}>
+                {projects.map((project, pi) => (
+                    <div
+                        key={pi}
+                        onMouseEnter={() => { setHoveredIdx(pi); setActiveIdx(pi); }}
+                        onMouseLeave={() => setHoveredIdx(null)}
+                        onClick={() => window.open(project.link, '_blank')}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '18px',
+                            position: 'relative',
+                            cursor: 'pointer',
+                            backgroundColor: '#FBFBFB',
+                            padding: '12px',
+                            borderRadius: '4px'
+                        }}
+                    >
                         <div style={{
                             fontFamily: '"Share Tech Mono", monospace',
                             fontSize: '12px',
@@ -251,15 +191,31 @@ const ProjectShowcase = () => {
                             </div>
                         </div>
                     </div>
+                ))}
+            </div>
 
-                    <div style={{ width: '70%', paddingTop: '0px', position: 'relative' }}>
-                        {project.slides.length > 1 ? (
-                            <ProjectImageStrip
-                                slides={project.slides}
-                                height={pi === 1 ? '456px' : '480px'}
-                            />
-                        ) : (
-                            <div style={{ width: '100%', height: '480px', display: 'flex', justifyContent: 'flex-start', overflow: 'hidden' }}>
+            {/* Right: single showcase box with its own scroll context */}
+            <div style={{
+                width: '70%',
+                position: 'relative',
+                overflowY: 'auto'
+            }}>
+                <div
+                    onClick={() => window.open(projects[activeIdx].link, '_blank')}
+                    style={{ position: 'relative', width: '100%', height: '480px', cursor: 'pointer' }}
+                >
+                    {projects.map((project, pi) => (
+                        <div
+                            key={pi}
+                            style={{
+                                position: 'absolute',
+                                inset: 0,
+                                opacity: activeIdx === pi ? 1 : 0,
+                                transition: 'opacity 0.45s ease',
+                                pointerEvents: activeIdx === pi ? 'auto' : 'none'
+                            }}
+                        >
+                            <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'flex-start', overflow: 'hidden' }}>
                                 <div style={{
                                     height: '100%',
                                     width: 'auto',
@@ -267,48 +223,29 @@ const ProjectShowcase = () => {
                                     borderRadius: '2px',
                                     outline: '0.4px solid rgba(0, 0, 0, 0.05)'
                                 }}>
-                                    {project.slides[0].toString().toLowerCase().includes('.mov') ||
-                                        project.slides[0].toString().toLowerCase().includes('.mp4') ||
-                                        project.slides[0].toString().toLowerCase().includes('.webm') ? (
-                                        <video
-                                            src={project.slides[0]}
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            style={{
-                                                height: '100%',
-                                                width: 'auto',
-                                                objectFit: 'cover',
-                                                transform: 'scaleX(1.0) translateX(-12px)',
-                                                transformOrigin: 'right center'
-                                            }}
-                                        />
-                                    ) : (
-                                        <img
-                                            src={project.slides[0]}
-                                            alt={project.title}
-                                            style={{
-                                                height: '100%',
-                                                width: 'auto',
-                                                objectFit: 'cover',
-                                                transform: 'scaleX(1.0) translateX(-12px)',
-                                                transformOrigin: 'right center'
-                                            }}
-                                        />
-                                    )}
+                                    <img
+                                        src={project.slides[0]}
+                                        alt={project.title}
+                                        style={{
+                                            height: '100%',
+                                            width: 'auto',
+                                            objectFit: 'cover',
+                                            transform: 'scaleX(1.0) translateX(-12px)',
+                                            transformOrigin: 'right center'
+                                        }}
+                                    />
                                 </div>
                             </div>
-                        )}
-                        <LiveButton style={{
-                            position: 'absolute',
-                            bottom: '24px',
-                            right: '24px',
-                            zIndex: 10
-                        }} />
-                    </div>
+                        </div>
+                    ))}
+                    <LiveButton style={{
+                        position: 'absolute',
+                        bottom: '24px',
+                        right: '24px',
+                        zIndex: 10
+                    }} />
                 </div>
-            ))}
+            </div>
         </div>
     );
 };
