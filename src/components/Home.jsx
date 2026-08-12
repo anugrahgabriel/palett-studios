@@ -466,12 +466,12 @@ const ThreadGrid = ({ hideContent = false }) => {
         <>
             {isIntroActive && (
                 <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-                    <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '22px', fontWeight: 510, color: '#373434', letterSpacing: '-0.2px' }}>Palett</h1>
+                    <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '22px', fontWeight: 400, color: '#373434', letterSpacing: '-0.2px' }}>Palett</h1>
                 </div>
             )}
             <div style={{ ...navBoxStyle, opacity: isNavDelayed ? 0 : 1 }} className="fixed-nav-content">
                 <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-start' : 'baseline', minWidth: '160px', gap: isSmallLaptop ? '2px' : '8px', pointerEvents: 'auto' }}>
-                    <Link to="/" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 510, color: isNavInFooter ? '#FFFFFF' : '#373434', textDecoration: 'none', transition: 'color 0.4s ease' }}>Palett</Link>
+                    <Link to="/" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 400, color: isNavInFooter ? '#FFFFFF' : '#373434', textDecoration: 'none', transition: 'color 0.4s ease' }}>Palett</Link>
                     {!isSmallLaptop && <LiveIST color={isNavInFooter ? '#FFFFFF' : '#8b8a8a'} />}
                 </div>
                 <div style={{ flex: 1 }}></div>
@@ -553,7 +553,7 @@ const ThreadGrid = ({ hideContent = false }) => {
                         </div>
                     </div>
                     <div style={{ width: '100%', borderTop: '1px solid rgba(255, 255, 255, 0.2)', paddingTop: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative' }}>
-                        <h2 style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '112px', fontWeight: 510, lineHeight: 1.1, color: '#FFFFFF', margin: 0, opacity: 0.9 }}>your palett, our colours</h2>
+                        <h2 style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '112px', fontWeight: 500, lineHeight: 1.1, color: '#FFFFFF', margin: 0, opacity: 0.9 }}>your palett, our colours</h2>
                         <span style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '11px', color: '#FFFFFF', opacity: 0.3, letterSpacing: '0.05em', marginBottom: '14px', whiteSpace: 'nowrap' }}>©2024 <span style={{ fontWeight: 510 }}>Palett</span>. ALL RIGHTS RESERVED.</span>
                     </div>
                 </footer>
