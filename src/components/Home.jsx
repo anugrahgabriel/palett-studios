@@ -56,6 +56,13 @@ const LiveButton = ({ style = {} }) => (
 const ProjectShowcase = () => {
     const projects = [
         {
+            title: 'Pennywise',
+            desc: 'Mobile design and branding for an Indian consumer intelligence fintech',
+            tags: ['Fintech'],
+            slides: [],
+            link: ''
+        },
+        {
             title: 'GrayForge',
             desc: 'Website design, development and branding for a well based marketing agency',
             tags: ['Agency'],
@@ -92,12 +99,12 @@ const ProjectShowcase = () => {
             {projects.map((project, pi) => (
                 <div
                     key={pi}
-                    onClick={() => window.open(project.link, '_blank')}
+                    onClick={() => project.link && window.open(project.link, '_blank')}
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '12px',
-                        cursor: 'pointer'
+                        cursor: project.link ? 'pointer' : 'default'
                     }}
                 >
                     <div style={{
