@@ -20,6 +20,7 @@ import slide6 from '../../pics/clients/quotient/6-slide.webp';
 import slide10 from '../../pics/clients/runable/10-slide.webp';
 import slide11 from '../../pics/clients/runable/11-slide.webp';
 import grayforgeImg from '../../pics/clients/grayforge/grayforge-new.webp';
+import pennywiseImg from '../../pics/clients/pennywise/pennywise.png';
 import client1 from '../../pics/client 1.png';
 import mainContentBg from '../../pics/main-content-bg.webp';
 
@@ -59,6 +60,7 @@ const ProjectShowcase = () => {
             title: 'Pennywise',
             desc: 'Mobile design and branding for an Indian consumer intelligence fintech',
             tags: ['Fintech'],
+            cover: pennywiseImg,
             slides: [],
             link: ''
         },
@@ -111,7 +113,13 @@ const ProjectShowcase = () => {
                         width: '100%',
                         aspectRatio: '1 / 1',
                         backgroundColor: '#F0F0F0',
-                        borderRadius: '2px'
+                        borderRadius: '2px',
+                        ...(project.cover && {
+                            backgroundImage: `url(${project.cover})`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'center',
+                            backgroundSize: 'auto'
+                        })
                     }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         <h3 style={{
