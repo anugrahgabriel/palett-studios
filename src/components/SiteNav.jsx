@@ -135,7 +135,7 @@ const SiteNav = ({ isNavInFooter, isSmallLaptop, activeItem = null, delayed = fa
                 {!isSmallLaptop && <LiveIST color={isNavInFooter ? '#FFFFFF' : '#8b8a8a'} />}
             </div>
             <div style={{ flex: 1 }}></div>
-            <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: isSmallLaptop ? 'column' : 'row', alignItems: isSmallLaptop ? 'flex-end' : 'baseline', gap: isSmallLaptop ? '8px' : '18px', justifyContent: 'flex-end', pointerEvents: 'auto', position: 'relative', zIndex: 20 }}>
                 {isSmallLaptop ? <MorphMenuIcon color={menuOpen ? '#FFFFFF' : (isNavInFooter ? '#FFFFFF' : '#373434')} open={menuOpen} onClick={() => setMenuOpen(prev => !prev)} /> : NAV_ITEMS.map((item) => (
                     <Link
                         key={item}
