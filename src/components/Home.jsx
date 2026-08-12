@@ -81,135 +81,54 @@ const ProjectShowcase = () => {
     return (
         <div style={{
             width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-            gap: '24px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '20px',
             padding: '12px',
             backgroundColor: '#FBFBFB',
             borderRadius: '6px',
             pointerEvents: 'auto'
         }}>
-            {/* Left: project list container, top-aligned */}
-            <div style={{
-                width: '30%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'stretch',
-                justifyContent: 'flex-start',
-                alignSelf: 'flex-start',
-                gap: '4px'
-            }}>
-                {projects.map((project, pi) => (
-                    <div
-                        key={pi}
-                        onClick={() => window.open(project.link, '_blank')}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '6px',
-                            position: 'relative',
-                            cursor: 'pointer',
-                            backgroundColor: '#FBFBFB',
-                            padding: '9px 12px',
-                            borderRadius: '4px'
-                        }}
-                    >
-                        <div style={{
-                            fontFamily: '"Share Tech Mono", monospace',
-                            fontSize: '12px',
-                            color: '#888888',
-                            fontWeight: 400,
-                            letterSpacing: '-0.3px'
+            {projects.map((project, pi) => (
+                <div
+                    key={pi}
+                    onClick={() => window.open(project.link, '_blank')}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <div style={{
+                        width: '100%',
+                        aspectRatio: '1 / 1',
+                        backgroundColor: '#F0F0F0',
+                        borderRadius: '2px'
+                    }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <h3 style={{
+                            fontFamily: '"Cocosharp Trial", sans-serif',
+                            fontSize: '14px',
+                            fontWeight: 510,
+                            color: '#3E3E3E',
+                            margin: 0
                         }}>
-                            [{pi + 1}]
-                        </div>
-
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '0px',
-                            position: 'relative'
+                            {project.title}
+                        </h3>
+                        <p style={{
+                            fontFamily: '"Inter", sans-serif',
+                            fontSize: '13px',
+                            color: '#666666',
+                            margin: 0,
+                            lineHeight: 1.4,
+                            letterSpacing: '-0.1px'
                         }}>
-                            <h3 style={{
-                                fontFamily: '"Cocosharp Trial", sans-serif',
-                                fontSize: '14px',
-                                fontWeight: 510,
-                                color: '#3E3E3E',
-                                margin: 0,
-                                position: 'relative',
-                                zIndex: 5
-                            }}>
-                                {project.title}
-                            </h3>
-                            <p style={{
-                                fontFamily: '"Inter", sans-serif',
-                                fontSize: '13px',
-                                color: '#666666',
-                                marginTop: '4px',
-                                marginBottom: 0,
-                                lineHeight: 1.4,
-                                letterSpacing: '-0.1px',
-                                position: 'relative',
-                                zIndex: 5
-                            }}>
-                                {project.desc}
-                            </p>
-                        </div>
+                            {project.desc}
+                        </p>
                     </div>
-                ))}
-            </div>
-
-            {/* Right: card grid container, 3 columns, rows grow with projects */}
-            <div style={{
-                width: '70%',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '20px',
-                overflowY: 'auto'
-            }}>
-                {projects.map((project, pi) => (
-                    <div
-                        key={pi}
-                        onClick={() => window.open(project.link, '_blank')}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '12px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <div style={{
-                            width: '100%',
-                            aspectRatio: '1 / 1',
-                            backgroundColor: '#F0F0F0',
-                            borderRadius: '2px'
-                        }} />
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <h3 style={{
-                                fontFamily: '"Cocosharp Trial", sans-serif',
-                                fontSize: '14px',
-                                fontWeight: 510,
-                                color: '#3E3E3E',
-                                margin: 0
-                            }}>
-                                {project.title}
-                            </h3>
-                            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
-                                {project.tags.map((tag, ti) => (
-                                    <span key={ti} style={{
-                                        fontFamily: '"Rethink Sans", sans-serif',
-                                        fontSize: '12px',
-                                        color: '#888888'
-                                    }}>
-                                        {tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                </div>
+            ))}
         </div>
     );
 };
