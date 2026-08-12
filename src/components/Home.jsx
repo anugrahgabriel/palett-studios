@@ -134,7 +134,7 @@ const ProjectShowcase = () => {
                             <h3 style={{
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
-                                fontWeight: 460,
+                                fontWeight: 510,
                                 color: '#1A1A1A',
                                 margin: 0,
                                 letterSpacing: '-0.1px',
@@ -190,7 +190,7 @@ const ProjectShowcase = () => {
                             <h3 style={{
                                 fontFamily: '"Cocosharp Trial", sans-serif',
                                 fontSize: '14px',
-                                fontWeight: 460,
+                                fontWeight: 510,
                                 color: '#1A1A1A',
                                 margin: 0,
                                 letterSpacing: '-0.1px'
