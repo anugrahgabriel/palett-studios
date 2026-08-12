@@ -78,7 +78,6 @@ const ProjectShowcase = () => {
         }
     ];
 
-    const [hoveredIdx, setHoveredIdx] = useState(null);
     const [activeIdx, setActiveIdx] = useState(0);
 
     return (
@@ -93,23 +92,25 @@ const ProjectShowcase = () => {
             borderRadius: '6px',
             pointerEvents: 'auto'
         }}>
-            {/* Left: project list container */}
+            {/* Left: project list container, top-aligned */}
             <div style={{
                 width: '30%',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '10px'
+                alignItems: 'stretch',
+                justifyContent: 'flex-start',
+                alignSelf: 'flex-start',
+                gap: '4px'
             }}>
                 {projects.map((project, pi) => (
                     <div
                         key={pi}
-                        onMouseEnter={() => { setHoveredIdx(pi); setActiveIdx(pi); }}
-                        onMouseLeave={() => setHoveredIdx(null)}
+                        onMouseEnter={() => setActiveIdx(pi)}
                         onClick={() => window.open(project.link, '_blank')}
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '18px',
+                            gap: '10px',
                             position: 'relative',
                             cursor: 'pointer',
                             backgroundColor: '#FBFBFB',
@@ -164,9 +165,6 @@ const ProjectShowcase = () => {
                                 flexDirection: 'row',
                                 flexWrap: 'wrap',
                                 gap: '6px',
-                                opacity: hoveredIdx === pi ? 1 : 0,
-                                transform: hoveredIdx === pi ? 'translateY(0)' : 'translateY(-10px)',
-                                transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                                 position: 'relative',
                                 zIndex: 1
                             }}>
