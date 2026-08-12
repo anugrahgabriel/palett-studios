@@ -36,7 +36,6 @@ const Archive = () => {
     }, [windowWidth]);
 
     const isSmallLaptop = windowWidth < 1700;
-    const PAGE_WIDTH = 1200;
 
     const selectedProject = projects.find(p => p.title === selected) || null;
     const innerImages = selectedProject
@@ -66,7 +65,7 @@ const Archive = () => {
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} activeItem="Archive" />
 
             <div ref={scrollerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-                <main style={{ maxWidth: PAGE_WIDTH, margin: '0 auto', paddingTop: '160px', paddingBottom: '240px', boxSizing: 'border-box' }}>
+                <main style={{ width: '100%', padding: '160px 32px 240px', boxSizing: 'border-box' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row',
