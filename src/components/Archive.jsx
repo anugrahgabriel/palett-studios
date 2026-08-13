@@ -161,6 +161,13 @@ const Archive = () => {
                                                     {row.desc || selectedProject.desc}
                                                 </p>
                                             </div>
+                                        ) : row.type === 'video' ? (
+                                            <video key={ri} src={row.src} autoPlay muted loop playsInline style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                                display: 'block',
+                                                borderRadius: '2px'
+                                            }} />
                                         ) : (
                                             <div key={ri} style={{
                                                 display: 'grid',
