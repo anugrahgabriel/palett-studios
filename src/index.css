@@ -98,7 +98,7 @@ button {
 }
 
 .blink {
-  animation: blink 0.9s ease-in-out infinite;
+  animation: blink 0.45s ease-in-out infinite;
 }
 
 .container {

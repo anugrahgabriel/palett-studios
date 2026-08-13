@@ -53,12 +53,15 @@ const Archive = () => {
         }
         let cancelled = false;
         setIsProjectLoading(true);
-        Promise.all(urls.map(src => new Promise(resolve => {
+        const preload = Promise.all(urls.map(src => new Promise(resolve => {
             const im = new Image();
             im.onload = resolve;
             im.onerror = resolve;
             im.src = src;
-        }))).then(() => {
+        })));
+        // Minimum hold so the blink is visible even when images are cached.
+        const minHold = new Promise(resolve => setTimeout(resolve, 700));
+        Promise.all([preload, minHold]).then(() => {
             if (!cancelled) setIsProjectLoading(false);
         });
         return () => { cancelled = true; };
@@ -157,7 +160,7 @@ const Archive = () => {
                             Scrolls within itself; the page takes over once it's exhausted. */}
                         <div ref={gridScrollRef} className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
-                                selectedProject.rows ? (
+                                selectedProject.rows ? isProjectLoading ? null : (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
                                             <div key={ri} style={{
