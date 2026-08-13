@@ -65,7 +65,7 @@ const Archive = () => {
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} activeItem="Archive" />
 
             <div ref={scrollerRef} className="main-scroller" style={{ width: '100%', height: '100vh', background: '#FFFFFF', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
-                <main style={{ width: '100%', minHeight: '100vh', padding: isSmallLaptop ? '60px 32px 240px' : '32px 32px 240px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
+                <main style={{ width: '100%', minHeight: '100vh', padding: isSmallLaptop ? '44px 32px 240px' : '32px 32px 240px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row',
