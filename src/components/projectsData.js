@@ -7,6 +7,8 @@ import pennywiseImg from '../../pics/clients/pennywise/BG.jpg';
 import pennywiseBrand1 from '../../pics/clients/pennywise/Brand 01.png';
 import pennywiseBrand2 from '../../pics/clients/pennywise/Brand 02.png';
 import pennywiseBrand3 from '../../pics/clients/pennywise/Brand 03.png';
+import pennywiseShot1 from '../../pics/clients/pennywise/Shot 01.png';
+import pennywiseBrand5 from '../../pics/clients/pennywise/Brand 05.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 
 // Ordered newest to oldest.
@@ -25,7 +27,9 @@ export const projects = [
             { type: 'text' },
             { type: 'images', images: [pennywiseBrand1] },
             { type: 'images', images: [pennywiseBrand2] },
-            { type: 'images', images: [pennywiseBrand3] }
+            { type: 'images', images: [pennywiseBrand3] },
+            { type: 'images', images: [pennywiseShot1] },
+            { type: 'images', images: [pennywiseBrand5] }
         ]
     },
     {
