@@ -29,7 +29,7 @@ export const projects = [
             { type: 'video', src: pennywiseBrand4Video },
             { type: 'images', images: [pennywiseBrand5] },
             { type: 'images', images: [pennywiseBrand3] },
-            { type: 'images', images: [pennywiseBrand2], zoom: 1.24 }
+            { type: 'images', images: [pennywiseBrand2], zoom: 1.25 }
         ]
     },
     {
