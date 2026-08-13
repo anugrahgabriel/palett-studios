@@ -60,7 +60,7 @@ const Archive = () => {
             im.src = src;
         })));
         // Minimum hold so the blink is visible even when images are cached.
-        const minHold = new Promise(resolve => setTimeout(resolve, 700));
+        const minHold = new Promise(resolve => setTimeout(resolve, 1100));
         Promise.all([preload, minHold]).then(() => {
             if (!cancelled) setIsProjectLoading(false);
         });
