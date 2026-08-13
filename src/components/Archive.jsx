@@ -74,7 +74,7 @@ const Archive = () => {
                         flex: 1
                     }}>
                         {/* Left: project list */}
-                        <div style={{
+                        <div className="no-scrollbar" style={{
                             width: 'calc((100% - 1176px) / 2 - 24px)',
                             marginLeft: '-2px',
                             display: 'flex',
@@ -129,7 +129,7 @@ const Archive = () => {
                         {/* Right: overview grid, or the selected project's inner grid.
                             Fixed at 1176px so the tiles match the home grid's width and position.
                             Scrolls within itself; the page takes over once it's exhausted. */}
-                        <div style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+                        <div className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
                                 selectedProject.rows ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
