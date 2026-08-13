@@ -4,6 +4,7 @@ import slide10 from '../../pics/clients/runable/10-slide.webp';
 import slide11 from '../../pics/clients/runable/11-slide.webp';
 import grayforgeImg from '../../pics/clients/grayforge/grayforge-new.webp';
 import pennywiseImg from '../../pics/clients/pennywise/BG.jpg';
+import pennywiseBrand1 from '../../pics/clients/pennywise/Brand 01.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 
 // Ordered newest to oldest.
@@ -19,7 +20,8 @@ export const projects = [
         link: '',
         rows: [
             { type: 'images', images: [pennywiseImg] },
-            { type: 'text' }
+            { type: 'text' },
+            { type: 'images', images: [pennywiseBrand1] }
         ]
     },
     {
