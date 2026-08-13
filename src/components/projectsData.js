@@ -11,6 +11,7 @@ import pennywiseBrand4Video from '../../pics/clients/pennywise/Brand 04.mp4';
 import pennywiseBrand5 from '../../pics/clients/pennywise/Brand 05.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 import auroraImg from '../../pics/clients/Aurora/Aurora.png';
+import auroraBanner from '../../pics/clients/Aurora/Banner.png';
 
 // Ordered newest to oldest.
 export const projects = [
@@ -22,7 +23,11 @@ export const projects = [
         cover: auroraImg,
         coverSize: 'auto 100%',
         slides: [],
-        link: ''
+        link: '',
+        rows: [
+            { type: 'images', images: [auroraBanner] },
+            { type: 'text' }
+        ]
     },
     {
         title: 'Pennywise',
