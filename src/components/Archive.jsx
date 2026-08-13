@@ -181,7 +181,9 @@ const Archive = () => {
                                                             height: 'auto',
                                                             display: 'block',
                                                             transform: row.zoom ? `scale(${row.zoom})` : 'none',
-                                                            transformOrigin: 'center'
+                                                            transformOrigin: 'center',
+                                                            marginTop: row.trimY ? `-${row.trimY / 2}px` : 0,
+                                                            marginBottom: row.trimY ? `-${row.trimY / 2}px` : 0
                                                         }} />
                                                     </div>
                                                 ))}
