@@ -76,7 +76,7 @@ const Archive = () => {
                         {/* Left: project list */}
                         <div style={{
                             width: 'calc((100% - 1176px) / 2 - 24px)',
-                            marginLeft: '-1px',
+                            marginLeft: '-2px',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'stretch',
