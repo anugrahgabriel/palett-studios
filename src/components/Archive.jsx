@@ -37,20 +37,24 @@ const Archive = () => {
 
     const isSmallLaptop = windowWidth < 1700;
 
-    const selectedProject = projects.find(p => p.title === selected) || null;
     const gridScrollRef = useRef(null);
-    // Starts true when arriving with a preselected project so its rows
-    // never flash before the preload effect runs.
+    // `selected` drives the list highlight and blink; `displayed` is what the
+    // grid actually shows — the old content stays up until the new is ready.
+    const [displayed, setDisplayed] = useState(null);
     const [isProjectLoading, setIsProjectLoading] = useState(() => !!location.state?.selected);
 
-    // On project switch: reset the grid's inner scroll, then preload the
-    // project's images — the selected list item blinks until they're ready.
+    // On project switch: preload the incoming project's images while the
+    // selected list item blinks, then swap the grid over.
     useEffect(() => {
-        if (gridScrollRef.current) gridScrollRef.current.scrollTop = 0;
-        if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
+        if (!selected) {
+            setDisplayed(null);
+            setIsProjectLoading(false);
+            return;
+        }
         const rows = projects.find(p => p.title === selected)?.rows;
         const urls = rows ? rows.filter(r => r.images).flatMap(r => r.images) : [];
         if (urls.length === 0) {
+            setDisplayed(selected);
             setIsProjectLoading(false);
             return;
         }
@@ -65,12 +69,22 @@ const Archive = () => {
         // Minimum hold so the blink is visible even when images are cached.
         const minHold = new Promise(resolve => setTimeout(resolve, 1100));
         Promise.all([preload, minHold]).then(() => {
-            if (!cancelled) setIsProjectLoading(false);
+            if (cancelled) return;
+            setDisplayed(selected);
+            setIsProjectLoading(false);
         });
         return () => { cancelled = true; };
     }, [selected]);
-    const innerImages = selectedProject
-        ? [selectedProject.cover, ...selectedProject.slides].filter(Boolean)
+
+    // Scroll resets happen at the moment the grid content swaps, not before.
+    useEffect(() => {
+        if (gridScrollRef.current) gridScrollRef.current.scrollTop = 0;
+        if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
+    }, [displayed]);
+
+    const displayedProject = projects.find(p => p.title === displayed) || null;
+    const innerImages = displayedProject
+        ? [displayedProject.cover, ...displayedProject.slides].filter(Boolean)
         : [];
 
     const tileStyle = (image, size) => ({
@@ -162,10 +176,10 @@ const Archive = () => {
                             Fixed at 1176px so the tiles match the home grid's width and position.
                             Scrolls within itself; the page takes over once it's exhausted. */}
                         <div ref={gridScrollRef} className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
-                            {selectedProject ? (
-                                selectedProject.rows ? isProjectLoading ? null : (
+                            {displayedProject ? (
+                                displayedProject.rows ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                        {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
+                                        {displayedProject.rows.map((row, ri) => row.type === 'text' ? (
                                             <div key={ri} style={{
                                                 display: 'grid',
                                                 gridTemplateColumns: '1fr 2fr',
@@ -175,10 +189,10 @@ const Archive = () => {
                                             }}>
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                                     <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '14px', lineHeight: 1.5, color: '#3E3E3E', letterSpacing: '-0.1px' }}>
-                                                        {selectedProject.title}
+                                                        {displayedProject.title}
                                                     </span>
                                                     <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '14px', lineHeight: 1.5, color: '#888888', letterSpacing: '-0.1px' }}>
-                                                        Client: {selectedProject.client || selectedProject.title}, {selectedProject.year}
+                                                        Client: {displayedProject.client || displayedProject.title}, {displayedProject.year}
                                                     </span>
                                                 </div>
                                                 <p style={{
@@ -190,7 +204,7 @@ const Archive = () => {
                                                     letterSpacing: '-0.1px',
                                                     maxWidth: '720px'
                                                 }}>
-                                                    {row.desc || selectedProject.desc}
+                                                    {row.desc || displayedProject.desc}
                                                 </p>
                                             </div>
                                         ) : row.type === 'video' ? (
@@ -208,7 +222,7 @@ const Archive = () => {
                                             }}>
                                                 {row.images.map((img, i) => (
                                                     <div key={i} style={{ overflow: 'hidden', borderRadius: '2px' }}>
-                                                        <img src={img} alt={selectedProject.title} style={{
+                                                        <img src={img} alt={displayedProject.title} style={{
                                                             width: '100%',
                                                             height: 'auto',
                                                             display: 'block',
