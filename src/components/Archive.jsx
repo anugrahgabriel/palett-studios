@@ -58,7 +58,7 @@ const Archive = () => {
     return (
         <div style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', width: '100%', position: 'relative' }}>
             <Helmet>
-                <title>Archive | Palett</title>
+                <title>Palett | Archive</title>
                 <meta name="description" content="Selected work from Palett — product design, development and branding projects." />
             </Helmet>
 
