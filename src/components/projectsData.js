@@ -14,6 +14,14 @@ import runableImg from '../../pics/clients/runable/bg.jpg';
 // Ordered newest to oldest.
 export const projects = [
     {
+        title: 'Aurora',
+        desc: '',
+        tags: [],
+        year: '2026',
+        slides: [],
+        link: ''
+    },
+    {
         title: 'Pennywise',
         desc: 'Mobile design and branding for an Indian consumer intelligence fintech',
         tags: ['Fintech'],
