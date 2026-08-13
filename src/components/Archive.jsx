@@ -132,7 +132,7 @@ const Archive = () => {
                         <div className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
                                 selectedProject.rows ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
                                             <div key={ri} style={{
                                                 display: 'grid',
@@ -165,7 +165,7 @@ const Archive = () => {
                                             <div key={ri} style={{
                                                 display: 'grid',
                                                 gridTemplateColumns: `repeat(${row.images.length}, 1fr)`,
-                                                gap: '20px'
+                                                gap: '10px'
                                             }}>
                                                 {row.images.map((img, i) => (
                                                     <img key={i} src={img} alt={selectedProject.title} style={{
