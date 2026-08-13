@@ -38,6 +38,31 @@ const Archive = () => {
     const isSmallLaptop = windowWidth < 1700;
 
     const selectedProject = projects.find(p => p.title === selected) || null;
+    const gridScrollRef = useRef(null);
+    const [isProjectLoading, setIsProjectLoading] = useState(false);
+
+    // On project switch: reset the grid's inner scroll, then preload the
+    // project's images — the selected list item blinks until they're ready.
+    useEffect(() => {
+        if (gridScrollRef.current) gridScrollRef.current.scrollTop = 0;
+        const rows = projects.find(p => p.title === selected)?.rows;
+        const urls = rows ? rows.filter(r => r.images).flatMap(r => r.images) : [];
+        if (urls.length === 0) {
+            setIsProjectLoading(false);
+            return;
+        }
+        let cancelled = false;
+        setIsProjectLoading(true);
+        Promise.all(urls.map(src => new Promise(resolve => {
+            const im = new Image();
+            im.onload = resolve;
+            im.onerror = resolve;
+            im.src = src;
+        }))).then(() => {
+            if (!cancelled) setIsProjectLoading(false);
+        });
+        return () => { cancelled = true; };
+    }, [selected]);
     const innerImages = selectedProject
         ? [selectedProject.cover, ...selectedProject.slides].filter(Boolean)
         : [];
@@ -90,6 +115,7 @@ const Archive = () => {
                                 <div
                                     key={pi}
                                     onClick={() => setSelected(project.title)}
+                                    className={isProjectLoading && selected === project.title ? 'blink' : undefined}
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'row',
@@ -129,10 +155,10 @@ const Archive = () => {
                         {/* Right: overview grid, or the selected project's inner grid.
                             Fixed at 1176px so the tiles match the home grid's width and position.
                             Scrolls within itself; the page takes over once it's exhausted. */}
-                        <div className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+                        <div ref={gridScrollRef} className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
                                 selectedProject.rows ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', opacity: isProjectLoading ? 0 : 1, transition: 'opacity 0.35s ease' }}>
                                         {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
                                             <div key={ri} style={{
                                                 display: 'grid',

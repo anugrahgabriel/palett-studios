@@ -85,6 +85,22 @@ button {
   display: none;
 }
 
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.blink {
+  animation: blink 0.9s ease-in-out infinite;
+}
+
 .container {
   width: 100%;
   max-width: var(--max-width);
