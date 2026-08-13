@@ -12,6 +12,8 @@ import pennywiseBrand5 from '../../pics/clients/pennywise/Brand 05.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 import auroraImg from '../../pics/clients/Aurora/Aurora.png';
 import auroraBanner from '../../pics/clients/Aurora/Banner.png';
+import auroraBrand1 from '../../pics/clients/Aurora/Brand 1.png';
+import auroraBrand2 from '../../pics/clients/Aurora/Brand 2.png';
 
 // Ordered newest to oldest.
 export const projects = [
@@ -26,7 +28,9 @@ export const projects = [
         link: '',
         rows: [
             { type: 'images', images: [auroraBanner] },
-            { type: 'text' }
+            { type: 'text' },
+            { type: 'images', images: [auroraBrand1] },
+            { type: 'images', images: [auroraBrand2] }
         ]
     },
     {
