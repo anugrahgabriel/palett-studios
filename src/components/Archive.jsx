@@ -142,10 +142,10 @@ const Archive = () => {
                                                 padding: '18px 0 38px'
                                             }}>
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '13px', color: '#3E3E3E', letterSpacing: '-0.1px' }}>
+                                                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '14px', lineHeight: 1.5, color: '#3E3E3E', letterSpacing: '-0.1px' }}>
                                                         {selectedProject.title}
                                                     </span>
-                                                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '13px', color: '#888888', letterSpacing: '-0.1px' }}>
+                                                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '14px', lineHeight: 1.5, color: '#888888', letterSpacing: '-0.1px' }}>
                                                         Client: {selectedProject.client || selectedProject.title}, {selectedProject.year}
                                                     </span>
                                                 </div>
