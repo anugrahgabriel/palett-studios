@@ -169,7 +169,7 @@ const Archive = () => {
                                                         width: '100%',
                                                         height: 'auto',
                                                         display: 'block',
-                                                        borderRadius: '2px',
+                                                        borderRadius: '20px',
                                                         outline: '0.4px solid rgba(0, 0, 0, 0.05)'
                                                     }} />
                                                 ))}
