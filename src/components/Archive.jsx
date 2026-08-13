@@ -180,7 +180,10 @@ const Archive = () => {
                                                             width: '100%',
                                                             height: 'auto',
                                                             display: 'block',
-                                                            transform: row.zoom ? `scale(${row.zoom})` : 'none',
+                                                            transform: [
+                                                                row.offsetY ? `translateY(${row.offsetY}px)` : '',
+                                                                row.zoom ? `scale(${row.zoom})` : ''
+                                                            ].filter(Boolean).join(' ') || 'none',
                                                             transformOrigin: 'center',
                                                             marginTop: row.trimY ? `-${row.trimY / 2}px` : 0,
                                                             marginBottom: row.trimY ? `-${row.trimY / 2}px` : 0
