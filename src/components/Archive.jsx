@@ -138,7 +138,7 @@ const Archive = () => {
                                                 display: 'grid',
                                                 gridTemplateColumns: '1fr 2fr',
                                                 gap: '20px',
-                                                padding: '8px 0'
+                                                padding: '18px 0'
                                             }}>
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                                     <span style={{ fontFamily: '"Share Tech Mono", monospace', fontSize: '13px', color: '#3E3E3E', letterSpacing: '-0.3px' }}>
