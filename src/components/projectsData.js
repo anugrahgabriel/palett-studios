@@ -16,7 +16,11 @@ export const projects = [
         cover: pennywiseImg,
         coverSize: 'auto 100%',
         slides: [],
-        link: ''
+        link: '',
+        rows: [
+            { type: 'images', images: [pennywiseImg] },
+            { type: 'text' }
+        ]
     },
     {
         title: 'Runable',
@@ -26,7 +30,12 @@ export const projects = [
         cover: runableImg,
         coverSize: 'auto 100%',
         slides: [slide10, slide11],
-        link: 'https://runable.com/'
+        link: 'https://runable.com/',
+        rows: [
+            { type: 'images', images: [runableImg] },
+            { type: 'text' },
+            { type: 'images', images: [slide10, slide11] }
+        ]
     },
     {
         title: 'GrayForge',
@@ -34,7 +43,11 @@ export const projects = [
         tags: ['Agency'],
         year: '2025',
         slides: [grayforgeImg],
-        link: 'https://grayforge.vercel.app/'
+        link: 'https://grayforge.vercel.app/',
+        rows: [
+            { type: 'images', images: [grayforgeImg] },
+            { type: 'text' }
+        ]
     },
     {
         title: 'Quotient',
@@ -42,6 +55,10 @@ export const projects = [
         tags: ['Software Product'],
         year: '2025',
         slides: [slide5, slide6],
-        link: 'https://www.getquotient.ai/'
+        link: 'https://www.getquotient.ai/',
+        rows: [
+            { type: 'images', images: [slide5, slide6] },
+            { type: 'text' }
+        ]
     }
 ];

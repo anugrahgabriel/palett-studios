@@ -129,15 +129,64 @@ const Archive = () => {
                             Scrolls within itself; the page takes over once it's exhausted. */}
                         <div style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(4, 1fr)',
-                                    gap: '20px'
-                                }}>
-                                    {(innerImages.length > 0 ? innerImages : [null, null, null]).map((img, i) => (
-                                        <div key={i} style={tileStyle(img)} />
-                                    ))}
-                                </div>
+                                selectedProject.rows ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                        {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
+                                            <div key={ri} style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr 2fr',
+                                                gap: '20px',
+                                                padding: '8px 0'
+                                            }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                    <span style={{ fontFamily: '"Share Tech Mono", monospace', fontSize: '13px', color: '#3E3E3E', letterSpacing: '-0.3px' }}>
+                                                        {selectedProject.title}
+                                                    </span>
+                                                    <span style={{ fontFamily: '"Share Tech Mono", monospace', fontSize: '13px', color: '#888888', letterSpacing: '-0.3px' }}>
+                                                        Client: {selectedProject.client || selectedProject.title}, {selectedProject.year}
+                                                    </span>
+                                                </div>
+                                                <p style={{
+                                                    fontFamily: '"Inter", sans-serif',
+                                                    fontSize: '14px',
+                                                    color: '#3E3E3E',
+                                                    margin: 0,
+                                                    lineHeight: 1.5,
+                                                    letterSpacing: '-0.1px',
+                                                    maxWidth: '720px'
+                                                }}>
+                                                    {row.desc || selectedProject.desc}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div key={ri} style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: `repeat(${row.images.length}, 1fr)`,
+                                                gap: '20px'
+                                            }}>
+                                                {row.images.map((img, i) => (
+                                                    <img key={i} src={img} alt={selectedProject.title} style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        display: 'block',
+                                                        borderRadius: '2px',
+                                                        outline: '0.4px solid rgba(0, 0, 0, 0.05)'
+                                                    }} />
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(4, 1fr)',
+                                        gap: '20px'
+                                    }}>
+                                        {(innerImages.length > 0 ? innerImages : [null, null, null]).map((img, i) => (
+                                            <div key={i} style={tileStyle(img)} />
+                                        ))}
+                                    </div>
+                                )
                             ) : (
                                 <div style={{
                                     display: 'grid',
