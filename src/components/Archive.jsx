@@ -106,17 +106,19 @@ const Archive = () => {
                                         fontFamily: '"Cocosharp Trial", sans-serif',
                                         fontSize: '14px',
                                         fontWeight: 510,
-                                        color: '#3E3E3E',
-                                        margin: 0
+                                        color: selected === project.title ? '#5240F0' : '#3E3E3E',
+                                        margin: 0,
+                                        transition: 'color 0.25s ease'
                                     }}>
                                         {project.title}
                                     </h3>
                                     <div style={{
                                         fontFamily: '"Share Tech Mono", monospace',
                                         fontSize: '12px',
-                                        color: '#888888',
+                                        color: selected === project.title ? '#5240F0' : '#888888',
                                         fontWeight: 400,
-                                        letterSpacing: '-0.3px'
+                                        letterSpacing: '-0.3px',
+                                        transition: 'color 0.25s ease'
                                     }}>
                                         {project.year}
                                     </div>
