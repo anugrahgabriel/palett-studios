@@ -38,6 +38,7 @@ const Archive = () => {
     const isSmallLaptop = windowWidth < 1700;
 
     const gridScrollRef = useRef(null);
+    const sameClickTimer = useRef(null);
     // `selected` drives the list highlight and blink; `displayed` is what the
     // grid actually shows — the old content stays up until the new is ready.
     const [displayed, setDisplayed] = useState(null);
@@ -134,7 +135,16 @@ const Archive = () => {
                             {projects.map((project, pi) => (
                                 <div
                                     key={pi}
-                                    onClick={() => { setIsProjectLoading(true); setSelected(project.title); }}
+                                    onClick={() => {
+                                        clearTimeout(sameClickTimer.current);
+                                        setIsProjectLoading(true);
+                                        if (selected === project.title) {
+                                            // Re-click on the open project: two blinks, then stop.
+                                            sameClickTimer.current = setTimeout(() => setIsProjectLoading(false), 1200);
+                                        } else {
+                                            setSelected(project.title);
+                                        }
+                                    }}
                                     className={isProjectLoading && selected === project.title ? 'blink' : undefined}
                                     style={{
                                         display: 'flex',
