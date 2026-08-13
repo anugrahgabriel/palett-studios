@@ -82,6 +82,8 @@ const Archive = () => {
                             alignItems: 'stretch',
                             justifyContent: 'flex-start',
                             alignSelf: 'flex-start',
+                            position: 'sticky',
+                            top: isSmallLaptop ? '60px' : '32px',
                             maxHeight: 'calc(50vh - 72px)',
                             overflowY: 'auto',
                             gap: '4px'
