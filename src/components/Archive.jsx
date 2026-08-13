@@ -175,12 +175,15 @@ const Archive = () => {
                                                 gap: '10px'
                                             }}>
                                                 {row.images.map((img, i) => (
-                                                    <img key={i} src={img} alt={selectedProject.title} style={{
-                                                        width: '100%',
-                                                        height: 'auto',
-                                                        display: 'block',
-                                                        borderRadius: '2px'
-                                                    }} />
+                                                    <div key={i} style={{ overflow: 'hidden', borderRadius: '2px' }}>
+                                                        <img src={img} alt={selectedProject.title} style={{
+                                                            width: '100%',
+                                                            height: 'auto',
+                                                            display: 'block',
+                                                            transform: row.zoom ? `scale(${row.zoom})` : 'none',
+                                                            transformOrigin: 'center'
+                                                        }} />
+                                                    </div>
                                                 ))}
                                             </div>
                                         ))}

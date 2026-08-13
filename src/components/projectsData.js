@@ -25,11 +25,11 @@ export const projects = [
         rows: [
             { type: 'images', images: [pennywiseImg] },
             { type: 'text' },
+            { type: 'images', images: [pennywiseBrand1] },
             { type: 'video', src: pennywiseBrand4Video },
             { type: 'images', images: [pennywiseBrand5] },
             { type: 'images', images: [pennywiseBrand3] },
-            { type: 'images', images: [pennywiseBrand2] },
-            { type: 'images', images: [pennywiseBrand1] }
+            { type: 'images', images: [pennywiseBrand2], zoom: 1.15 }
         ]
     },
     {
