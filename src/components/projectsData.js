@@ -7,7 +7,6 @@ import pennywiseImg from '../../pics/clients/pennywise/BG.jpg';
 import pennywiseBrand1 from '../../pics/clients/pennywise/Brand 01.png';
 import pennywiseBrand2 from '../../pics/clients/pennywise/Brand 02.png';
 import pennywiseBrand3 from '../../pics/clients/pennywise/Brand 03.png';
-import pennywiseShot1 from '../../pics/clients/pennywise/Shot 01.png';
 import pennywiseBrand4Video from '../../pics/clients/pennywise/Brand 04.mp4';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 
@@ -28,7 +27,6 @@ export const projects = [
             { type: 'video', src: pennywiseBrand4Video },
             { type: 'images', images: [pennywiseBrand3] },
             { type: 'images', images: [pennywiseBrand2] },
-            { type: 'images', images: [pennywiseShot1] },
             { type: 'images', images: [pennywiseBrand1] }
         ]
     },
