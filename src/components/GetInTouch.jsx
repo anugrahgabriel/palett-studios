@@ -94,7 +94,7 @@ const GetInTouch = () => {
     return (
         <div style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', width: '100%', position: 'relative' }}>
             <Helmet>
-                <title>Get in Touch | Palett</title>
+                <title>Palett | Get in Touch</title>
                 <meta name="description" content="Start a project with Palett. Send us a message or schedule a call to build exceptional digital experiences." />
             </Helmet>
 
