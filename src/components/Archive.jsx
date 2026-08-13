@@ -39,12 +39,15 @@ const Archive = () => {
 
     const selectedProject = projects.find(p => p.title === selected) || null;
     const gridScrollRef = useRef(null);
-    const [isProjectLoading, setIsProjectLoading] = useState(false);
+    // Starts true when arriving with a preselected project so its rows
+    // never flash before the preload effect runs.
+    const [isProjectLoading, setIsProjectLoading] = useState(() => !!location.state?.selected);
 
     // On project switch: reset the grid's inner scroll, then preload the
     // project's images — the selected list item blinks until they're ready.
     useEffect(() => {
         if (gridScrollRef.current) gridScrollRef.current.scrollTop = 0;
+        if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
         const rows = projects.find(p => p.title === selected)?.rows;
         const urls = rows ? rows.filter(r => r.images).flatMap(r => r.images) : [];
         if (urls.length === 0) {
@@ -117,7 +120,7 @@ const Archive = () => {
                             {projects.map((project, pi) => (
                                 <div
                                     key={pi}
-                                    onClick={() => setSelected(project.title)}
+                                    onClick={() => { setIsProjectLoading(true); setSelected(project.title); }}
                                     className={isProjectLoading && selected === project.title ? 'blink' : undefined}
                                     style={{
                                         display: 'flex',
@@ -242,7 +245,7 @@ const Archive = () => {
                                     {projects.map((project, pi) => (
                                         <div
                                             key={pi}
-                                            onClick={() => setSelected(project.title)}
+                                            onClick={() => { setIsProjectLoading(true); setSelected(project.title); }}
                                             style={{
                                                 display: 'flex',
                                                 flexDirection: 'column',
