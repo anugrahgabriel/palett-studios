@@ -158,7 +158,7 @@ const Archive = () => {
                         <div ref={gridScrollRef} className="no-scrollbar" style={{ width: '1176px', flexShrink: 0, maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
                             {selectedProject ? (
                                 selectedProject.rows ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', opacity: isProjectLoading ? 0 : 1, transition: 'opacity 0.35s ease' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         {selectedProject.rows.map((row, ri) => row.type === 'text' ? (
                                             <div key={ri} style={{
                                                 display: 'grid',
