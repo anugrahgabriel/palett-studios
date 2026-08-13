@@ -10,6 +10,7 @@ import pennywiseBrand3 from '../../pics/clients/pennywise/Brand 03.png';
 import pennywiseBrand4Video from '../../pics/clients/pennywise/Brand 04.mp4';
 import pennywiseBrand5 from '../../pics/clients/pennywise/Brand 05.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
+import auroraImg from '../../pics/clients/Aurora/Aurora.png';
 
 // Ordered newest to oldest.
 export const projects = [
@@ -18,6 +19,8 @@ export const projects = [
         desc: '',
         tags: [],
         year: '2026',
+        cover: auroraImg,
+        coverSize: 'auto 100%',
         slides: [],
         link: ''
     },
