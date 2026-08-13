@@ -65,6 +65,14 @@ export const projects = [
         ]
     },
     {
+        title: 'Double Take',
+        desc: '',
+        tags: [],
+        year: '2026',
+        slides: [],
+        link: ''
+    },
+    {
         title: 'Runable',
         desc: "Product design for India's leading general AI platform",
         tags: ['Software Product'],
