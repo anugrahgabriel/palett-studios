@@ -14,6 +14,12 @@ import auroraImg from '../../pics/clients/Aurora/Aurora.png';
 import auroraBanner from '../../pics/clients/Aurora/Banner.png';
 import auroraBrand1 from '../../pics/clients/Aurora/Brand 1.png';
 import auroraBrand2 from '../../pics/clients/Aurora/Brand 2.png';
+import auroraBrand3 from '../../pics/clients/Aurora/Brand 3.png';
+import auroraBrand4 from '../../pics/clients/Aurora/Brand 4.png';
+import auroraBrand5 from '../../pics/clients/Aurora/Brand 5.png';
+import auroraBrand6 from '../../pics/clients/Aurora/Brand 6.png';
+import auroraBrand7 from '../../pics/clients/Aurora/Brand 7.png';
+import auroraBrand8 from '../../pics/clients/Aurora/Brand 8.png';
 
 // Ordered newest to oldest.
 export const projects = [
@@ -30,7 +36,13 @@ export const projects = [
             { type: 'images', images: [auroraBanner] },
             { type: 'text' },
             { type: 'images', images: [auroraBrand1] },
-            { type: 'images', images: [auroraBrand2] }
+            { type: 'images', images: [auroraBrand2] },
+            { type: 'images', images: [auroraBrand3] },
+            { type: 'images', images: [auroraBrand4] },
+            { type: 'images', images: [auroraBrand5] },
+            { type: 'images', images: [auroraBrand6] },
+            { type: 'images', images: [auroraBrand7] },
+            { type: 'images', images: [auroraBrand8] }
         ]
     },
     {
