@@ -136,13 +136,8 @@ const ThreadGrid = ({ hideContent = false }) => {
         const tl = gsap.timeline();
         const introLogo = document.querySelector(".intro-logo");
         if (introLogo) {
-            tl.fromTo(introLogo, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.inOut" })
-                .to(introLogo, { opacity: 0.1, duration: 0.05 })
-                .to(introLogo, { opacity: 0.7, duration: 0.04 })
-                .to(introLogo, { opacity: 0.4, duration: 0.06 })
-                .to(introLogo, { opacity: 0.9, duration: 0.04 })
-                .to(introLogo, { opacity: 0.2, duration: 0.05, repeat: 10, yoyo: true, ease: "none" })
-                .to(introLogo, { opacity: 0, duration: 0.8, ease: "power2.inOut", onComplete: () => { setIsIntroActive(false); sessionStorage.setItem('palettIntroPlayed', 'true'); } }, "+=0.2");
+            tl.set(introLogo, { opacity: 1 })
+                .to(introLogo, { opacity: 0, duration: 0.6, ease: "power2.inOut", onComplete: () => { setIsIntroActive(false); sessionStorage.setItem('palettIntroPlayed', 'true'); } }, "+=1.0");
         }
         const contentElements = contentSelectors.map(sel => document.querySelector(sel)).filter(Boolean);
         tl.fromTo(contentElements, { opacity: 0 }, { opacity: 1, duration: 1.8, stagger: 0.25, ease: "power2.inOut", onStart: () => setIsNavDelayed(false) }, "-=1.4s");
@@ -167,7 +162,7 @@ const ThreadGrid = ({ hideContent = false }) => {
     return (
         <>
             {isIntroActive && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#1E06D5', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#E10690', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                     <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 400, color: '#FFFFFF', letterSpacing: '-0.2px' }}>Palett</h1>
                 </div>
             )}
