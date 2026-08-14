@@ -167,8 +167,8 @@ const ThreadGrid = ({ hideContent = false }) => {
     return (
         <>
             {isIntroActive && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-                    <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '22px', fontWeight: 400, color: '#373434', letterSpacing: '-0.2px' }}>Palett</h1>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#1E06D5', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                    <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 400, color: '#FFFFFF', letterSpacing: '-0.2px' }}>Palett</h1>
                 </div>
             )}
             <SiteNav isNavInFooter={isNavInFooter} isSmallLaptop={isSmallLaptop} delayed={isNavDelayed} className="fixed-nav-content" />
