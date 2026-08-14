@@ -162,7 +162,7 @@ const ThreadGrid = ({ hideContent = false }) => {
     return (
         <>
             {isIntroActive && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#E10690', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: '#E2008E', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                     <h1 className="intro-logo" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '20px', fontWeight: 400, color: '#FFFFFF', letterSpacing: '-0.2px' }}>Palett</h1>
                 </div>
             )}
