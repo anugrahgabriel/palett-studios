@@ -12,6 +12,7 @@ import pennywiseBrand5 from '../../pics/clients/pennywise/Brand 05.png';
 import runableImg from '../../pics/clients/runable/bg.jpg';
 import auroraImg from '../../pics/clients/Aurora/Aurora.png';
 import auroraBanner from '../../pics/clients/Aurora/Banner.png';
+import cards01 from '../../pics/clients/Cards/01.jpg';
 import auroraBrand1 from '../../pics/clients/Aurora/Brand 1.png';
 import auroraBrand2 from '../../pics/clients/Aurora/Brand 2.png';
 import auroraBrand3 from '../../pics/clients/Aurora/Brand 3.png';
@@ -71,6 +72,17 @@ export const projects = [
         year: '2026',
         slides: [],
         link: ''
+    },
+    {
+        title: '(Re)Bank Cards',
+        desc: '',
+        tags: [],
+        year: '2026',
+        slides: [],
+        link: '',
+        rows: [
+            { type: 'images', images: [cards01] }
+        ]
     },
     {
         title: 'Runable',
